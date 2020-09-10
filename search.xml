@@ -1,0 +1,3225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Linux配置ZSH终端环境</title>
+    <url>/2020/Linux/Linux%E9%85%8D%E7%BD%AEZSH%E7%BB%88%E7%AB%AF%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<p>ZSH是mac的默认终端，相当于Linux发行版的bash，本文主要记录了Linux中zsh+onmyzsh的配置方法及优化过程，zsh优点：</p>
+<p>1.完全兼容bash,之前bash下的使用习惯,shell脚本都可以完全兼容。 </p>
+<p>2.更强大的tab补全,当你切换目录敲两下tab,他可以列出当前目录下面的所有目录,…</p>
+<p>3.更智能的切换目录,比如你要进入一个很深的目录，zsh会帮助你完成路径的补全</p>
+<p>4.命令选项补齐,比如输入yum,然后按tab,即可显示出yum都有哪些命令选项。 </p>
+<p>5.命令参数补齐,比如要kill一个进程,直接输入kill 进程名,会自动显示出进程的pid</p>
+<p>···</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-ZSH的安装"><a href="#1-ZSH的安装" class="headerlink" title="1. ZSH的安装"></a>1. ZSH的安装</h2><h3 id="1-1-安装zsh"><a href="#1-1-安装zsh" class="headerlink" title="1.1 安装zsh"></a>1.1 安装zsh</h3><p>如果你用 Redhat Linux，执行：sudo yum install zsh<br>如果你用 Ubuntu Linux，执行：sudo apt-get install zsh</p>
+<p>查看系统中的shell版本</p>
+<pre><code class="line-numbers language-bash">cat /etc/shells        </code></pre>
+<p>切换系统默认shell为zsh</p>
+<pre><code class="line-numbers language-bash">chsh -s /bin/zsh    </code></pre>
+<h3 id="1-2-安装-ohmyzsh"><a href="#1-2-安装-ohmyzsh" class="headerlink" title="1.2 安装 ohmyzsh"></a>1.2 安装 ohmyzsh</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901232057.png"></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL29obXl6c2gvb2hteXpzaC9uZXR3b3Jr">ohmyzsh的GitHub项目地址<i class="fa fa-external-link-alt"></i></span></p>
+<p>自动安装：</p>
+<pre><code class="line-numbers language-bash">wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh</code></pre>
+<p>手动安装：</p>
+<pre><code class="line-numbers language-bash">git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh 
+cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</code></pre>
+<p>或者前两种方式都不合适，可以尝试此种：</p>
+<pre><code class="line-numbers language-tex">1. 到项目仓库下载zip包
+2. 安装unzip
+3. unzip master.zip
+4. cd cd ./ohmyzsh-master/tools/ &amp;&amp; sh install.sh</code></pre>
+<p>都不复杂，安装完成之后退出当前会话重新打开一个终端窗口，你就可以见到彩色的提示了</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901210857.png"></p>
+<hr>
+<h2 id="2-ZSH的优化"><a href="#2-ZSH的优化" class="headerlink" title="2. ZSH的优化"></a>2. ZSH的优化</h2><p>zsh 的配置在<code>~/.zshrc</code>文件，用 vim打开.zshrc进行配置，配置项如</p>
+<p>查看zsh的主题：<code>echo $ZSH_THEME</code></p>
+<pre><code class="line-numbers language-shell">ZSH_THEME=&quot;agnoster&quot;        # 主题</code></pre>
+<h3 id="2-1-zsh隐藏终端用户名和计算机名"><a href="#2-1-zsh隐藏终端用户名和计算机名" class="headerlink" title="2.1 zsh隐藏终端用户名和计算机名"></a>2.1 zsh隐藏终端用户名和计算机名</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901215129.png"></p>
+<p>由于<code>oh my zsh</code>会经常更新，为了防止ohmyzsh更新个人配置被覆盖，将本地的主题文件复制出一份</p>
+<pre><code class="line-numbers language-bash">cp ~/.oh-my-zsh/themes/agnoster.zsh-theme ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
+<p>修改主题文件</p>
+<pre><code class="line-numbers language-bash">vim ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
+<p>注释末尾配置</p>
+<pre><code class="line-numbers language-shell"># Main prompt
+build_prompt() &#123;
+  RETVAL=$?
+  prompt_status
+  prompt_virtualenv
+ # prompt_context
+  prompt_dir
+  prompt_git
+  prompt_hg
+  prompt_end
+&#125;</code></pre>
+<p>修改<code>~/.zshrc</code></p>
+<pre><code class="line-numbers language-bash">ZSH_THEME=&quot;agnoster-my&quot;</code></pre>
+<p>立即生效环境变量</p>
+<pre><code class="line-numbers language-bash">source ~/.zshrc</code></pre>
+<h2 id="3-插件"><a href="#3-插件" class="headerlink" title="3. 插件"></a>3. 插件</h2><p>插件放置文件夹：<code>$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins</code></p>
+<p>插件启用：<code>~/.zshrc</code>的</p>
+<pre><code class="line-numbers language-bash"># plugins
+plugins=(
+  zsh-history-substring-search
+  sudo
+  git
+)</code></pre>
+<h3 id="sudo"><a href="#sudo" class="headerlink" title="sudo"></a>sudo</h3><p>自带插件。按两下 <code>ESC</code> 键，自动为命令前加上 sudo。</p>
+<h3 id="zsh-autosuggestions"><a href="#zsh-autosuggestions" class="headerlink" title="zsh-autosuggestions"></a>zsh-autosuggestions</h3><p>这个插件会根据历史输入指令的记录即时的提示</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-autosuggestions $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-autosuggestions</code></pre>
+<h3 id="zsh-syntax-highlighting"><a href="#zsh-syntax-highlighting" class="headerlink" title="zsh-syntax-highlighting"></a>zsh-syntax-highlighting</h3><p>这是一个命令高亮插件，输入为绿色时表示正确的命令，路径带有下划线时表示可用路径</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting</code></pre>
+<h3 id="git-open"><a href="#git-open" class="headerlink" title="git-open"></a>git-open</h3><p>在git目录打开相应的github页面</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/paulirish/git-open.git $ZSH_CUSTOM/plugins/git-open  </code></pre>
+<h3 id="thefuck"><a href="#thefuck" class="headerlink" title="thefuck"></a>thefuck</h3><p>输入 fuck 纠正前一条输错的命令, 需要先下载</p>
+<pre><code class="line-numbers language-bash">sudo apt install thefuck</code></pre>
+<h3 id="history-substring-search"><a href="#history-substring-search" class="headerlink" title="history-substring-search"></a>history-substring-search</h3><p>强大的历史命令搜索插件</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-history-substring-search \
+$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-history-substring-search</code></pre>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker快速部署多种数据库及配置使用</title>
+    <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/</url>
+    <content><![CDATA[<ul>
+<li><strong>redis</strong></li>
+<li><strong>mongodb</strong></li>
+<li><strong>mysql</strong></li>
+</ul>
+<a id="more"></a>
+
+<hr>
+<h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><p>为了方便，我们可以将MongoDB的数据目录映射到主机上来</p>
+<pre><code class="line-numbers language-bash">mkdir -p /data/mongodata        # 创建数据目录</code></pre>
+<p>拉取镜像</p>
+<pre><code class="line-numbers language-bash">docker pull mongo</code></pre>
+<p>启动MongoDB容器</p>
+<pre><code class="line-numbers language-bash">docker run -d --name mongo -v /data/mongodata:/data/db -p 27017:27017 mongo --auth</code></pre>
+<ul>
+<li><p>–name mongo 容器名称</p>
+</li>
+<li><p>–v /data/mongodata:/data/db 映射数据目录</p>
+</li>
+<li><p>-p 27017:27017 端口映射，前面的是主机端口，后面的是docker中的端口</p>
+</li>
+<li><p>mongo –auth 以账号验证模式启动</p>
+</li>
+</ul>
+<p><strong>创建账号</strong></p>
+<p>创建root用户、密码为123，所有数据库读写权限</p>
+<pre><code class="line-numbers language-bash">docker exec -it mongo mongo admin --eval &quot;db.createUser(&#123;user: &#39;root&#39;, pwd: &#39;123&#39;, roles: [ &#123; role: &#39;root&#39;, db: &#39;admin&#39; &#125; , &#39;readWriteAnyDatabase&#39;] &#125;)&quot;</code></pre>
+<p><strong>设置随Docker启动</strong></p>
+<pre><code class="line-numbers language-bash">docker update --restart=always mongo          </code></pre>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>拉取镜像</p>
+<pre><code class="line-numbers language-bash">docker pull redis</code></pre>
+<p>创建容器，容器名称为redis16379、开放在宿主机的16379端口上</p>
+<pre><code class="line-numbers language-bash">docker run -d --name redis16379 -p 16379:6379 redis</code></pre>
+<p>设置随Docker启动</p>
+<pre><code class="line-numbers language-bash">docker update --restart=always redis16379     </code></pre>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WSL（Windows Subsystem for Linux）使用笔记</title>
+    <url>/2020/%E9%9A%8F%E7%AC%94/WSL%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>Windows Subsystem for Linux（简称WSL）是一个在Windows 10上能够运行原生Linux二进制可执行文件（ELF格式）的兼容层。它是由Microsoft与Canonical公司合作开发，最初目标是使纯正的Ubuntu 14.04 “Trusty Tahr”映像能下载和解压到用户的本地计算机，并且映像内的工具和实用工具能在此子系统上原生运行。</p>
+<ul>
+<li>WSL的安装、WSL2版本转换问题</li>
+<li>重启WSL的方法</li>
+<li>Windows中查看WSL文件的方法</li>
+</ul>
+<a id="more"></a>
+
+<hr>
+<h2 id="WSL的安装"><a href="#WSL的安装" class="headerlink" title="WSL的安装"></a>WSL的安装</h2><p>WSL一定向前兼容，所以将Windows更新至最新</p>
+<p>以<strong>管理员权限</strong>启动 PowerShell</p>
+<pre><code class="line-numbers language-powershell">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform               # 启用虚拟机平台
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux    # 启用 Linux 子系统功能</code></pre>
+<p>重启计算机应用配置（不必每一步都重启）</p>
+<p>下载：到windows store下载一个Linux发行版本系统，如Ubuntu、Ubuntu18等，注意当下载完成时实际上并没有完成实际的安装</p>
+<p>配置wsl版本为wsl2，wsl2是wsl的升级版本，增加了一些新功能和减少BUG</p>
+<pre><code class="line-numbers language-powershell">wsl -l        # 查看下载的Linux发行版本
+# 适用于 Linux 的 Windows 子系统分发版:
+# Ubuntu (默认)    
+wsl --set-version Ubuntu 2   ## 设置一个 Linux 发行版的 WSL 版本
+# 这里需要下载安装一个插件：wsl_update_x64.msi
+wsl --set-default-version 2   ## 在以后安装 Linux 的时候默认启用 WSL2</code></pre>
+<p>安装：返回桌面按win键搜索下载的Linux名称运行一次完成安装</p>
+<h2 id="WSL的停止与重启"><a href="#WSL的停止与重启" class="headerlink" title="WSL的停止与重启"></a>WSL的停止与重启</h2><p>比如我使用的WSL发行版本为Ubuntu，因为系统控制的某些原因，WSL内执行<code>reboot</code>并不能控制WSL的重启，所以在不重启Windows的情况下需要重启WSL需要使用以下命令</p>
+<p><strong>管理员权限启动CMD/Powershell</strong></p>
+<pre><code class="line-numbers language-powershell">net stop LxssManager         # 停止
+net start LxssManager        # 启动</code></pre>
+<h2 id="使用文件管理器查看WSL文件的方法"><a href="#使用文件管理器查看WSL文件的方法" class="headerlink" title="使用文件管理器查看WSL文件的方法"></a>使用文件管理器查看WSL文件的方法</h2><p>打开文件管理器，点击地址栏，输入<code>\\wsl$</code>回车会显示所有已安装的wsl的文件系统</p>
+<p>比如我只安装了一个wsl发行版本，名称为Ubuntu</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200902153211.png"></p>
+<h2 id="WSL常用命令"><a href="#WSL常用命令" class="headerlink" title="WSL常用命令"></a>WSL常用命令</h2><pre><code class="line-numbers language-powershell">$ wsl --help
+版权所有 (c) Microsoft Corporation。保留所有权利。
+
+用法: wsl.exe [参数] [选项...] [命令行]
+
+用于运行 Linux 二进制文件的参数:
+
+    如果未提供命令行，wsl.exe 将启动默认的 shell。
+
+    --exec, -e &lt;命令行&gt;
+        执行指定的命令而不使用默认的 Linux shell。
+
+    --
+        按原样传递剩余的命令行。
+
+选项:
+    --distribution, -d &lt;分发版&gt;
+        运行指定的分发。
+
+    --user, -u &lt;用户名&gt;
+        以指定用户身份运行。
+
+用于管理适用于 Linux 的 Windows 子系统的参数:
+
+    --export &lt;分发版&gt; &lt;文件名&gt;
+        将分发导出到 tar 文件。
+        对于标准输出，文件名可以是 -。
+
+    --import &lt;分发版&gt; &lt;安装位置&gt; &lt;文件名&gt; [选项]
+        将指定的 tar 文件作为新分发进行导入。
+        对于标准输入，文件名可以是 -。
+
+    --list, -l [选项]
+        列出分发。
+        选项:
+            --all        # 列出所有分发，包括当前正在安装或卸载的分发。
+            --running        # 只列出当前正在运行的分发。
+            --quiet, -q        # 只显示分发名称。
+            --verbose, -v        # 显示有关所有分发的详细信息。
+    --set-default, -s &lt;分发版&gt;        # 将分发设置为默认值。
+    --set-default-version &lt;版本&gt;        # 更改新分发的默认安装版本。
+    --set-version &lt;分发版&gt; &lt;版本&gt;        # 更改指定分发的版本。
+    --shutdown        # 立即终止所有正在运行的分发和 WSL 2 轻型工具虚拟机。
+    --terminate, -t &lt;分发版&gt;        # 终止指定的分发。
+    --unregister &lt;分发版&gt;        # 注销分发。
+    --help        # 显示用法信息。</code></pre>
+]]></content>
+      <tags>
+        <tag>WSL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy框架爬取文件和图片</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/Scrapy%E4%B8%8B%E8%BD%BD%E5%9B%BE%E7%89%87%E5%92%8C%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>当我们的scrapy项目需要爬取媒体内容时，可以使用以下两条scrapy模块自带的pipeline管道进行下载处理，都包含了两个默认特殊字段：</p>
+<ul>
+<li>对于文件：<code>scrapy.pipelines.files.FilesPipeline</code><ul>
+<li><code>item[&#39;file_urls&#39;]</code> - 下载链接列表</li>
+<li><code>item[&#39;files&#39;]</code> - 管道处理结果列表（每个url的信息字典）</li>
+</ul>
+</li>
+<li>对于图片：<code>scrapy.pipelines.images.ImagesPipeline</code><ul>
+<li><code>item[&#39;image_urls&#39;]</code> - 下载链接列表</li>
+<li><code>item[&#39;images&#39;]</code> - 管道处理结果列表（每个url的信息字典）</li>
+</ul>
+</li>
+</ul>
+<p>这些管道都实现了：</p>
+<ul>
+<li>避免重新下载最近下载的媒体</li>
+<li>指定存储媒体的位置（本地、ftp位置、AmazonS3存储桶、Google云存储桶）</li>
+</ul>
+<p>imagespipeline作为filespipeline的子类，还实现了：</p>
+<ul>
+<li>将所有下载的图像转换为通用格式（JPG）和模式（RGB）</li>
+<li>缩略图生成</li>
+<li>图像尺寸过滤</li>
+</ul>
+<p>通过重写pipeline，还可以实现：</p>
+<ul>
+<li>自定义文件名称</li>
+<li>自定义保存路径</li>
+<li>爬取结果的处理</li>
+</ul>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-媒体管道的使用"><a href="#1-媒体管道的使用" class="headerlink" title="1. 媒体管道的使用"></a>1. 媒体管道的使用</h2><p>（1）先在settings.py中启用管道并配置相关的存储位置。</p>
+<pre><code class="line-numbers language-python">ITEM_PIPELINES = &#123;
+    &#39;scrapy.pipelines.images.ImagesPipeline&#39;: 1
+    &#125;
+IMAGES_STORE = &#39;/data/scrapy/images&#39;</code></pre>
+<p>（2）配置item字段</p>
+<pre><code class="line-numbers language-python">import scrapy
+
+class MyItem(scrapy.Item):
+    # ... other item fields ...
+    image_urls = scrapy.Field()        # 源文件链接
+    images = scrapy.Field()        # 管道处理后的结果（爬取结果）</code></pre>
+<p>（3）编码spider，将图像链接列表保存到<code>item[&#39;image_urls&#39;]</code>中</p>
+<p>（4）爬取</p>
+<h3 id="下载结果示例"><a href="#下载结果示例" class="headerlink" title="下载结果示例"></a>下载结果示例</h3><p>管道默认使用URL的SHA1 Hash值作为文件的名称。</p>
+<p>比如说需要下载的图片URL为：<span class="exturl" data-url="aHR0cDovL3d3dy5leGFtcGxlLmNvbS9pbWFnZS5qcGc=">http://www.example.com/image.jpg<i class="fa fa-external-link-alt"></i></span></p>
+<p>它的SHA1 hash为：<code>3afec3b4765f8f0a07b78f98c07b83f013567a0a</code></p>
+<p>最终下载得到的文件为：<code>/data/scrapy/images/full/3afec3b4765f8f0a07b78f98c07b83f013567a0a.jpg</code></p>
+<hr>
+<h2 id="2-媒体管道的配置项"><a href="#2-媒体管道的配置项" class="headerlink" title="2. 媒体管道的配置项"></a>2. 媒体管道的配置项</h2><p>在项目settings.py中进行配置</p>
+<h3 id="爬取结果保存位置"><a href="#爬取结果保存位置" class="headerlink" title="爬取结果保存位置"></a>爬取结果保存位置</h3><pre><code class="line-numbers language-bash">IMAGES_STORE = &#39;/path/to/valid/dir&#39;        # 图像保存位置
+FILES_STORE = &#39;/path/to/valid/dir&#39;        # 文件保存位置</code></pre>
+<p>FILES_STORE和IMAGES_STORE可以指向一个FTP服务器，Scrapy会自动将文件上传到服务器，FILES_STORE和IMAGES_STORE应该以下列形式之一写入:</p>
+<pre><code class="line-numbers language-bash">ftp://username:password@address:port/path
+ftp://address:port/path</code></pre>
+<p>如果未提供用户名和密码，则分别取自</p>
+<pre><code class="line-numbers language-bash">FTP_USER = &#39;admin&#39;
+FTP_PASSWORD = &#39;admin&#39;</code></pre>
+<h3 id="自定义item字段名称"><a href="#自定义item字段名称" class="headerlink" title="自定义item字段名称"></a>自定义item字段名称</h3><p>配置该字段可以替换掉初始的<code>file_urls</code>与<code>file</code></p>
+<pre><code class="line-numbers language-bash"># 对于文件管道
+FILES_URLS_FIELD = &#39;field_name_for_your_files_urls&#39;
+FILES_RESULT_FIELD = &#39;field_name_for_your_processed_files&#39;
+# 对于图像管道
+IMAGES_URLS_FIELD = &#39;field_name_for_your_images_urls&#39;
+IMAGES_RESULT_FIELD = &#39;field_name_for_your_processed_images&#39;</code></pre>
+<h3 id="文件过期"><a href="#文件过期" class="headerlink" title="文件过期"></a>文件过期</h3><p>为了避免重复下载最近下载过的文件、图片，默认90day</p>
+<pre><code class="line-numbers language-bash"># 120 days of delay for files expiration
+FILES_EXPIRES = 120
+# 30 days of delay for images expiration
+IMAGES_EXPIRES = 30</code></pre>
+<p>对于重写的子类pipeline，配置项添加自定义的类名作为前缀</p>
+<pre><code class="line-numbers language-bash">MYPIPELINECLASSNAME_FILES_EXPIRES = 180</code></pre>
+<h3 id="图片管道的缩略图"><a href="#图片管道的缩略图" class="headerlink" title="图片管道的缩略图"></a>图片管道的缩略图</h3><p>图像管道可以自动创建下载图像的缩略图，要使用此功能，必须设置 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#std:setting-IMAGES_THUMBS"><code>IMAGES_THUMBS</code></a> 到一个字典，其中键是缩略图名称，值是它们的尺寸。</p>
+<pre><code class="line-numbers language-bash">IMAGES_THUMBS = &#123;
+    &#39;small&#39;: (50, 50),
+    &#39;big&#39;: (270, 270),
+&#125;</code></pre>
+<p>使用此功能时，图像管道将保存缩略图到下列位置：</p>
+<pre><code class="line-numbers language-bash">&lt;IMAGES_STORE&gt;/thumbs/&lt;size_name&gt;/&lt;image_id&gt;.jpg
+# &lt;size_name&gt; 是在 IMAGES_THUMBS 字典键 (small ， big 等）
+# &lt;image_id&gt; 是 SHA1 hash 图像URL的
+# 实例
+&lt;IMAGES_STORE&gt;/full/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg        # 原始
+&lt;IMAGES_STORE&gt;/thumbs/small/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
+&lt;IMAGES_STORE&gt;/thumbs/big/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg</code></pre>
+<h3 id="图像尺寸过滤"><a href="#图像尺寸过滤" class="headerlink" title="图像尺寸过滤"></a>图像尺寸过滤</h3><p>使用图像管道时，可以过滤过小的图像，但不影响缩略图的生成。</p>
+<pre><code class="line-numbers language-bash">IMAGES_MIN_HEIGHT = 110
+IMAGES_MIN_WIDTH = 110</code></pre>
+<h3 id="下载失败处理"><a href="#下载失败处理" class="headerlink" title="下载失败处理"></a>下载失败处理</h3><p>管道默认忽略掉失败的下载请求，如果需要重新处理失败的请求，配置：</p>
+<pre><code class="line-numbers language-bash">MEDIA_ALLOW_REDIRECTS = True</code></pre>
+<h2 id="3-重写媒体管道类"><a href="#3-重写媒体管道类" class="headerlink" title="3. 重写媒体管道类"></a>3. 重写媒体管道类</h2><p>自定义类继承原管道并重写媒体管道中的方法可以对爬取中的细节进行处理</p>
+<h3 id="class-scrapy-pipelines-files-FilesPipeline"><a href="#class-scrapy-pipelines-files-FilesPipeline" class="headerlink" title="class scrapy.pipelines.files.FilesPipeline"></a><em>class</em> <code>scrapy.pipelines.files.FilesPipeline</code></h3><h4 id="get-media-requests"><a href="#get-media-requests" class="headerlink" title="get_media_requests"></a><code>get_media_requests</code></h4><p><code>get_media_requests</code>(<em>item</em>, <em>info</em>)</p>
+<p>因为item中保存下载链接的是一个列表字段，该方法用于从中分离单个链接并创建下载请求</p>
+<pre><code class="line-numbers language-python">def get_media_requests(self, item, info):
+    for file_url in item[&#39;file_urls&#39;]:
+        yield scrapy.Request(file_url)</code></pre>
+<p>下载完成后，结果将发送到 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.item_completed"><code>item_completed()</code></a> 方法，生成一个两元素的set<code>(success, file_info_or_error)</code></p>
+<pre><code class="line-numbers language-bash">[(True,
+  &#123;&#39;checksum&#39;: &#39;2b00042f7481c7b056c4b410d28f33cf&#39;,
+   &#39;path&#39;: &#39;full/0a79c461a4062ac383dc4fade7bc09f1384a3910.jpg&#39;,
+   &#39;url&#39;: &#39;http://www.example.com/files/product1.pdf&#39;,
+   &#39;status&#39;: &#39;downloaded&#39;&#125;),
+ (False,
+  Failure(...))]</code></pre>
+<ul>
+<li><p><code>success</code> - True下载成功，False下载失败</p>
+</li>
+<li><p><code>file_info_or_error</code> is a dict containing the following keys (if success is <code>True</code>) or a <a href="https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html"><code>Failure</code></a> if there was a problem.</p>
+<ul>
+<li><p><code>url</code> - 文件的源URL链接. This is the url of the request returned from the <a href="https://docs.scrapy.org/en/latest/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.get_media_requests"><code>get_media_requests()</code></a> method.</p>
+</li>
+<li><p><code>path</code> - 保存路径（FILES_STORE + path）</p>
+</li>
+<li><p><code>checksum</code> - 数据的MD5</p>
+</li>
+<li><p><code>status</code> - 状态指示，scrapy&gt;2.2版本提供</p>
+<p>It can be one of the following:</p>
+<ul>
+<li><code>downloaded</code> - file was downloaded.</li>
+<li><code>uptodate</code> - file was not downloaded, as it was downloaded recently, according to the file expiration policy.</li>
+<li><code>cached</code> - file was already scheduled for download, by another item sharing the same file.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>默认情况下 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.get_media_requests"><code>get_media_requests()</code></a> 方法返回 <code>None</code> ，这意味着该项目没有可下载的文件。</p>
+<h4 id="file-path"><a href="#file-path" class="headerlink" title="file_path"></a><code>file_path</code></h4><p><code>file_path</code>(<em>self</em>, <em>request</em>, <em>response=None</em>, <em>info=None</em>)</p>
+<p>（1）可以重写此方法以自定义每个文件的下载路径，默认情况下 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.file_path"><code>file_path()</code></a> 方法返回 <code>full/&lt;request URL hash&gt;.&lt;extension&gt;</code> .</p>
+<p>（2）重写以下载图片到files文件夹并保持原始的文件名称：即<code>https://example.com/a/b/c/foo.png --&gt; files/foo.png</code></p>
+<pre><code class="line-numbers language-python">import os
+from urllib.parse import urlparse
+
+from scrapy.pipelines.files import FilesPipeline
+
+class MyFilesPipeline(FilesPipeline):
+
+    def file_path(self, request, response, info):
+        return &#39;files/&#39; + os.path.basename(urlparse(request.url).path)</code></pre>
+<h4 id="item-completed"><a href="#item-completed" class="headerlink" title="item_completed"></a><code>item_completed</code></h4><p><code>item_completed</code>(<em>results</em>, <em>item</em>, <em>info</em>)</p>
+<p>当媒体管道处理完成了一项spider传递的item时（全部请求完毕，success or failed）会调用该方法，该方法用于为处理item的相关内容并返回item交给下一级管道</p>
+<p>实例：将下载文件的路径传入item的<code>file_paths</code>字段中</p>
+<pre><code class="line-numbers language-python">from scrapy.exceptions import DropItem
+
+def item_completed(self, results, item, info):
+    file_paths = [x[&#39;path&#39;] for ok, x in results if ok]
+    if not file_paths:
+        raise DropItem(&quot;Item contains no files&quot;)
+    item[&#39;file_paths&#39;] = file_paths
+    return item</code></pre>
+<h3 id="class-scrapy-pipelines-images-ImagesPipeline"><a href="#class-scrapy-pipelines-images-ImagesPipeline" class="headerlink" title="class scrapy.pipelines.images.``ImagesPipeline"></a><em>class</em> <code>scrapy.pipelines.images.``ImagesPipeline</code></h3><p>同上</p>
+<h2 id="4-自定义的文件pipeline实例"><a href="#4-自定义的文件pipeline实例" class="headerlink" title="4. 自定义的文件pipeline实例"></a>4. 自定义的文件pipeline实例</h2><p>实现功能</p>
+<ul>
+<li>文件使用原名称重命名</li>
+<li>按title文件夹归类</li>
+<li>下载结果保存</li>
+</ul>
+<pre><code class="line-numbers language-python">import os, scrapy
+from scrapy.pipelines.files import FilesPipeline
+from urllib.parse import urlparse
+
+
+class MyFilesPipeline(FilesPipeline):
+
+    def get_media_requests(self, item, info):
+        &quot;&quot;&quot;重命名&quot;&quot;&quot;
+        for file_url in item[&#39;file_urls&#39;]:
+            yield scrapy.Request(file_url, meta=&#123;&#39;item&#39;: item.copy()&#125;)
+
+    def file_path(self, request, response=None, info=None):
+        &quot;&quot;&quot;归类&quot;&quot;&quot;
+        name = request.meta[&#39;item&#39;][&#39;name&#39;]
+        title = request.meta[&#39;item&#39;][&#39;title&#39;]
+        return &quot;%s/%s/%s&quot; % (name, title, os.path.basename(urlparse(request.url).path))
+
+    def item_completed(self, results, item, info):
+        &quot;&quot;&quot;下载结果处理&quot;&quot;&quot;
+        data = &#123;&#125;
+        for status, result in results:
+            data[item[&#39;title&#39;]].append(result) if status else None
+        file = &#39;./%s.json&#39; % item[&#39;name&#39;]  # 以spidername命名
+        with open(file, &#39;w+&#39;) as f:
+            f.writelines(data)
+        return item</code></pre>
+<p>item.py</p>
+<pre><code class="line-numbers language-python">from scrapy import Field, Item
+
+class FilespiderItem(Item):
+    file_urls = Field()
+    files = Field()
+    name = Field()
+    title = Field()</code></pre>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用SSH进行远程主机登录</title>
+    <url>/2019/Linux/SSH%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86/</url>
+    <content><![CDATA[<p>SSH 为 [Secure Shell](<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9TZWN1cmU=">https://baike.baidu.com/item/Secure<i class="fa fa-external-link-alt"></i></span> Shell) 的缩写，由 IETF 的网络小组（Network Working Group）所制定；SSH 为建立在应用层基础上的安全协议。SSH 是较可靠，专为<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTglQkYlOUMlRTclQTglOEIlRTclOTklQkIlRTUlQkQlOTUvMTA3MTk5OA==">远程登录<i class="fa fa-external-link-alt"></i></span>会话和其他网络服务提供安全性的协议。利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。SSH最初是UNIX系统上的一个程序，后来又迅速扩展到其他操作平台。SSH在正确使用时可弥补网络中的漏洞。SSH客户端适用于多种平台。几乎所有UNIX平台—包括<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9IUC1VWA==">HP-UX<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9MaW51eA==">Linux<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9BSVg=">AIX<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9Tb2xhcmlzLzM1MTc=">Solaris<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9EaWdpdGFs">Digital<i class="fa fa-external-link-alt"></i></span> <span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9VTklY">UNIX<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9Jcml4">Irix<i class="fa fa-external-link-alt"></i></span>，以及其他平台，都可运行SSH。</p>
+<p>SSH 为 Secure Shell 的缩写，由 IETF 的网络小组（Network Working Group）所制定；SSH 为建立在应用层基础上的安全协议。SSH 是较可靠，专为远程登录会话和其他网络服务提供安全性的协议。利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。SSH最初是UNIX系统上的一个程序，后来又迅速扩展到其他操作平台。SSH在正确使用时可弥补网络中的漏洞。SSH客户端适用于多种平台。几乎所有UNIX平台—包括HP-UX、Linux、AIX、Solaris、Digital UNIX、Irix，以及其他平台，都可运行SSH。</p>
+<p>SSH 为 Secure Shell 的缩写，是一种建立在应用层基础上专为远程登录会话和其他网络服务提供安全性的通信协议，初始提供于各种Unix平台，windows也年来也提供了ssh服务。</p>
+<a id="more"></a>
+
+<hr>
+<h4 id="1-远程登陆方法"><a href="#1-远程登陆方法" class="headerlink" title="1. 远程登陆方法"></a>1. 远程登陆方法</h4><p>执行远程连接命令后，如果是第一次的端对端连接，会提示是否信任主机的figure，输入yes信任即可，然后会提示输入登录用户的密码（passwd），输入正确后即可完成远程登陆</p>
+<pre><code class="line-numbers language-bash">ssh 远程主机用户名称@远程主机IP地址
+ssh 远程主机用户名称@远程主机在本地hosts文件的域名映射</code></pre>
+<p>实例：用户yuan，主机公网IP47.93.230.x</p>
+<pre><code class="line-numbers language-bash">ssh yuan@47.93.230.x</code></pre>
+<h4 id="2-免密登陆配置方法"><a href="#2-免密登陆配置方法" class="headerlink" title="2. 免密登陆配置方法"></a>2. 免密登陆配置方法</h4><p>将本机的公钥保存到需要远程登陆的主机上就可以省略每次连接的输入密码的流程</p>
+<p>（1）本地主机生成密钥对</p>
+<pre><code class="line-numbers language-bash">ssh-keygen</code></pre>
+<blockquote>
+<p>常用参数</p>
+<p>-t: 密钥类型, 可以选择 dsa | ecdsa | ed25519 | rsa;</p>
+<p>-f: 密钥目录位置, 默认为当前用户home路径下的.ssh隐藏目录, 也就是<code>~/.ssh/</code>, 同时默认密钥文件名以<code>id_rsa</code>开头. 如果是root用户, 则在<code>/root/.ssh/id_rsa</code>, 若为其他用户, 则在<code>/home/username/.ssh/id_rsa</code>;</p>
+<p>-C: 指定此密钥的备注信息, 需要配置多个免密登录时, 建议携带;</p>
+<p>-N: 指定此密钥对的密码, 如果指定此参数, 则命令执行过程中就不会出现交互确认密码的信息了.</p>
+</blockquote>
+<p>（2）将本地公钥保存到远程主机</p>
+<pre><code class="line-numbers language-bash"># 语法：ssh-copy-id -i ~/.ssh/id_rsa.pub -p 端口 用户名@IP
+ssh-copy-id root@47.93.230.x</code></pre>
+<p>（3）此时使用远程登陆命令即可直接进行连接</p>
+<h4 id="3-其他方式发送公钥文件"><a href="#3-其他方式发送公钥文件" class="headerlink" title="3. 其他方式发送公钥文件"></a>3. 其他方式发送公钥文件</h4><p>上述步骤是通过<code>ssh-copy-id</code>工具发送公钥文件的, 当然我们也可以通过其他方式实现:</p>
+<p>(1)  将本地的公钥文件发给远程主机:</p>
+<p>通过scp命令将本地的 <strong>公钥文件</strong> 发送到远程主机的用户目录下, 因为还没有配置成功免密登录, 所以期间需要输入远程主机对应用户的密码:</p>
+<pre><code class="line-numbers language-bash">[root@localhost .ssh]# scp id_rsa.pub root@47.93.230.x:/root/.ssh 
+root@47.93.230.x&#39;s password: 
+id_rsa.pub                                           100%  390     0.4KB/s   00:00 </code></pre>
+<p>(2)  在远程主机上创建authorized_keys文件:</p>
+<pre><code class="line-numbers language-bash">[root@localhost .ssh]# cd /root/.ssh/
+[root@localhost .ssh]# ls
+id_rsa.pub
+# 通过A服务器的公钥生成&quot;authorized_keys&quot;文件:
+[root@localhost .ssh]# cat id_rsa.pub &gt;&gt; authorized_keys
+[root@localhost .ssh]# cat authorized_keys 
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC2JpLMqgeg9jB9ZztOCw0WMS8hdVpFxthqG1vOQTOji/cp0+8RUZl3P6NtzqfHbs0iTcY0ypIJGgx4eXyipfLvilV2bSxRINCVV73VnydVYl5gLHsrgOx+372Wovlanq7Mxq06qAONjuRD0c64xqdJFKb1OvS/nyKaOr9D8yq/FxfwKqK7TzJM0cVBAG7+YR8lc9tJTCypmNXNngiSlipzjBcnfT+5VtcFSENfuJd60dmZDzrQTxGFSS2J34CuczTQSsItmYF3DyhqmrXL+cJ2vjZWVZRU6IY7BpqJFWwfYY9m8KaL0PZ+JJuaU7ESVBXf6HJcQhYPp2bTUyff+vdV yuan</code></pre>
+<p>注意: 上述重定向时使用<code>&gt;&gt;</code>进行追加, 不要用<code>&gt;</code>, 那会清空原有内容.</p>
+<h4 id="4-关于密钥对文件的权限问题"><a href="#4-关于密钥对文件的权限问题" class="headerlink" title="4. 关于密钥对文件的权限问题"></a>4. 关于密钥对文件的权限问题</h4><p>为了让私钥文件和公钥文件能够在认证中起作用, 需要确保权限的正确性:</p>
+<blockquote>
+<p>①  对于<code>.ssh</code>目录以及其内部的公钥、私钥文件, 当前用户至少要有执行权限, 其他用户最多只能有执行权限.<br>②  不要图省事设置成777权限: 太大的权限不安全, 而且数字签名也不支持这种权限策略.<br>③  对普通用户, 建议设置成600权限: chmod 600  authorized_keys  id_rsa  id_rsa.pub;<br>④  对root用户, 建议设置成644权限: chmod 644  authorized_keys  id_rsa  id_rsa.pub.</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MongoDB数据库笔记</title>
+    <url>/2019/%E9%9A%8F%E7%AC%94/MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<ul>
+<li>MongoDB数据库的安装</li>
+<li>MongoDB数据库的使用</li>
+<li>Python操作库pymongo的安装及使用</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="MongoDB的安装"><a href="#MongoDB的安装" class="headerlink" title="MongoDB的安装"></a>MongoDB的安装</h2><p>MongoDB 源码及安装包下载地址：<span class="exturl" data-url="aHR0cHM6Ly93d3cubW9uZ29kYi5jb20vZG93bmxvYWQtY2VudGVyI2NvbW11bml0eQ==">https://www.mongodb.com/download-center#community<i class="fa fa-external-link-alt"></i></span></p>
+<h3 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h3><p>比若说下载Ubuntu 下的安装包方法如下：</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200903145040.jpg"></p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200903145100.jpg"></p>
+<p>当我们得到下载链接后</p>
+<pre><code class="line-numbers language-bash">wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.8.tgz    # 下载
+tar -zxvf mongodb-linux-x86_64-ubuntu1604-4.2.8.tgz        # 解压
+
+mv mongodb-src-r4.2.8  /opt/mongo        # 将解压包拷贝到指定目录</code></pre>
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>MongoDB 的可执行文件位于文件夹的bin 目录下，所以可以将其添加到系统环境变量 <strong>PATH</strong> 中：</p>
+<pre><code class="line-numbers language-bash">vim /etc/profile.d/mongo.sh</code></pre>
+<pre><code class="line-numbers language-bash">export PATH=/opt/mongo/bin:$PATH</code></pre>
+<pre><code class="line-numbers language-bash">source /etc/profile.d/mongo.sh</code></pre>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><pre><code class="line-numbers language-bash">/etc/mongod.conf.orig</code></pre>
+<pre><code class="line-numbers language-yaml"># mongod.conf
+
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongodb
+  journal:
+    enabled: true
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+# network interfaces
+net:
+  port: 27017
+  bindIp: 127.0.0.1</code></pre>
+<h3 id="MongoShell"><a href="#MongoShell" class="headerlink" title="MongoShell"></a>MongoShell</h3><p>Mongosh是MongoDB自带javascript shell, 可在shell中使用命令行与MongoDB实列交互，可以执行管理操作，检查运行实列等等操作。</p>
+<p>当我们使用docker部署mongodb时，可以在宿主机上单独配置mongoshell使用，下载地址：<span class="exturl" data-url="aHR0cHM6Ly93d3cubW9uZ29kYi5jb20vdHJ5L2Rvd25sb2FkL3NoZWxs">https://www.mongodb.com/try/download/shell<i class="fa fa-external-link-alt"></i></span></p>
+<p>下载得到的压缩包解压后得到的是一个可执行文件<code>mongosh</code>，直接使用即可进行连接，默认输出 ：</p>
+<pre><code class="line-numbers language-shell">$ mongosh
+Current sessionID:  52c39be56c73153cee1840d7
+Connecting to:      mongodb://127.0.0.1:27017
+Using MongoDB:      4.4.0
+Using Mongosh Beta: 0.2.2
+
+For more information about mongosh, please see our docs: https://docs.mongodb.com/mongodb-shell/
+
+&gt; &lt;your_order&gt;</code></pre>
+<p>URL连接</p>
+<pre><code class="line-numbers language-bash">#  Start mongosh using &#39;ships&#39; database on specified connection string:
+$ mongosh mongodb://192.168.0.5:9999/ships</code></pre>
+<p>连接选项帮助</p>
+<pre><code class="line-numbers language-bash">$ mongosh --help</code></pre>
+<h2 id="MongoDB使用方法"><a href="#MongoDB使用方法" class="headerlink" title="MongoDB使用方法"></a>MongoDB使用方法</h2><h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><p>我想创建一个scrapy数据库，其中有一个info集合（类mysql表），添加以下数据</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>age</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>张三</td>
+<td>15</td>
+</tr>
+<tr>
+<td>李四</td>
+<td>16</td>
+</tr>
+<tr>
+<td>王五</td>
+<td>17</td>
+</tr>
+</tbody></table>
+<p>mongosh代码</p>
+<pre><code class="line-numbers language-shell">&gt; db    # 显示当前数据库
+# test
+
+&gt; use scrapy    # 创建/选择scrapy数据库
+# switched to db scrapy
+
+&gt; show dbs        # 显示所有数据库，不包含空库
+# admin    102 kB
+# config   111 kB
+# local   73.7 kB</code></pre>
+<p>插入数据</p>
+<pre><code class="line-numbers language-bash"># 插入数据行1
+&gt; db.info.insert(&#123;&quot;name&quot;:&quot;张三&quot;, &quot;age&quot;:&quot;15&quot;&#125;)        
+&#123;
+  acknowledged: 1,
+  insertedIds: &#123; &#39;0&#39;: ObjectId(&quot;5f50a59ee4c079078fab16f4&quot;) &#125;
+&#125;
+
+# 插入数据行2
+&gt; db.info.insert(&#123;&quot;name&quot;:&quot;李四&quot;, &quot;age&quot;:&quot;16&quot;&#125;)        
+&#123;
+  acknowledged: 1,
+  insertedIds: &#123; &#39;0&#39;: ObjectId(&quot;5f50a59ee4c079078fab16f4&quot;) &#125;
+&#125;
+
+# 插入数据行3
+&gt; db.info.insert(&#123;&quot;name&quot;:&quot;王五&quot;, &quot;age&quot;:&quot;17&quot;&#125;)        
+&#123;
+  acknowledged: 1,
+  insertedIds: &#123; &#39;0&#39;: ObjectId(&quot;5f50a59ee4c079078fab16f4&quot;) &#125;
+&#125;</code></pre>
+<p>查看数据</p>
+<pre><code class="line-numbers language-bash">&gt; db.info.find()
+# [
+#   &#123; _id: ObjectId(&quot;5f50a88fe8320e0817d3c1c2&quot;), name: &#39;张三&#39;, age: &#39;15&#39; &#125;,
+#   &#123; _id: ObjectId(&quot;5f50a892e8320e0817d3c1c3&quot;), name: &#39;李四&#39;, age: &#39;16&#39; &#125;,
+#   &#123; _id: ObjectId(&quot;5f50a896e8320e0817d3c1c4&quot;), name: &#39;王五&#39;, age: &#39;17&#39; &#125;
+# ]</code></pre>
+<p>删除集合、数据库</p>
+<pre><code class="line-numbers language-bash">db.info.drop()        # true
+db.dropDatabase()        # &#123; ok: 1, dropped: &#39;scrapy&#39; &#125;</code></pre>
+<h3 id="更新文档数据"><a href="#更新文档数据" class="headerlink" title="更新文档数据"></a>更新文档数据</h3><p>首先我们在test集合里插入测试数据</p>
+<pre><code class="line-numbers language-bash">use test
+db.test_collection.insert( [
+&#123;&quot;name&quot;:&quot;abc&quot;,&quot;age&quot;:&quot;25&quot;,&quot;status&quot;:&quot;zxc&quot;&#125;,
+&#123;&quot;name&quot;:&quot;dec&quot;,&quot;age&quot;:&quot;19&quot;,&quot;status&quot;:&quot;qwe&quot;&#125;,
+&#123;&quot;name&quot;:&quot;asd&quot;,&quot;age&quot;:&quot;30&quot;,&quot;status&quot;:&quot;nmn&quot;&#125;,
+] )</code></pre>
+<p>更新单个文档</p>
+<pre><code class="line-numbers language-bash">&gt; db.test_collection.updateOne(&#123;&quot;name&quot;:&quot;abc&quot;&#125;,&#123;$set:&#123;&quot;age&quot;:&quot;28&quot;&#125;&#125;)
+&#123; &quot;acknowledged&quot; : true, &quot;matchedCount&quot; : 1, &quot;modifiedCount&quot; : 1 &#125;
+&gt; db.test_collection.find()
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716af&quot;), &quot;name&quot; : &quot;abc&quot;, &quot;age&quot; : &quot;28&quot;, &quot;status&quot; : &quot;zxc&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b0&quot;), &quot;name&quot; : &quot;dec&quot;, &quot;age&quot; : &quot;19&quot;, &quot;status&quot; : &quot;qwe&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b1&quot;), &quot;name&quot; : &quot;asd&quot;, &quot;age&quot; : &quot;30&quot;, &quot;status&quot; : &quot;nmn&quot; &#125;
+&gt;</code></pre>
+<p>更新多个文档</p>
+<pre><code class="line-numbers language-bash">&gt; db.test_collection.updateMany(&#123;&quot;age&quot;:&#123;$gt:&quot;10&quot;&#125;&#125;,&#123;$set:&#123;&quot;status&quot;:&quot;xyz&quot;&#125;&#125;)
+&#123; &quot;acknowledged&quot; : true, &quot;matchedCount&quot; : 3, &quot;modifiedCount&quot; : 3 &#125;
+&gt; db.test_collection.find()
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716af&quot;), &quot;name&quot; : &quot;abc&quot;, &quot;age&quot; : &quot;28&quot;, &quot;status&quot; : &quot;xyz&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b0&quot;), &quot;name&quot; : &quot;dec&quot;, &quot;age&quot; : &quot;19&quot;, &quot;status&quot; : &quot;xyz&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b1&quot;), &quot;name&quot; : &quot;asd&quot;, &quot;age&quot; : &quot;30&quot;, &quot;status&quot; : &quot;xyz&quot; &#125;
+&gt;</code></pre>
+<h3 id="删除集合数据"><a href="#删除集合数据" class="headerlink" title="删除集合数据"></a>删除集合数据</h3><p>如删除集合下全部文档：</p>
+<pre><code class="line-numbers language-bash">db.inventory.deleteMany(&#123;&#125;)</code></pre>
+<p>删除 status 等于 A 的全部文档：</p>
+<pre><code class="line-numbers language-bash">db.inventory.deleteMany(&#123; status : &quot;A&quot; &#125;)</code></pre>
+<p>删除 status 等于 D 的一个文档：</p>
+<pre><code class="line-numbers language-bash">db.inventory.deleteOne( &#123; status: &quot;D&quot; &#125; )</code></pre>
+<h2 id="pymongo的安装及使用"><a href="#pymongo的安装及使用" class="headerlink" title="pymongo的安装及使用"></a>pymongo的安装及使用</h2><h3 id="pymongo安装"><a href="#pymongo安装" class="headerlink" title="pymongo安装"></a>pymongo安装</h3><p>使用pip安装</p>
+<pre><code class="line-numbers language-bash">python -m pip install pymongo</code></pre>
+<p>使用setuptools安装</p>
+<pre><code class="line-numbers language-bash">python -m easy_install pymongo</code></pre>
+<p>显示python版本</p>
+<pre><code class="line-numbers language-bash">python -c &quot;import sys; print(sys.version)&quot;</code></pre>
+<p>显示pymongo版本</p>
+<pre><code class="line-numbers language-bash">python -c &quot;import pymongo; print(pymongo.version); print(pymongo.has_c())&quot;</code></pre>
+<h3 id="pymongo的使用方法"><a href="#pymongo的使用方法" class="headerlink" title="pymongo的使用方法"></a>pymongo的使用方法</h3><pre><code class="line-numbers language-python">#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+&quot;&quot;&quot;
+MongoDB存储
+    在这里我们来看一下Python3下MongoDB的存储操作，在本节开始之前请确保你已经安装好了MongoDB并启动了其服务，另外安装好了Python
+    的PyMongo库。
+
+连接MongoDB
+    连接MongoDB我们需要使用PyMongo库里面的MongoClient，一般来说传入MongoDB的IP及端口即可，第一个参数为地址host，
+    第二个参数为端口port，端口如果不传默认是27017。
+&quot;&quot;&quot;
+import pymongo
+client = pymongo.MongoClient(host=&#39;localhost&#39;, port=27017)
+&quot;&quot;&quot;
+这样我们就可以创建一个MongoDB的连接对象了。另外MongoClient的第一个参数host还可以直接传MongoDB的连接字符串，以mongodb开头，
+例如：client = MongoClient(&#39;mongodb://localhost:27017/&#39;)可以达到同样的连接效果。
+&quot;&quot;&quot;
+# 指定数据库
+# MongoDB中还分为一个个数据库，我们接下来的一步就是指定要操作哪个数据库，在这里我以test数据库为例进行说明，所以下一步我们
+# 需要在程序中指定要使用的数据库。
+
+db = client.test
+# 调用client的test属性即可返回test数据库，当然也可以这样来指定：
+# db = client[&#39;test&#39;]
+#　两种方式是等价的。
+
+# 指定集合
+# MongoDB的每个数据库又包含了许多集合Collection，也就类似与关系型数据库中的表，下一步我们需要指定要操作的集合，
+# 在这里我们指定一个集合名称为students，学生集合。还是和指定数据库类似，指定集合也有两种方式。
+
+collection = db.students
+# collection = db[&#39;students&#39;]
+# 插入数据,接下来我们便可以进行数据插入了，对于students这个Collection，我们新建一条学生数据，以字典的形式表示：
+
+student = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+# 在这里我们指定了学生的学号、姓名、年龄和性别，然后接下来直接调用collection的insert()方法即可插入数据。
+
+result = collection.insert(student)
+print(result)
+# 在MongoDB中，每条数据其实都有一个_id属性来唯一标识，如果没有显式指明_id，MongoDB会自动产生一个ObjectId类型的_id属性。
+# insert()方法会在执行后返回的_id值。
+
+# 运行结果：
+# 5932a68615c2606814c91f3d
+# 当然我们也可以同时插入多条数据，只需要以列表形式传递即可，示例如下：
+
+student1 = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+student2 = &#123;
+    &#39;id&#39;: &#39;20170202&#39;,
+    &#39;name&#39;: &#39;Mike&#39;,
+    &#39;age&#39;: 21,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+result = collection.insert([student1, student2])
+print(result)
+# 返回的结果是对应的_id的集合，运行结果：
+# [ObjectId(&#39;5932a80115c2606a59e8a048&#39;), ObjectId(&#39;5932a80115c2606a59e8a049&#39;)]
+# 实际上在PyMongo 3.X版本中，insert()方法官方已经不推荐使用了，当然继续使用也没有什么问题，
+# 官方推荐使用insert_one()和insert_many()方法将插入单条和多条记录分开。
+
+student = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+result = collection.insert_one(student)
+print(result)
+print(result.inserted_id)
+# 运行结果：
+# &lt;pymongo.results.InsertOneResult object at 0x10d68b558&gt;
+# 5932ab0f15c2606f0c1cf6c5
+# 返回结果和insert()方法不同，这次返回的是InsertOneResult对象，我们可以调用其inserted_id属性获取_id。
+
+# 对于insert_many()方法，我们可以将数据以列表形式传递即可，示例如下：
+
+student1 = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+student2 = &#123;
+    &#39;id&#39;: &#39;20170202&#39;,
+    &#39;name&#39;: &#39;Mike&#39;,
+    &#39;age&#39;: 21,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+result = collection.insert_many([student1, student2])
+print(result)
+print(result.inserted_ids)
+# insert_many()方法返回的类型是InsertManyResult，调用inserted_ids属性可以获取插入数据的_id列表，运行结果：
+
+# &lt;pymongo.results.InsertManyResult object at 0x101dea558&gt;
+# [ObjectId(&#39;5932abf415c2607083d3b2ac&#39;), ObjectId(&#39;5932abf415c2607083d3b2ad&#39;)]
+# 查询，插入数据后我们可以利用find_one()或find()方法进行查询，find_one()查询得到是单个结果，find()则返回多个结果。
+
+result = collection.find_one(&#123;&#39;name&#39;: &#39;Mike&#39;&#125;)
+print(type(result))
+print(result)
+# 在这里我们查询name为Mike的数据，它的返回结果是字典类型，运行结果：
+# &lt;class&#39;dict&#39;&gt;
+# &#123;&#39;_id&#39;: ObjectId(&#39;5932a80115c2606a59e8a049&#39;), &#39;id&#39;: &#39;20170202&#39;, &#39;name&#39;: &#39;Mike&#39;, &#39;age&#39;: 21, &#39;gender&#39;: &#39;male&#39;&#125;
+# 可以发现它多了一个_id属性，这就是MongoDB在插入的过程中自动添加的。
+
+# 我们也可以直接根据ObjectId来查询，这里需要使用bson库里面的ObjectId。
+
+from bson.objectid import ObjectId
+
+result = collection.find_one(&#123;&#39;_id&#39;: ObjectId(&#39;593278c115c2602667ec6bae&#39;)&#125;)
+print(result)
+# 其查询结果依然是字典类型，运行结果：
+
+# &#123;&#39; ObjectId(&#39;593278c115c2602667ec6bae&#39;), &#39;id&#39;: &#39;20170101&#39;, &#39;name&#39;: &#39;Jordan&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# 当然如果查询_id&#39;:结果不存在则会返回None。
+
+# 对于多条数据的查询，我们可以使用find()方法，例如在这里查找年龄为20的数据，示例如下：
+
+results = collection.find(&#123;&#39;age&#39;: 20&#125;)
+print(results)
+for result in results:
+    print(result)
+# 运行结果：
+
+# &lt;pymongo.cursor.Cursor object at 0x1032d5128&gt;
+# &#123;&#39;_id&#39;: ObjectId(&#39;593278c115c2602667ec6bae&#39;), &#39;id&#39;: &#39;20170101&#39;, &#39;name&#39;: &#39;Jordan&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# &#123;&#39;_id&#39;: ObjectId(&#39;593278c815c2602678bb2b8d&#39;), &#39;id&#39;: &#39;20170102&#39;, &#39;name&#39;: &#39;Kevin&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# &#123;&#39;_id&#39;: ObjectId(&#39;593278d815c260269d7645a8&#39;), &#39;id&#39;: &#39;20170103&#39;, &#39;name&#39;: &#39;Harden&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# 返回结果是Cursor类型，相当于一个生成器，我们需要遍历取到所有的结果，每一个结果都是字典类型。
+
+# 如果要查询年龄大于20的数据，则写法如下：
+
+results = collection.find(&#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;)
+# 在这里查询的条件键值已经不是单纯的数字了，而是一个字典，其键名为比较符号$gt，意思是大于，键值为20，这样便可以查询出所有
+# 年龄大于20的数据。
+
+# 在这里将比较符号归纳如下表：
+&quot;&quot;&quot;
+符号含义示例
+$lt小于&#123;&#39;age&#39;: &#123;&#39;$lt&#39;: 20&#125;&#125;
+$gt大于&#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;
+$lte小于等于&#123;&#39;age&#39;: &#123;&#39;$lte&#39;: 20&#125;&#125;
+$gte大于等于&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 20&#125;&#125;
+$ne不等于&#123;&#39;age&#39;: &#123;&#39;$ne&#39;: 20&#125;&#125;
+$in在范围内&#123;&#39;age&#39;: &#123;&#39;$in&#39;: [20, 23]&#125;&#125;
+$nin不在范围内&#123;&#39;age&#39;: &#123;&#39;$nin&#39;: [20, 23]&#125;&#125;
+&quot;&quot;&quot;
+# 另外还可以进行正则匹配查询，例如查询名字以M开头的学生数据，示例如下：
+
+results = collection.find(&#123;&#39;name&#39;: &#123;&#39;$regex&#39;: &#39;^M.*&#39;&#125;&#125;)
+# 在这里使用了$regex来指定正则匹配，^M.*代表以M开头的正则表达式，这样就可以查询所有符合该正则的结果。
+
+# 在这里将一些功能符号再归类如下：
+&quot;&quot;&quot;
+符号含义示例示例含义
+$regex匹配正则&#123;&#39;name&#39;: &#123;&#39;$regex&#39;: &#39;^M.*&#39;&#125;&#125;name以M开头
+$exists属性是否存在&#123;&#39;name&#39;: &#123;&#39;$exists&#39;: True&#125;&#125;name属性存在
+$type类型判断&#123;&#39;age&#39;: &#123;&#39;$type&#39;: &#39;int&#39;&#125;&#125;age的类型为int
+$mod数字模操作&#123;&#39;age&#39;: &#123;&#39;$mod&#39;: [5, 0]&#125;&#125;年龄模5余0
+$text文本查询&#123;&#39;$text&#39;: &#123;&#39;$search&#39;: &#39;Mike&#39;&#125;&#125;text类型的属性中包含Mike字符串
+$where高级条件查询&#123;&#39;$where&#39;: &#39;obj.fans_count == obj.follows_count&#39;&#125;自身粉丝数等于关注数
+&quot;&quot;&quot;
+# 这些操作的更详细用法在可以在MongoDB官方文档找到：
+# https://docs.mongodb.com/manual/reference/operator/query/
+
+# 计数
+# 要统计查询结果有多少条数据，可以调用count()方法，如统计所有数据条数：
+
+count = collection.find().count()
+print(count)
+# 或者统计符合某个条件的数据：
+
+count = collection.find(&#123;&#39;age&#39;: 20&#125;).count()
+print(count)
+# 排序
+# 可以调用sort方法，传入排序的字段及升降序标志即可，示例如下：
+
+results = collection.find().sort(&#39;name&#39;, pymongo.ASCENDING)
+print([result[&#39;name&#39;] for result in results])
+# 运行结果：
+
+# [&#39;Harden&#39;, &#39;Jordan&#39;, &#39;Kevin&#39;, &#39;Mark&#39;, &#39;Mike&#39;]
+# 偏移,可能想只取某几个元素，在这里可以利用skip()方法偏移几个位置，比如偏移2，就忽略前2个元素，得到第三个及以后的元素。
+
+results = collection.find().sort(&#39;name&#39;, pymongo.ASCENDING).skip(2)
+print([result[&#39;name&#39;] for result in results])
+# 运行结果：
+# [&#39;Kevin&#39;, &#39;Mark&#39;, &#39;Mike&#39;]
+# 另外还可以用limit()方法指定要取的结果个数，示例如下：
+
+results = collection.find().sort(&#39;name&#39;, pymongo.ASCENDING).skip(2).limit(2)
+print([result[&#39;name&#39;] for result in results])
+# 运行结果：
+# [&#39;Kevin&#39;, &#39;Mark&#39;]
+# 如果不加limit()原本会返回三个结果，加了限制之后，会截取2个结果返回。
+
+# 值得注意的是，在数据库数量非常庞大的时候，如千万、亿级别，最好不要使用大的偏移量来查询数据，很可能会导致内存溢出，
+# 可以使用类似find(&#123;&#39;_id&#39;: &#123;&#39;$gt&#39;: ObjectId(&#39;593278c815c2602678bb2b8d&#39;)&#125;&#125;) 这样的方法来查询，记录好上次查询的_id。
+
+# 更新
+# 对于数据更新可以使用update()方法，指定更新的条件和更新后的数据即可，例如：
+
+condition = &#123;&#39;name&#39;: &#39;Kevin&#39;&#125;
+student = collection.find_one(condition)
+student[&#39;age&#39;] = 25
+result = collection.update(condition, student)
+print(result)
+# 在这里我们将name为Kevin的数据的年龄进行更新，首先指定查询条件，然后将数据查询出来，修改年龄，
+# 之后调用update方法将原条件和修改后的数据传入，即可完成数据的更新。
+
+# 运行结果：
+
+# &#123;&#39;ok&#39;: 1, &#39;nModified&#39;: 1, &#39;n&#39;: 1, &#39;updatedExisting&#39;: True&#125;
+# 返回结果是字典形式，ok即代表执行成功，nModified代表影响的数据条数。
+
+# 另外update()方法其实也是官方不推荐使用的方法，在这里也分了update_one()方法和update_many()方法，用法更加严格，
+# 第二个参数需要使用$类型操作符作为字典的键名，我们用示例感受一下。
+
+condition = &#123;&#39;name&#39;: &#39;Kevin&#39;&#125;
+student = collection.find_one(condition)
+student[&#39;age&#39;] = 26
+result = collection.update_one(condition, &#123;&#39;$set&#39;: student&#125;)
+print(result)
+print(result.matched_count, result.modified_count)
+# 在这里调用了update_one方法，第二个参数不能再直接传入修改后的字典，而是需要使用&#123;&#39;$set&#39;: student&#125;这样的形式，
+# 其返回结果是UpdateResult类型，然后调用matched_count和modified_count属性分别可以获得匹配的数据条数和影响的数据条数。
+
+# 运行结果：
+#
+# &lt;pymongo.results.UpdateResult object at 0x10d17b678&gt;
+# 1 0
+# 我们再看一个例子：
+
+condition = &#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;
+result = collection.update_one(condition, &#123;&#39;$inc&#39;: &#123;&#39;age&#39;: 1&#125;&#125;)
+print(result)
+print(result.matched_count, result.modified_count)
+# 在这里我们指定查询条件为年龄大于20，然后更新条件为&#123;&#39;$inc&#39;: &#123;&#39;age&#39;: 1&#125;&#125;，执行之后会讲第一条符合条件的数据年龄加1。
+
+# 运行结果：
+#
+# &lt;pymongo.results.UpdateResult object at 0x10b8874c8&gt;
+# 1 1
+# 可以看到匹配条数为1条，影响条数也为1条。
+
+# 如果调用update_many()方法，则会将所有符合条件的数据都更新，示例如下：
+
+condition = &#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;
+result = collection.update_many(condition, &#123;&#39;$inc&#39;: &#123;&#39;age&#39;: 1&#125;&#125;)
+print(result)
+print(result.matched_count, result.modified_count)
+# 这时候匹配条数就不再为1条了，运行结果如下：
+#
+# &lt;pymongo.results.UpdateResult object at 0x10c6384c8&gt;
+# 3 3
+# 可以看到这时所有匹配到的数据都会被更新。
+
+# 删除
+# 删除操作比较简单，直接调用remove()方法指定删除的条件即可，符合条件的所有数据均会被删除，示例如下：
+
+result = collection.remove(&#123;&#39;name&#39;: &#39;Kevin&#39;&#125;)
+print(result)
+# 运行结果：
+#
+# &#123;&#39;ok&#39;: 1, &#39;n&#39;: 1&#125;
+# 另外依然存在两个新的推荐方法，delete_one()和delete_many()方法，示例如下：
+
+result = collection.delete_one(&#123;&#39;name&#39;: &#39;Kevin&#39;&#125;)
+print(result)
+print(result.deleted_count)
+result = collection.delete_many(&#123;&#39;age&#39;: &#123;&#39;$lt&#39;: 25&#125;&#125;)
+print(result.deleted_count)
+# 运行结果：
+
+# &lt;pymongo.results.DeleteResult object at 0x10e6ba4c8&gt;
+# 1
+# 4
+# delete_one()即删除第一条符合条件的数据，delete_many()即删除所有符合条件的数据，返回结果是DeleteResult类型，
+# 可以调用deleted_count属性获取删除的数据条数。
+
+# 更多
+# 另外PyMongo还提供了一些组合方法，如find_one_and_delete()、find_one_and_replace()、find_one_and_update()，
+# 就是查找后删除、替换、更新操作，用法与上述方法基本一致。
+
+# 另外还可以对索引进行操作，如create_index()、create_indexes()、drop_index()等。
+
+# 详细用法可以参见官方文档：http://api.mongodb.com/python/current/api/pymongo/collection.html
+
+# 另外还有对数据库、集合本身以及其他的一些操作，在这不再一一讲解，可以参见
+# 官方文档：http://api.mongodb.com/python/current/api/pymongo/</code></pre>
+]]></content>
+      <tags>
+        <tag>数据库</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux源码编译安装Python</title>
+    <url>/2020/Linux/Linux%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85Python/</url>
+    <content><![CDATA[<pre><code class="line-numbers language-bash">$ python3 --version
+Python 3.8.2
+$ python --version
+Python 3.8.0</code></pre>
+<a id="more"></a>
+
+<hr>
+<p>Python源码版本索引下载地址：<span class="exturl" data-url="aHR0cHM6Ly93d3cucHl0aG9uLm9yZy9mdHAv">Python Index of /ftp/<i class="fa fa-external-link-alt"></i></span>，选择对应版本的<code>.tgz</code>源码包下载即可，以Python 3.8.0 Ubuntu下编译安装为例</p>
+<h3 id="1-源码编译安装过程"><a href="#1-源码编译安装过程" class="headerlink" title="1. 源码编译安装过程"></a>1. 源码编译安装过程</h3><h4 id="1-1-预配置"><a href="#1-1-预配置" class="headerlink" title="1.1 预配置"></a>1.1 预配置</h4><pre><code class="line-numbers language-bash"># 新建安装目录
+sudo mkdir /opt/env/python38
+sudo chmod 777 /opt/env/python38
+# 安装依赖
+sudo apt install zlib unzip</code></pre>
+<h4 id="1-2-编译安装"><a href="#1-2-编译安装" class="headerlink" title="1.2 编译安装"></a>1.2 编译安装</h4><pre><code class="line-numbers language-bash">wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz
+tar xvf Python-3.8.0.tgz
+cd Python-3.8.0
+./configure --prefix=/opt/env/python38
+make &amp;&amp; sudo make install</code></pre>
+<h4 id="1-3-测试"><a href="#1-3-测试" class="headerlink" title="1.3 测试"></a>1.3 测试</h4><pre><code class="line-numbers language-bash">/opt/env/python38/bin/python3 --version
+# Python 3.8.0
+/opt/env/python38/bin/pip3 --version
+# pip 20.2.2 from /opt/env/python38/lib/python3.8/site-packages/pip (python 3.8)</code></pre>
+<blockquote>
+<p>如果此时出现了一些错误，解决方案大致有：</p>
+<ul>
+<li><p>注意非root用户编译安装需要使用sudo赋权，否则会出现SSL的通信错误</p>
+</li>
+<li><p><code>sudo chmod 777 -R /opt/env/python38</code>后重新测试</p>
+</li>
+</ul>
+</blockquote>
+<h4 id="1-4-配置环境变量"><a href="#1-4-配置环境变量" class="headerlink" title="1.4 配置环境变量"></a>1.4 配置环境变量</h4><p>配置到系统环境变量可以解决<code>scrapy</code>、<code>flask</code>等全局框架命令的执行问题，但要注意与系统自带的<code>python3</code>、<code>python3.8</code>的区分</p>
+<pre><code class="line-numbers language-bash">vim /etc/profile.d/python38.sh
+# 添加
+export PATH=$PATH:/opt/env/python38/bin/</code></pre>
+<p>或者配置到个人环境变量</p>
+<pre><code class="line-numbers language-bash">vim ~/.bashrc
+# 添加
+export PATH=$PATH:/opt/env/python38/bin/</code></pre>
+<p>如果使用<code>zsh</code>的话</p>
+<pre><code>vim ~/.zshrc</code></pre>
+<h4 id="1-5-建立符号链接"><a href="#1-5-建立符号链接" class="headerlink" title="1.5 建立符号链接"></a>1.5 建立符号链接</h4><p>建立链接可以解决与系统自带Python混淆的问题</p>
+<pre><code class="line-numbers language-bash">sudo ln -s /opt/env/python38/bin/python3 /usr/bin/python
+sudo ln -s /opt/env/python38/bin/pip3 /usr/bin/pip</code></pre>
+<h4 id="1-6-测试"><a href="#1-6-测试" class="headerlink" title="1.6 测试"></a>1.6 测试</h4><pre><code class="line-numbers language-bash">python --version
+# Python 3.8.0
+pip --version
+# pip 20.2.2 from /opt/env/python38/lib/python3.8/site-packages/pip (python 3.8)</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200831151523.png"></p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里云OSS Python_SDK 使用记录</title>
+    <url>/2020/Python/%E9%98%BF%E9%87%8C%E4%BA%91OSS%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/</url>
+    <content><![CDATA[<p>OpenStorageService，简称OSS，是阿里云对外提供的海量，安全，低成本，高可靠的云存储服务。用户可以通过简单的REST接口，在任何时间、任何地点、任何互联网设备上进行上传和下载数据，也可以使用WEB页面对数据进行管理。同时，OSS提供Java、 Python、 PHP、C#语言的SDK，简化用户的编程。基于OSS，用户可以搭建出各种多媒体分享网站、网盘、个人和企业数据备份等基于大规模数据的服务。</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-基础知识"><a href="#1-基础知识" class="headerlink" title="1. 基础知识"></a>1. 基础知识</h2><h3 id="1-1-Python-SDK-依赖库"><a href="#1-1-Python-SDK-依赖库" class="headerlink" title="1.1 Python SDK 依赖库"></a>1.1 Python SDK 依赖库</h3><pre><code class="line-numbers language-bash">pip install oss2</code></pre>
+<h3 id="1-2-OSS相关概念"><a href="#1-2-OSS相关概念" class="headerlink" title="1.2 OSS相关概念"></a>1.2 OSS相关概念</h3><p><strong>Object</strong></p>
+<p>在OSS中，用户操作的基本数据单元是Object。单个Object最大允许存储5TB的数据。Object包含key、meta和data。其中，key是Object的名字；meta是用户对该object的描述，由一系列name-value对组成；data是Object的数据。</p>
+<p>使用UTF-8编码、长度必须在1-1023字节之间、不能以“/”或者“\”字符开头</p>
+<p><strong>Bucket</strong></p>
+<p>Bucket是OSS上的命名空间，也是计费、权限控制、日志记录等高级功能的管理实体；Bucket名称在整个OSS服务中具有全局唯一性，且不能修改；存储在OSS上的每个Object必须都包含在某个Bucket中。一个应用，例如图片分享网站，可以对应一个或多个Bucket。一个用户最多可创建10个Bucket，但每个Bucket中存放的Object的数量和大小总和没有限制，用户不需要考虑数据的可扩展性。</p>
+<p>只能包括小写字母，数字，短横线（-）、必须以小写字母或者数字开头、长度必须在3-63字节之间</p>
+<p><strong>Access Key ID、Access Key Secret</strong></p>
+<p>用户注册OSS时，系统会给用户分配一对Access Key ID和Access Key Secret，称为ID对，用于标识用户，为访问OSS做签名验证。</p>
+<p><strong>Service</strong></p>
+<p>OSS提供给用户的虚拟存储空间，在这个虚拟空间中，每个用户可拥有一个到多个Bucket。</p>
+<h3 id="1-3-OSS基本功能"><a href="#1-3-OSS基本功能" class="headerlink" title="1.3 OSS基本功能"></a>1.3 OSS基本功能</h3><p>OSS为用户提供数据存储服务，用户可以通过以下操作来处理OSS上的数据：</p>
+<ul>
+<li><p>创建、查看、罗列、删除 Bucket</p>
+</li>
+<li><p>修改、获取Bucket的访问权限</p>
+</li>
+<li><p>上传、查看、罗列、删除、批量删除Object</p>
+</li>
+<li><p>对于大文件支持分片上传（Multi-Part Upload）</p>
+</li>
+<li><p>访问时支持If-Modified-Since和If-Match等HTTP参数</p>
+</li>
+</ul>
+<h3 id="1-4-Object外链地址的构成规则"><a href="#1-4-Object外链地址的构成规则" class="headerlink" title="1.4  Object外链地址的构成规则"></a>1.4  Object外链地址的构成规则</h3><blockquote>
+<p>如果一个bucket设置成公开读权限意味着你允许其他用户来访问属于你的object。你的object的外链地址构成规则如下：</p>
+<p><code> http:// &lt;你的bucket名字&gt;.oss.aliyuncs.com/&lt;你的object名字&gt; </code></p>
+<p>例如，在一个名为oss-example的bucket中，有一个名为”aliyun-log.png”的object（content-type为image/png）。那么这个object的外链URL为：</p>
+<p><code>http://oss-example.oss.aliyuncs.com//image/aliyun-logo.png</code></p>
+<p>用户可以直接该URL链接放入HTML中使用</p>
+</blockquote>
+<h2 id="2-Python-SDK-基础使用"><a href="#2-Python-SDK-基础使用" class="headerlink" title="2. Python SDK 基础使用"></a>2. Python SDK 基础使用</h2><p>以下代码展示了基本的文件上传、下载、罗列、删除用法。</p>
+<pre><code class="line-numbers language-python">import os
+import shutil
+import oss2
+
+
+# 首先初始化AccessKeyId、AccessKeySecret、Endpoint等信息。
+# 通过环境变量获取，或者把诸如“&lt;你的AccessKeyId&gt;”替换成真实的AccessKeyId等。
+#
+# 以杭州区域为例，Endpoint可以是：
+#   http://oss-cn-hangzhou.aliyuncs.com
+#   https://oss-cn-hangzhou.aliyuncs.com
+# 分别以HTTP、HTTPS协议访问。
+access_key_id = os.getenv(&#39;OSS_TEST_ACCESS_KEY_ID&#39;, &#39;&lt;你的AccessKeyId&gt;&#39;)
+access_key_secret = os.getenv(&#39;OSS_TEST_ACCESS_KEY_SECRET&#39;, &#39;&lt;你的AccessKeySecret&gt;&#39;)
+bucket_name = os.getenv(&#39;OSS_TEST_BUCKET&#39;, &#39;&lt;你的Bucket&gt;&#39;)
+endpoint = os.getenv(&#39;OSS_TEST_ENDPOINT&#39;, &#39;&lt;你的访问域名&gt;&#39;)
+
+
+# 确认上面的参数都填写正确了
+for param in (access_key_id, access_key_secret, bucket_name, endpoint):
+    assert &#39;&lt;&#39; not in param, &#39;请设置参数：&#39; + param
+
+
+# 创建Bucket对象，所有Object相关的接口都可以通过Bucket对象来进行
+bucket = oss2.Bucket(oss2.Auth(access_key_id, access_key_secret), endpoint, bucket_name)
+
+
+# 上传一段字符串。Object名是motto.txt，内容是一段名言。
+bucket.put_object(&#39;motto.txt&#39;, &#39;Never give up. - Jack Ma&#39;)
+
+# 获取Object的metadata
+object_meta = bucket.get_object_meta(&#39;你的对象名&#39;)
+print(&#39;last modified: &#39; + object_meta.last_modified)
+print(&#39;etag: &#39; + object_meta.etag)
+print(&#39;size: &#39; + object_meta.content_length)
+
+# 下载到本地文件
+bucket.get_object_to_file(&#39;motto.txt&#39;, &#39;本地文件名.txt&#39;)
+
+
+# 把刚刚上传的Object下载到本地文件 “座右铭.txt” 中
+# 因为get_object()方法返回的是一个file-like object，所以我们可以直接用shutil.copyfileobj()做拷贝
+with open(oss2.to_unicode(&#39;本地座右铭.txt&#39;), &#39;wb&#39;) as f:
+    shutil.copyfileobj(bucket.get_object(&#39;motto.txt&#39;), f)
+
+
+# 把本地文件 “座右铭.txt” 上传到OSS，新的Object叫做 “我的座右铭.txt”
+# 注意到，这次put_object()的第二个参数是file object；而上次上传是一个字符串。
+# put_object()能够识别不同的参数类型
+with open(oss2.to_unicode(&#39;本地座右铭.txt&#39;), &#39;rb&#39;) as f:
+    bucket.put_object(&#39;云上座右铭.txt&#39;, f)
+
+
+# 上面两行代码，也可以用下面的一行代码来实现
+bucket.put_object_from_file(&#39;云上座右铭.txt&#39;, &#39;本地座右铭.txt&#39;)
+
+
+# 列举Bucket下10个Object，并打印它们的最后修改时间、文件名
+for i, object_info in enumerate(oss2.ObjectIterator(bucket)):
+    print(&quot;&#123;0&#125; &#123;1&#125;&quot;.format(object_info.last_modified, object_info.key))
+
+    if i &gt;= 9:
+        break
+
+
+# 删除名为motto.txt的Object
+bucket.delete_object(&#39;motto.txt&#39;)
+
+# 也可以批量删除
+# 注意：重复删除motto.txt，并不会报错
+bucket.batch_delete_objects([&#39;motto.txt&#39;, &#39;云上座右铭.txt&#39;])
+
+
+# 确认Object已经被删除了
+assert not bucket.object_exists(&#39;motto.txt&#39;)
+
+
+# 获取不存在的文件会抛出oss2.exceptions.NoSuchKey异常
+try:
+    bucket.get_object(&#39;云上座右铭.txt&#39;)
+except oss2.exceptions.NoSuchKey as e:
+    print(u&#39;已经被删除了：request_id=&#123;0&#125;&#39;.format(e.request_id))
+else:
+    assert False
+
+# 清除本地文件
+os.remove(u&#39;本地文件名.txt&#39;)
+os.remove(u&#39;本地座右铭.txt&#39;)</code></pre>
+<h2 id="3-上传及下载进度条"><a href="#3-上传及下载进度条" class="headerlink" title="3. 上传及下载进度条"></a>3. 上传及下载进度条</h2><pre><code class="line-numbers language-python"># -*- coding: utf-8 -*-
+
+import os
+import sys
+import tempfile
+
+import oss2
+
+# 以下代码展示了进度条功能的用法，包括上传进度条和下载进度条。
+
+
+# 首先初始化AccessKeyId、AccessKeySecret、Endpoint等信息。
+# 通过环境变量获取，或者把诸如“&lt;你的AccessKeyId&gt;”替换成真实的AccessKeyId等。
+access_key_id = os.getenv(&#39;OSS_TEST_ACCESS_KEY_ID&#39;, &#39;&lt;你的AccessKeyId&gt;&#39;)
+access_key_secret = os.getenv(&#39;OSS_TEST_ACCESS_KEY_SECRET&#39;, &#39;&lt;你的AccessKeySecret&gt;&#39;)
+bucket_name = os.getenv(&#39;OSS_TEST_BUCKET&#39;, &#39;&lt;你的Bucket&gt;&#39;)
+endpoint = os.getenv(&#39;OSS_TEST_ENDPOINT&#39;, &#39;&lt;你的访问域名&gt;&#39;)
+
+
+# 确认上面的参数都填写正确了
+for param in (access_key_id, access_key_secret, bucket_name, endpoint):
+    assert &#39;&lt;&#39; not in param, &#39;请设置参数：&#39; + param
+
+def percentage(consumed_bytes, total_bytes):
+    &quot;&quot;&quot;进度条回调函数，计算当前完成的百分比
+
+    :param consumed_bytes: 已经上传/下载的数据量
+    :param total_bytes: 总数据量
+    &quot;&quot;&quot;
+    if total_bytes:
+        rate = int(100 * (float(consumed_bytes) / float(total_bytes)))
+        print(&#39;\r&#123;0&#125;% &#39;.format(rate))
+        sys.stdout.flush()
+
+def _prepare_temp_file(content):
+    &quot;&quot;&quot;创建临时文件
+    :param content: 文件内容
+    :return 文件名
+    &quot;&quot;&quot;
+    fd, pathname = tempfile.mkstemp(suffix=&#39;exam-progress-&#39;)
+    os.write(fd, content)
+    os.close(fd)
+    return pathname
+
+key = &#39;story.txt&#39;
+content = &#39;a&#39; * 1024 * 1024
+
+# 创建Bucket对象，所有Object相关的接口都可以通过Bucket对象来进行
+bucket = oss2.Bucket(oss2.Auth(access_key_id, access_key_secret), endpoint, bucket_name)
+
+&quot;&quot;&quot;
+流式上传
+&quot;&quot;&quot;
+# 带有进度条的覆盖上传
+bucket.put_object(key, content, progress_callback=percentage)
+
+# 删除上传的文件
+bucket.delete_object(key)
+
+&quot;&quot;&quot;
+追加上传
+&quot;&quot;&quot;
+# 带有进度条的追加上传，每一次追加一个进度条
+# 创建可追加文件，首次偏移（position）设为0
+result = bucket.append_object(key, 0, content, progress_callback=percentage)
+# 追加一行数据，偏移可以从上次响应中获得
+# 当然，也可以通过head_object()获得当前长度作为偏移，只是比较低效
+bucket.append_object(key, result.next_position, content, progress_callback=percentage)
+
+# 删除上传的文件
+bucket.delete_object(key)
+
+&quot;&quot;&quot;
+分片上传
+&quot;&quot;&quot;
+# 带有进度条的分片上传，每个分片上传一个进度条
+parts = []
+upload_id = bucket.init_multipart_upload(key).upload_id
+
+# 上传分片
+for i in range(3):
+    result = bucket.upload_part(key, upload_id, i+1, content, progress_callback=percentage)
+    parts.append(oss2.models.PartInfo(i+1, result.etag, size = len(content), part_crc = result.crc))
+
+# 完成上传并回调
+result = bucket.complete_multipart_upload(key, upload_id, parts)
+
+&quot;&quot;&quot;
+断点续传上传
+&quot;&quot;&quot;
+# 带进度条的断点续传
+pathname = _prepare_temp_file(content)
+oss2.resumable_upload(bucket, key, pathname, 
+                      multipart_threshold=200*1024,
+                      part_size=100*1024,
+                      num_threads=3,
+                      progress_callback=percentage)
+
+&quot;&quot;&quot;
+文件下载
+&quot;&quot;&quot;
+# 带进度条的下载
+result = bucket.get_object(key, progress_callback=percentage)
+content_got = b&#39;&#39;
+for chunk in result:
+    content_got += chunk
+assert content == content_got
+
+&quot;&quot;&quot;
+范围下载
+&quot;&quot;&quot;
+# 带进度条的范围下载
+result = bucket.get_object(key, byte_range=(1024, 2047), progress_callback=percentage)
+content_got = b&#39;&#39;
+for chunk in result:
+    content_got += chunk
+assert &#39;a&#39;*1024 == content_got
+
+&quot;&quot;&quot;
+断点续传下载 
+&quot;&quot;&quot;
+# 带进度条的断点续传下载 
+filename = &#39;download.txt&#39;
+oss2.resumable_download(bucket, key, filename,
+                        multiget_threshold=200*1024,
+                        part_size=100*1024,
+                        num_threads=3,
+                        progress_callback=percentage) 
+os.remove(filename)
+
+# 删除上传的文件
+bucket.delete_object(key)</code></pre>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>OSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Windows Terminal安装及配置使用</title>
+    <url>/2020/%E9%9A%8F%E7%AC%94/Windows%20Terminal/</url>
+    <content><![CDATA[<p>Windows 终端是一个面向命令行工具和 shell（如命令提示符、PowerShell 和适用于 Linux 的 Windows 子系统 (WSL)）用户的新式终端应用程序。 它的主要功能包括多个选项卡、窗格、Unicode 和 UTF-8 字符支持、GPU 加速文本呈现引擎，还可以用于创建你自己的主题并自定义文本、颜色、背景和快捷键绑定。</p>
+<p><img src="https://docs.microsoft.com/zh-cn/windows/terminal/images/overview.png"></p>
+<a id="more"></a>
+
+<hr>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>windows应用商店里搜索即可安装</p>
+<p>Github项目地址：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21pY3Jvc29mdC90ZXJtaW5hbA==">https://github.com/microsoft/terminal<i class="fa fa-external-link-alt"></i></span> ，可以下载release版本进行安装</p>
+<p>官方手册：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm1pY3Jvc29mdC5jb20vemgtY24vd2luZG93cy90ZXJtaW5hbC8=">https://docs.microsoft.com/zh-cn/windows/terminal/<i class="fa fa-external-link-alt"></i></span></p>
+<h3 id="简单配置"><a href="#简单配置" class="headerlink" title="简单配置"></a>简单配置</h3><p>Window Terminal通过profiles.json来配置</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200904222401.png"></p>
+<ol>
+<li><p>每配置一种类型的命令行界面都需要一个不同的<code>guid</code>，可以通过<span class="exturl" data-url="aHR0cHM6Ly93d3cuZ3VpZGdlbi5jb20v">Create GUIDs online<i class="fa fa-external-link-alt"></i></span>生成</p>
+</li>
+<li><p>配置文件配置项说明</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>释义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>alwaysShowTabs</td>
+<td>始终显示标签</td>
+<td></td>
+</tr>
+<tr>
+<td>defaultProfile</td>
+<td>默认终端</td>
+<td>GUID，用于连接终端配置</td>
+</tr>
+<tr>
+<td>initialCols</td>
+<td>默认列数</td>
+<td></td>
+</tr>
+<tr>
+<td>initialRows</td>
+<td>默认行数</td>
+<td></td>
+</tr>
+<tr>
+<td>keybindings</td>
+<td>快捷键配置</td>
+<td></td>
+</tr>
+<tr>
+<td>command</td>
+<td>快捷键执行的命令</td>
+<td></td>
+</tr>
+<tr>
+<td>keys</td>
+<td>快捷键</td>
+<td></td>
+</tr>
+<tr>
+<td>requestedTheme</td>
+<td>主题</td>
+<td></td>
+</tr>
+<tr>
+<td>showTabsInTitlebar</td>
+<td>在标题栏中显示终端窗口标签栏</td>
+<td></td>
+</tr>
+<tr>
+<td>showTerminalTitleInTitlebar</td>
+<td>在标签栏中显示终端标签</td>
+<td></td>
+</tr>
+<tr>
+<td>acrylicOpacity</td>
+<td>不透明度</td>
+<td></td>
+</tr>
+<tr>
+<td>closeOnExit</td>
+<td>退出后关闭</td>
+<td></td>
+</tr>
+<tr>
+<td>colorScheme</td>
+<td>颜色主题</td>
+<td></td>
+</tr>
+<tr>
+<td>commandline</td>
+<td>命令行程序</td>
+<td></td>
+</tr>
+<tr>
+<td>cursorColor</td>
+<td>光标颜色</td>
+<td></td>
+</tr>
+<tr>
+<td>cursorShape</td>
+<td>光标形状</td>
+<td></td>
+</tr>
+<tr>
+<td>fontFace</td>
+<td>字体</td>
+<td></td>
+</tr>
+<tr>
+<td>fontSize</td>
+<td>字体大小</td>
+<td></td>
+</tr>
+<tr>
+<td>guid</td>
+<td>GUID</td>
+<td>终端配置标识</td>
+</tr>
+<tr>
+<td>historySize</td>
+<td>历史大小</td>
+<td></td>
+</tr>
+<tr>
+<td>icon</td>
+<td>图标</td>
+<td></td>
+</tr>
+<tr>
+<td>name</td>
+<td>名称</td>
+<td></td>
+</tr>
+<tr>
+<td>padding</td>
+<td>内容距离界面的内部距离</td>
+<td></td>
+</tr>
+<tr>
+<td>snapOnInput</td>
+<td>嗅探输入</td>
+<td></td>
+</tr>
+<tr>
+<td>startingDirectory</td>
+<td>初始目录</td>
+<td></td>
+</tr>
+<tr>
+<td>useAcrylic</td>
+<td>使用不透明度</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<h3 id="配置git"><a href="#配置git" class="headerlink" title="配置git"></a>配置git</h3><h4 id="1-配置：cmd下通过bash命令打开git命令行"><a href="#1-配置：cmd下通过bash命令打开git命令行" class="headerlink" title="1. 配置：cmd下通过bash命令打开git命令行"></a>1. 配置：cmd下通过<code>bash</code>命令打开git命令行</h4><ul>
+<li><p>打开环境变量配置</p>
+<p><img src="https://img2018.cnblogs.com/blog/1536549/202001/1536549-20200119103742020-888134717.png" alt="img"></p>
+</li>
+<li><p>配置Path</p>
+<p><img src="https://img2018.cnblogs.com/blog/1536549/202001/1536549-20200119104202576-1352584275.png" alt="img"></p>
+</li>
+<li><p>cmd下打开git</p>
+</li>
+</ul>
+<p><img src="https://img2018.cnblogs.com/blog/1536549/202001/1536549-20200119104145720-438416481.png" alt="img"></p>
+<h4 id="2-配置Window-Terminal的profile-json"><a href="#2-配置Window-Terminal的profile-json" class="headerlink" title="2. 配置Window Terminal的profile.json"></a>2. 配置Window Terminal的profile.json</h4><p>在<code>profiles</code>属性值的数组里添加以下json</p>
+<pre><code class="line-numbers language-json">&#123;
+    &quot;guid&quot;: &quot;&#123;0caa0dad-35be-5f56-a8ff-afceeeaa6109&#125;&quot;, // GUID,终端配置标识,每个都必须不一样
+    &quot;commandline&quot;: &quot;bash.exe&quot;,  // 命令
+    &quot;name&quot;: &quot;git-bash&quot;, // 给它一个名字来与其他界面分开
+    &quot;tabTitle&quot;: &quot;Git Bash&quot;,  // 给它一个标签页的名字
+    &quot;snapOnInput&quot;: true,  // 捕捉输入
+    &quot;startingDirectory&quot;: &quot;%USERPROFILE%&quot;,  // 打开当前用户根目录
+    &quot;historySize&quot;: 9001,  // 历史大小
+    &quot;closeOnExit&quot;: true,  // 退出后关闭
+    &quot;icon&quot;: &quot;D:/Program Files/Git/mingw64/share/git/git-for-windows.ico&quot;  // 其实是安装Git以后自带的icon
+&#125;</code></pre>
+<h3 id="配置SSH"><a href="#配置SSH" class="headerlink" title="配置SSH"></a>配置SSH</h3><h4 id="1-配置远程连接"><a href="#1-配置远程连接" class="headerlink" title="1. 配置远程连接"></a>1. 配置远程连接</h4><ul>
+<li><p>配置公钥密钥</p>
+<p>Linux下可以直接通过shell命令配置，Window下通过Git的<code>git bash</code>来完成类似shell命令的功能</p>
+<p><code>ssh-keygen -t rsa</code></p>
+<p><img src="https://img2018.cnblogs.com/blog/1536549/202001/1536549-20200119103930853-783799958.png" alt="img"></p>
+</li>
+<li><p>配置远程连接文件</p>
+<p>在<code>C:\Users\11064\.ssh</code>目录下，<code>11064</code>是我的用户名，新建<code>config</code>命名的文件(没有后缀名)，配置远程连接</p>
+</li>
+</ul>
+<p><img src="https://img2018.cnblogs.com/blog/1536549/202001/1536549-20200119103831005-1208574898.png" alt="img"></p>
+<h4 id="2-cmd下可以远程连接"><a href="#2-cmd下可以远程连接" class="headerlink" title="2. cmd下可以远程连接"></a>2. cmd下可以远程连接</h4><p><img src="https://img2018.cnblogs.com/blog/1536549/202001/1536549-20200119103814954-1143916604.png" alt="img"></p>
+<h4 id="3-配置profiles-json"><a href="#3-配置profiles-json" class="headerlink" title="3. 配置profiles.json"></a>3. 配置profiles.json</h4><pre><code class="line-numbers language-json">&#123;
+    &quot;guid&quot;: &quot;&#123;9a138488-58fc-4a7a-b3c2-3af9ba5bc7bb&#125;&quot;,
+    &quot;commandline&quot;: &quot;ssh fengzi&quot;,
+    &quot;name&quot;: &quot;aliyun-Ubuntu&quot;,
+    &quot;tabTitle&quot;: &quot;aliyun-Ubuntu&quot;,
+    &quot;snapOnInput&quot;: true,
+    &quot;historySize&quot;: 9001,
+    &quot;closeOnExit&quot;: true,
+    &quot;icon&quot;: &quot;C:/Users/11064/.ssh/icon/ubuntu-icon.png&quot;   // 自己找的一个图标
+&#125;</code></pre>
+<h3 id="配置背景图片"><a href="#配置背景图片" class="headerlink" title="配置背景图片"></a>配置背景图片</h3><p><strong>最喜欢的配置项</strong></p>
+<p>以<code>profiles.json</code>里的<code>power shell</code>配置项为例</p>
+<pre><code class="line-numbers language-json">&#123;
+      // Make changes here to the powershell.exe profile
+      &quot;guid&quot;: &quot;&#123;61c54bbd-c2c6-5271-96e7-009a87ff44bf&#125;&quot;,
+      &quot;name&quot;: &quot;power shell&quot;,
+      &quot;commandline&quot;: &quot;powershell.exe&quot;,
+      &quot;hidden&quot;: false,
+      &quot;useAcrylic&quot;: true, // 使用不透明度
+      &quot;backgroundImage&quot;: &quot;C:/Users/11064/Desktop/vscode_bc/ab2bff80gy1g7oxngj7whj21900u0go6.jpg&quot;, // 背景图片
+      &quot;backgroundImageOpacity&quot;: 0.6,  // 背景图片不透明度
+      &quot;backgroundImageAlignment&quot;: &quot;topleft&quot;,  // 背景图片位置
+      &quot;foreground&quot;: &quot;#FFFFFF&quot;,   // 前景颜色？
+      &quot;tabTitle&quot;: &quot;power Shell&quot;,
+      &quot;startingDirectory&quot;: &quot;./&quot;
+    &#125;,</code></pre>
+<p>分享我的界面<br> <img src="https://img2018.cnblogs.com/blog/1536549/202001/1536549-20200119103752068-1619596894.png" alt="img"></p>
+<h3 id="配置主题颜色"><a href="#配置主题颜色" class="headerlink" title="配置主题颜色"></a>配置主题颜色</h3><ol>
+<li><p>从<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21iYWRvbGF0by9pVGVybTItQ29sb3ItU2NoZW1lcw==">mbadolato  iTerm2-Color-Schemes<i class="fa fa-external-link-alt"></i></span>中选择自己喜欢的颜色主题</p>
+</li>
+<li><p>从 <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21iYWRvbGF0by9pVGVybTItQ29sb3ItU2NoZW1lcy90cmVlL21hc3Rlci93aW5kb3dzdGVybWluYWw=">windowsterminal<i class="fa fa-external-link-alt"></i></span>文件夹中打开自己喜欢的主题的json文件</p>
+</li>
+<li><p>复制主题的json配置到<code>profiles.json</code>中的 <code>schemes</code> 配置项中</p>
+<pre><code class="line-numbers language-json">&quot;schemes&quot;: [&#123;
+  &quot;name&quot;: &quot;Day&quot;,
+  &quot;black&quot;: &quot;#000000&quot;,
+  &quot;red&quot;: &quot;#b87a7a&quot;,
+  &quot;green&quot;: &quot;#7ab87a&quot;,
+  &quot;yellow&quot;: &quot;#b8b87a&quot;,
+  &quot;blue&quot;: &quot;#7a7ab8&quot;,
+  &quot;purple&quot;: &quot;#b87ab8&quot;,
+  &quot;cyan&quot;: &quot;#7ab8b8&quot;,
+  &quot;white&quot;: &quot;#d9d9d9&quot;,
+  &quot;brightBlack&quot;: &quot;#262626&quot;,
+  &quot;brightRed&quot;: &quot;#dbbdbd&quot;,
+  &quot;brightGreen&quot;: &quot;#bddbbd&quot;,
+  &quot;brightYellow&quot;: &quot;#dbdbbd&quot;,
+  &quot;brightBlue&quot;: &quot;#bdbddb&quot;,
+  &quot;brightPurple&quot;: &quot;#dbbddb&quot;,
+  &quot;brightCyan&quot;: &quot;#bddbdb&quot;,
+  &quot;brightWhite&quot;: &quot;#ffffff&quot;
+&#125;,&#123;
+  &quot;name&quot;: &quot;Night&quot;,
+  &quot;black&quot;: &quot;#000000&quot;,
+  &quot;red&quot;: &quot;#ff7092&quot;,
+  &quot;green&quot;: &quot;#00fbac&quot;,
+  &quot;yellow&quot;: &quot;#fffa6a&quot;,
+  &quot;blue&quot;: &quot;#00bfff&quot;,
+  &quot;purple&quot;: &quot;#df95ff&quot;,
+  &quot;cyan&quot;: &quot;#86cbfe&quot;,
+  &quot;white&quot;: &quot;#ffffff&quot;,
+  &quot;brightBlack&quot;: &quot;#000000&quot;,
+  &quot;brightRed&quot;: &quot;#ff8aa4&quot;,
+  &quot;brightGreen&quot;: &quot;#21f6bc&quot;,
+  &quot;brightYellow&quot;: &quot;#fff787&quot;,
+  &quot;brightBlue&quot;: &quot;#1bccfd&quot;,
+  &quot;brightPurple&quot;: &quot;#e6aefe&quot;,
+  &quot;brightCyan&quot;: &quot;#99d6fc&quot;,
+  &quot;brightWhite&quot;: &quot;#ffffff&quot;
+&#125;],</code></pre>
+</li>
+<li><p>将主题的名字配置到界面的配置中，比如 <code>powershell</code></p>
+<pre><code class="line-numbers language-json">&quot;profiles&quot;: [&#123;
+    // Make changes here to the powershell.exe profile
+    &quot;guid&quot;: &quot;&#123;61c54bbd-c2c6-5271-96e7-009a87ff44bf&#125;&quot;,
+    &quot;name&quot;: &quot;power shell&quot;,
+    &quot;commandline&quot;: &quot;powershell.exe&quot;,
+    &quot;hidden&quot;: false,
+    &quot;tabTitle&quot;: &quot;power Shell&quot;,
+    &quot;startingDirectory&quot;: &quot;./&quot;,
+    &quot;colorScheme&quot; : &quot;Night&quot;
+&#125;]</code></pre>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python包管理器PIP配置使用</title>
+    <url>/2020/Python/pip/</url>
+    <content><![CDATA[<ul>
+<li>pip的使用方法</li>
+<li>pip常用命令</li>
+<li>pip更换安装源的方法</li>
+</ul>
+<a id="more"></a>
+
+<hr>
+<h3 id="1-Pip包管理器"><a href="#1-Pip包管理器" class="headerlink" title="1. Pip包管理器"></a>1. Pip包管理器</h3><p>pip 是一个 Python 包安装与管理工具。</p>
+<h4 id="1-1-使用方法"><a href="#1-1-使用方法" class="headerlink" title="1.1 使用方法"></a>1.1 使用方法</h4><p>从<span class="exturl" data-url="aHR0cHM6Ly9weXBpLm9yZy8=">PyPI<i class="fa fa-external-link-alt"></i></span>安装软件包：</p>
+<pre><code class="line-numbers language-bash">$ pip install SomePackage
+[...]
+Successfully installed SomePackage</code></pre>
+<p>安装已经从<span class="exturl" data-url="aHR0cHM6Ly9weXBpLm9yZy8=">PyPI<i class="fa fa-external-link-alt"></i></span>下载或从其他地方获得的软件包：</p>
+<pre><code class="line-numbers language-bash">$ pip install SomePackage-1.0-py2.py3-none-any.whl
+[...]
+Successfully installed SomePackage</code></pre>
+<p>显示安装了哪些文件：</p>
+<pre><code class="line-numbers language-bash">$ pip show --files SomePackage
+Name: SomePackage
+Version: 1.0
+Location: /my/env/lib/pythonx.x/site-packages
+Files:
+  ../somepackage/__init__.py
+  [...]</code></pre>
+<p>列出哪些软件包已过期：</p>
+<pre><code class="line-numbers language-bash">$ pip list --outdated
+SomePackage (Current: 1.0 Latest: 2.0)</code></pre>
+<p>升级软件包：</p>
+<pre><code class="line-numbers language-bash">$ pip install --upgrade SomePackage
+[...]
+Found existing installation: SomePackage 1.0
+Uninstalling SomePackage:
+  Successfully uninstalled SomePackage
+Running setup.py install for SomePackage
+Successfully installed SomePackage</code></pre>
+<p>卸载软件包：</p>
+<pre><code class="line-numbers language-bash">$ pip uninstall SomePackage
+Uninstalling SomePackage:
+  /my/env/lib/pythonx.x/site-packages/somepackage
+Proceed (y/n)? y
+Successfully uninstalled SomePackage</code></pre>
+<h4 id="1-2-常用命令"><a href="#1-2-常用命令" class="headerlink" title="1.2 常用命令"></a>1.2 常用命令</h4><pre><code class="line-numbers language-bash">install                     # 下载并安装包
+download                    # 下载包
+uninstall                   # 移除包
+freeze                      # 以需求格式输出已安装的包（默认：PackageName==version）
+list                        # 已安装包列表
+show                        # 显示已安装包的信息
+check                       # 验证已安装的包具有兼容的依赖关系
+config                      # 管理本地和全局配置
+search                      # 在PyPI中搜索包
+wheel                       # 根据您的需求构建轮子
+hash                        # 计算包的散列值（HASH）
+completion                  # A helper command used for command completion.
+debug                       # 显示有用的调试信息
+help                        # 显示帮助信息</code></pre>
+<h4 id="1-3-更换安装源的方法"><a href="#1-3-更换安装源的方法" class="headerlink" title="1.3 更换安装源的方法"></a>1.3 更换安装源的方法</h4><p>pip是python的包管理器，但仓库服务器位于国外··，所以我们需要为pip配置国内的镜像仓库，国内镜像一般同步延迟在十分钟之内，没有太大问题。</p>
+<p><strong>单次使用：</strong><code>pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pandas</code>，这样就会从清华镜像安装pandas库。</p>
+<p><strong>永久生效：</strong></p>
+<pre><code class="line-numbers language-bash">pip config set global.index-url http://mirrors.aliyun.com/pypi/simple
+pip config set install.trusted-host mirrors.aliyun.com        # 当使用http源时不添加信任容易error</code></pre>
+<p><strong>常用镜像源</strong></p>
+<table>
+<thead>
+<tr>
+<th>镜像源名称</th>
+<th>源地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>清华源</td>
+<td><span class="exturl" data-url="aHR0cHM6Ly9weXBpLnR1bmEudHNpbmdodWEuZWR1LmNuL3NpbXBsZQ==">https://pypi.tuna.tsinghua.edu.cn/simple<i class="fa fa-external-link-alt"></i></span></td>
+</tr>
+<tr>
+<td>阿里源</td>
+<td><span class="exturl" data-url="aHR0cDovL21pcnJvcnMuYWxpeXVuLmNvbS9weXBpL3NpbXBsZQ==">http://mirrors.aliyun.com/pypi/simple<i class="fa fa-external-link-alt"></i></span></td>
+</tr>
+<tr>
+<td>中科大源</td>
+<td><span class="exturl" data-url="aHR0cDovL3B5cGkubWlycm9ycy51c3RjLmVkdS5jbi9zaW1wbGUv">http://pypi.mirrors.ustc.edu.cn/simple/<i class="fa fa-external-link-alt"></i></span></td>
+</tr>
+</tbody></table>
+<h4 id="1-4-安装scrapy出现ERROR-Command-errored-out-with-exit-status-1-python-setup-py-egg-info-Check-the-logs-for-full-command-output-错误的解决办法"><a href="#1-4-安装scrapy出现ERROR-Command-errored-out-with-exit-status-1-python-setup-py-egg-info-Check-the-logs-for-full-command-output-错误的解决办法" class="headerlink" title="1.4 安装scrapy出现ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.错误的解决办法"></a>1.4 安装scrapy出现ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.错误的解决办法</h4><pre><code class="line-numbers language-bash">    distutils.errors.DistutilsError: Command &#39;[&#39;/usr/bin/python3&#39;, &#39;-m&#39;, &#39;pip&#39;, &#39;--disable-pip-version-check&#39;, &#39;wheel&#39;, &#39;--no-deps&#39;, &#39;-w&#39;, &#39;/tmp/tmpomo0h8v3&#39;, &#39;--quiet&#39;, &#39;--index-url&#39;, &#39;http://mirrors.cloud.aliyuncs.com/pypi/simple/&#39;, &#39;incremental&gt;=16.10.1&#39;]&#39; returned non-zero exit status 1.
+    ----------------------------------------
+ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.</code></pre>
+<p>解决办法</p>
+<pre><code class="line-numbers language-bash">pip install incremental</code></pre>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy项目部署工具scrapyd使用详解</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>Scrapy是一个爬虫框架, scrapy爬虫写好后，可以用命令行运行，但是如果能在网页上操作就比较方便.  scrapyd就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大.  。</p>
+<p>还有一个更加强大的国产工具 gerapy!</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-Scrapyd服务"><a href="#1-Scrapyd服务" class="headerlink" title="1. Scrapyd服务"></a>1. Scrapyd服务</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><p>服务端安装scrapyd（server）</p>
+<pre><code class="line-numbers language-bash">pip install scrapyd</code></pre>
+<p>本地主机安装scrapyd-client（client）</p>
+<pre><code class="line-numbers language-bash">pip install scrapyd-client</code></pre>
+<h3 id="1-2-启动Scrapyd服务"><a href="#1-2-启动Scrapyd服务" class="headerlink" title="1.2 启动Scrapyd服务"></a>1.2 启动Scrapyd服务</h3><p>作为测试，本地主机（localhost）安装完成服务端后运行<code>scrapyd</code>开启服务端，浏览器访问<code>localhost:6800</code>即可访问scrapyd服务</p>
+<pre><code class="line-numbers language-bash">scrapyd</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200906142415.png"></p>
+<h4 id="服务端的外网访问"><a href="#服务端的外网访问" class="headerlink" title="服务端的外网访问"></a>服务端的外网访问</h4><p>比如我的主机公网IP为<code>47.93.230.127</code>，使用命令<code>scrapyd</code>开启服务，本地主机浏览器访问<code>47.93.230.127:6800</code>是访问不到的，因为scrapyd默认bind为127.0.0.1</p>
+<p>编辑scrapyd的配置文件，我的为：<code>/usr/local/lib/python3.8/dist-packages/scrapyd/default_scrapyd.conf</code>，修改</p>
+<pre><code class="line-numbers language-json">bind_address = 0.0.0.0        # 绑定域名</code></pre>
+<p>开启服务</p>
+<pre><code class="line-numbers language-bash">$ scrapyd
+2020-01-06T14:28:57+0800 [-] Loading /usr/local/lib/python3.8/dist-packages/scrapyd/txapp.py...
+2020-01-06T14:28:57+0800 [-] Scrapyd web console available at http://0.0.0.0:6800/</code></pre>
+<h3 id="1-3-配置Scrapy项目"><a href="#1-3-配置Scrapy项目" class="headerlink" title="1.3 配置Scrapy项目"></a>1.3 配置Scrapy项目</h3><p>配置scrapy项目文件夹下的scrapy.cfg文件</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>说明</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>[deploy:target]</td>
+<td>多目标deploy时使用target指定scrapyd服务</td>
+<td></td>
+</tr>
+<tr>
+<td>url</td>
+<td>scrapy服务地址</td>
+<td></td>
+</tr>
+<tr>
+<td>project</td>
+<td>scrapyd服务中的项目名称</td>
+<td></td>
+</tr>
+</tbody></table>
+<pre><code class="line-numbers language-bash">vim scrapy.cfg</code></pre>
+<pre><code class="line-numbers language-json">[settings]
+default = filespider.settings
+
+[deploy:aliyun]
+url = http://47.93.230.127:6800/
+project = filespider</code></pre>
+<p>扫描项目中的deploy配置信息</p>
+<pre><code class="line-numbers language-bash">scrapyd-deploy -l
+# aliyun               http://47.93.230.127:6800/</code></pre>
+<h3 id="1-4-部署项目"><a href="#1-4-部署项目" class="headerlink" title="1.4 部署项目"></a>1.4 部署项目</h3><p>编译项目</p>
+<pre><code class="line-numbers language-bash"># scrapyd-deploy &lt;target&gt; -p &lt;project&gt; --version &lt;version&gt;
+scrapy</code></pre>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux使用Docker搭建FileBrowser主机文件浏览器</title>
+    <url>/2020/Docker/Docker%E9%83%A8%E7%BD%B2FileBrowser/</url>
+    <content><![CDATA[<p>预览Linux服务器上的音视频文件是一个很不容易的事情，在服务器上部署FileBrowser服务是一个解决问题的好方法</p>
+<a id="more"></a>
+
+<hr>
+<p>docker获取FileBrowser镜像</p>
+<pre><code class="line-numbers language-bash">docker pull filebrowser/filebrowser</code></pre>
+<p>创建FileBrowser挂载所需要的目录</p>
+<pre><code class="line-numbers language-bash">mkdir -p  /data/filebrowser
+cd /data/filebrowser</code></pre>
+<p>创建新的FileBrowser实例</p>
+<pre><code class="line-numbers language-bash">docker run -d \
+-v /:/srv  \
+-v /data/filebrowser/filebrowserconfig.json:/etc/config.json  \
+-v /data/filebrowser/database.db:/etc/database.db \
+-p 80:80 --name filebrowser filebrowser/filebrowser</code></pre>
+<blockquote>
+<p>filebrowser默认的登陆用户为：admin，密码为：admin</p>
+<p>通过浏览器访问服务器的<code>公网IP:端口</code>即可登陆File Browser服务，因为映射到了本地80所以不必指定端口</p>
+<p>/srv为filebrowser admin用户登陆后的根目录，将外部的/挂载到/srv结果为登陆后默认显示服务器的<code>/</code></p>
+</blockquote>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200828153104.png"></p>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linxu各种发行版本更换软件源的方法</title>
+    <url>/2020/Linux/Linux%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC%E6%9B%B4%E6%8D%A2%E8%BD%AF%E4%BB%B6%E6%BA%90%E7%9A%84%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>使用官方源会发生：安装速度慢、安装失败、包数量少等各种疑难杂症    </p>
+<a id="more"></a>
+
+<hr>
+<h2 id="Ubuntu20"><a href="#Ubuntu20" class="headerlink" title="Ubuntu20"></a>Ubuntu20</h2><p>备份现有源</p>
+<pre><code class="line-numbers language-bash">sudo mv /etc/apt/sources.list /etc/apt/sources.list.bak</code></pre>
+<p>新建新的配置文件</p>
+<pre><code class="line-numbers language-bash">sudo vim /etc/apt/sources.list</code></pre>
+<p>添加源配置</p>
+<pre><code class="line-numbers language-shell"># 阿里云源
+deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse</code></pre>
+<p>更新</p>
+<pre><code class="line-numbers language-bash">sudo apt update</code></pre>
+<h2 id="Centos7"><a href="#Centos7" class="headerlink" title="Centos7"></a>Centos7</h2><p>备份现有配置文件</p>
+<pre><code class="line-numbers language-bash">mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak</code></pre>
+<p>下载新的CentOS-Base.repo 到/etc/yum.repos.d/</p>
+<pre><code class="line-numbers language-bash">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo        # 阿里云
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo        # 或者网易</code></pre>
+<p>生成缓存</p>
+<pre><code class="line-numbers language-bash">yum makecache</code></pre>
+<h2 id="Centos8"><a href="#Centos8" class="headerlink" title="Centos8"></a>Centos8</h2><p>其他与centos7相似，仅配置文件</p>
+<pre><code class="line-numbers language-bash">wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-8.repo</code></pre>
+<p>对于非阿里云机器（如非aliyunECS），替换相关字段</p>
+<pre><code class="line-numbers language-bash">sed -i -e &#39;/mirrors.cloud.aliyuncs.com/d&#39; -e &#39;/mirrors.aliyuncs.com/d&#39; /etc/yum.repos.d/CentOS-Base.repo</code></pre>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Web前端代码自动补全插件Emmet</title>
+    <url>/2020/%E9%9A%8F%E7%AC%94/Emmet%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A1%A5%E5%85%A8%E7%A5%9E%E5%99%A8/</url>
+    <content><![CDATA[<p>Emmet是一款提升编写 HTML/CSS 代码效率的文本编辑器插件。</p>
+<p>本文主要学习记录一下emmet的详细用法（仅html使用emmet，css缩写的语法请参考这里）</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-Emmet简述"><a href="#1-Emmet简述" class="headerlink" title="1. Emmet简述"></a>1. Emmet简述</h2><p>Emmet (前身为 Zen Coding) 是一个能大幅度提高前端开发效率的一个工具. 在前端开发的过程中，一大部分的工作是写  HTML、CSS 代码。特别是手动编写 HTML 代码的时候，效率会特别低下，因为需要敲打很多尖括号，而且很多标签都需要闭合标签等。于是，就有了 Emmet，它可以极大的提高代码编写的效率，它提供了一种非常简练的语法规则，然后立刻生成对应的 HTML 结构或者 CSS  代码，同时还有多种实用的功能帮助进行前端开发，emmet语法基本规则如下:</p>
+<pre><code>E 代表HTML标签。
+E#id 代表id属性。
+E.class 代表class属性。
+E[attr=foo] 代表某一个特定属性。
+E&#123;foo&#125; 代表标签包含的内容是foo。
+E&gt;N 代表N是E的子元素。
+E+N 代表N是E的同级元素。
+E^N 代表N是E的上级元素。</code></pre>
+<blockquote>
+<ol>
+<li>pycharm内置集成了emmet，使用方法为：输入完成后<kbd>return</kbd>会自动展开，如果输入完成后输入了<kbd>esc</kbd>的话，使用<kbd>tab</kbd>唤醒emmet</li>
+<li>VsCode同样内置了emmet，使用方法与pycharm大同小异，但要注意：在VsCode新版本中按Tab不再默认启用Emmet展开缩写，需要在首选项配置中将emmet.triggerExpansionOnTab设置为true值!</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="2-基础用法"><a href="#2-基础用法" class="headerlink" title="2. 基础用法"></a>2. 基础用法</h2><p><strong>元素(Elements)</strong><br> 您可以使用元素的名称，如div或p来生成HTML标签。Emmet没有一组可用的标签名称，可以写任何单词并将其转换为标签。也就是只要知道元素的缩写,Emmet会自动转换成对应标签.<br> 形如:</p>
+<pre><code>div =&gt; &lt;div&gt; &lt;/div&gt;
+foo =&gt; &lt;foo&gt; &lt;/foo&gt;
+html:5 =&gt; 将生成html5标准的包含body为空基本dom
+html:xt =&gt; 生成XHTML过渡文档类型,DOCTYPE为XHTML
+html:4s =&gt; 生成HTML4严格文档类型,DOCTYPE为HTML 4.01
+a:mail          =&gt; &lt;a href=&quot;mailto:&quot;&gt;&lt;/a&gt;
+a:link          =&gt; &lt;a href=&quot;http://&quot;&gt;&lt;/a&gt;
+base            =&gt; &lt;base href=&quot;&quot;&gt;
+br              =&gt; &lt;br&gt;
+link            =&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;&quot;&gt;
+script:src      =&gt; &lt;script src=&quot;&quot;&gt;&lt;/script&gt;
+form:get        =&gt; &lt;form action=&quot;&quot; method=&quot;get&quot;&gt;&lt;/form&gt;
+label           =&gt; &lt;label for=&quot;&quot;&gt;&lt;/label&gt;
+input           =&gt; &lt;input type=&quot;text&quot;&gt;
+inp             =&gt; &lt;input type=&quot;text&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:hidden    =&gt; &lt;input type=&quot;hidden&quot; name=&quot;&quot;&gt; input:h亦可
+input:email     =&gt; &lt;input type=&quot;email&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:password  =&gt; &lt;input type=&quot;password&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:checkbox  =&gt; &lt;input type=&quot;checkbox&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:radio     =&gt; &lt;input type=&quot;radio&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+select          =&gt; &lt;select name=&quot;&quot; id=&quot;&quot;&gt;&lt;/select&gt;
+option          =&gt; &lt;option value=&quot;&quot;&gt;&lt;/option&gt;
+bq              =&gt; &lt;blockquote&gt;&lt;/blockquote&gt;
+btn             =&gt; &lt;button&gt;&lt;/button&gt;
+btn:s           =&gt; &lt;button type=&quot;submit&quot;&gt;&lt;/button&gt;
+btn:r           =&gt; &lt;button type=&quot;reset&quot;&gt;&lt;/button&gt;</code></pre>
+<p><strong>文本操作符(Text)</strong><br> 如果想在生成元素的同时添加文本内容可以使用{}</p>
+<pre><code>div&#123;这是一段文本&#125;
+&lt;div&gt;这是一段文本&lt;/div&gt;
+a&#123;点我点我&#125;
+&lt;a href=&quot;&quot;&gt;点我点我&lt;/a&gt;  </code></pre>
+<p><strong>属性操作符(Attribute operators)</strong><br> 属性运算符用于修改输出元素的属性.</p>
+<ul>
+<li>Id和Class   (elem#id and elem.class )</li>
+</ul>
+<pre><code>div.test  =&gt; &lt;div class=&quot;test&quot;&gt;&lt;/div&gt;
+div#pageId =&gt; &lt;div id=&quot;pageId&quot;&gt;&lt;/div&gt;</code></pre>
+<p>隐式标签则会自动联想生成对应元素,根据配置规则不同生成的结果也是不同的.</p>
+<pre><code>.class
+=&gt;
+&lt;div class&gt;&lt;/div&gt;
+em&gt;.class
+=&gt;
+&lt;em&gt;&lt;span class&gt;&lt;/span&gt;&lt;/em&gt;
+table&gt;.row&gt;.col
+=&gt;
+&lt;table&gt;
+    &lt;tr class=&quot;row&quot;&gt;
+        &lt;td class=&quot;col&quot;&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+<p>绑定多个类名用.符号连续起来即可</p>
+<pre><code>div.test1.test2.test3
+=&gt;
+&lt;div class=&quot;test1 test2 test3&quot;&gt;&lt;/div&gt;</code></pre>
+<ul>
+<li>自定义属性使用 [attr1=’’ attr2=’’]</li>
+</ul>
+<pre><code>a[href=&#39;#&#39; data-title=&#39;customer&#39; target=&#39;_blank&#39;]
+=&gt;
+&lt;a href=&quot;#&quot; data-title=&quot;customer&quot; target=&quot;_blank&quot;&gt;&lt;/a&gt;</code></pre>
+<p><strong>嵌套操作符(Nesting operators)</strong><br> 嵌套操作符用于将缩写元素放置在生成的树中,是否应放置在上下文元素的内部或附近.</p>
+<ul>
+<li><p>子级:&gt;</p>
+<p>通过&gt;标识元素可以生成嵌套子级元素,可以配合元素属性进行连写</p>
+<pre><code>div#pageId&gt;ul&gt;li 
+=&gt; 
+&lt;div id=&quot;pageId&quot;&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+</li>
+<li><p>同级:+</p>
+<p>+字符表示生成兄弟级元素.</p>
+<pre><code>div#pageId+div.child
+=&gt;
+&lt;div id=&quot;pageId&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;child&quot;&gt;&lt;/div&gt;</code></pre>
+</li>
+<li><p>父级:^</p>
+<p>用于生成父级元素的同级元素,从这个</p>
+<p>字符所在位置开始,查找左侧最近的元素的父级元素并生成其兄弟级元素.</p>
+<pre><code>div&gt;p.parent&gt;span.child^ul.brother&gt;li
+=&gt;
+&lt;div&gt;
+    &lt;p class=&quot;parent&quot;&gt;&lt;span class=&quot;child&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;ul class=&quot;brother&quot;&gt;
+        &lt;li&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+</li>
+</ul>
+<p><strong>分组操作符(Grouping)</strong><br> 分组使用()来实现缩写的分离.比如这个例子,如果不加括号那么a将作为span的子级元素生成.加上括号a将于()内的元素同级.</p>
+<pre><code>div&gt;(ul&gt;li+span)&gt;a
+=&gt;
+&lt;div&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;/li&gt;
+        &lt;span&gt;&lt;/span&gt;
+    &lt;/ul&gt;
+    &lt;a href=&quot;&quot;&gt;&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+<p><strong>乘法(Multiplication)</strong><br> 使用<em>N即可自动生成重复项.N是一个正整数.在使用时请注意</em>N所在位置,位置不同生成的结果不同.</p>
+<pre><code>ul&gt;li*3
+=&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+<p><strong>自动计数(numbering)</strong><br> 这个功能挺方便的对于生成重复项时增加一个序号,只需要加上$符号即可.</p>
+<pre><code>ul&gt;li.item$&#123;item number:$&#125;*3
+&lt;ul&gt;
+    &lt;li class=&quot;item1&quot;&gt;item number:1&lt;/li&gt;
+    &lt;li class=&quot;item2&quot;&gt;item number:2&lt;/li&gt;
+    &lt;li class=&quot;item3&quot;&gt;item number:3&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+<p>如果生成两位数则使用两个连续的$$,更多位数以此类推…<br> 使用@修饰符，可以更改编号方向（升序或降序）和基数（例如起始值）.注意这个操作符在$之后添加<br> @-表示降序,@+表示升序,默认使用升序.<br> @N可以改变起始值.需要注意的是如果配合升降序使用的话N是放到+-符后.</p>
+<pre><code>ul&gt;li.item$@-*3
+=&gt;
+&lt;ul&gt;
+    &lt;li class=&quot;item3&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item2&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item1&quot;&gt;&lt;/li&gt;
+&lt;/ul&gt;
+---------------------------
+ul&gt;li.item$@-10*3
+=&gt;
+&lt;ul&gt;
+    &lt;li class=&quot;item12&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item11&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item10&quot;&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+<p>上述的操作是可以搭配使用进而得出酷炫的效果,使用时请注意空格的问题,缩写代码不要有空格否则是不会进行转换的.<br> 另外如果你的编辑器中已经有了一些html智能提示代码段,比如我的VsCode还装了HTML Snippets插件,这个与Emmet语法有部分冲突,使用Tab键时会优先使用插件的代码提示,建议禁用.<br> 组合起来看看效果:</p>
+<pre><code>table.table-row[role=&#39;table&#39;]&gt;(thead&gt;tr&gt;td&#123;item $@120&#125;*5)+(tbody&gt;tr&gt;(td.item$$@-)lorem10*5)</code></pre>
+<p>这段目的在于生成一个类名为table-row,且自定义了属性role的table标签,内部包含了thead与tbody,分别生成5个td.<br> thead中td的内容是item加上自增序号,自增序号基数从120开始.<br> tbody中td拥有一个名为item加降序自增符号类名,且每个td内容随机填充10个单词.</p>
+<pre><code>&lt;table class=&quot;table-row&quot; role=&quot;table&quot;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;td&gt;item 120&lt;/td&gt;
+            &lt;td&gt;item 121&lt;/td&gt;
+            &lt;td&gt;item 122&lt;/td&gt;
+            &lt;td&gt;item 123&lt;/td&gt;
+            &lt;td&gt;item 124&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item05&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit, assumenda.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item04&quot;&gt;Magnam possimus molestias ipsum animi rem placeat, ut obcaecati laudantium.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item03&quot;&gt;Consequuntur, labore ad optio cupiditate iusto dolores fugit quidem officiis.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item02&quot;&gt;Veniam, explicabo consequuntur blanditiis at dicta fuga ratione eos beatae.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item01&quot;&gt;Fuga voluptatum illo quis ducimus ad eveniet non. Saepe, eveniet.&lt;/td&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+<p>再来个配合嵌套元素和计数的大栗子.</p>
+<pre><code>div.nav&gt;(nav#navbar&gt;(ul&gt;li&gt;(a[href=&quot;/xxx/product/$&quot; data-index=$]&gt;lorem4)*5))+div.btn[type=&#39;button&#39;]&gt;span&#123;--&#125;^^div#main</code></pre>
+<p>这个有点复杂,看下效果:</p>
+<pre><code>&lt;div class=&quot;nav&quot;&gt;
+    &lt;nav id=&quot;navbar&quot;&gt;
+        &lt;ul&gt;
+            &lt;li&gt;
+                &lt;a href=&quot;/xxx/product/1&quot; data-index=&quot;1&quot;&gt;Lorem ipsum dolor sit.&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/2&quot; data-index=&quot;2&quot;&gt;Dolor vel, quia quas.&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/3&quot; data-index=&quot;3&quot;&gt;Qui hic, corrupti eum!&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/4&quot; data-index=&quot;4&quot;&gt;Necessitatibus perspiciatis, corrupti. Praesentium!&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/5&quot; data-index=&quot;5&quot;&gt;Nostrum quos, voluptate. Velit!&lt;/a&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+    &lt;div class=&quot;btn&quot; type=&quot;button&quot;&gt;&lt;span&gt;--&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;main&quot;&gt;&lt;/div&gt;</code></pre>
+<h2 id="3-进阶高级用法"><a href="#3-进阶高级用法" class="headerlink" title="3. 进阶高级用法"></a>3. 进阶高级用法</h2><p><strong>模拟文本/随机文本</strong><br> 在开发时经常要填充一些文本内容占位,Emmet内置了Lorem Ipsum功能来实现.loremN或者lipsumN,N表示生成的单词数,正整数.可以不填.</p>
+<pre><code>lorem
+=&gt; Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit quia commodi vero sint omnis fugiat excepturi reiciendis necessitatibus totam asperiores, delectus saepe nulla consequuntur nostrum! Saepe suscipit recusandae repellendus assumenda.
+
+p&gt;lorem4
+=&gt;
+&lt;p&gt;Lorem ipsum dolor sit.&lt;/p&gt;
+
+(p&gt;lorem4)*3
+=&gt;
+&lt;p&gt;Lorem ipsum dolor sit.&lt;/p&gt;
+&lt;p&gt;Labore aperiam, consequuntur architecto.&lt;/p&gt;
+&lt;p&gt;Quidem nisi, cum odio!&lt;/p&gt;</code></pre>
+<p><strong>包装文本</strong><br> 听起来可能有点绕,通俗点解释就是把一段指定的文本包装成我们想要的结构.注意这个功能需要编辑器的支持,举个大栗子:<br> 比如PM给了这样一段文本</p>
+<pre><code>首页
+产品介绍
+相关案例
+关于我们
+联系我们
+而我们预期的效果是这样
+&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li&gt;首页&lt;/li&gt;
+        &lt;li&gt;产品介绍&lt;/li&gt;
+        &lt;li&gt;相关案例&lt;/li&gt;
+        &lt;li&gt;关于我们&lt;/li&gt;
+        &lt;li&gt;联系我们&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+<ol>
+<li>选中文本,按下<code>ctrl+shift+p</code>打开命令窗口输入ewrap</li>
+<li>选择<code>Emmet:使用缩写进行包装(Wrap with Abbreviation)</code>选项<br> <img src="https://images2015.cnblogs.com/blog/648483/201706/648483-20170605122055715-1250857112.png" alt="img"></li>
+<li>输入缩写字符<code>nav&gt;ul&gt;li*</code>按下回车键即可看到效果.<br> 当然也可以在菜单=&gt;编辑=&gt;Emmet(M)..然后输入.</li>
+</ol>
+<blockquote>
+<p>这里需要的注意的地方是输入的缩写代码中*所在位置不同得到的效果也是不同的.</p>
+</blockquote>
+<p>另外如果给的文本带有序号的情况,我们也是可以通过缩写来处理,而不是手动删除,主要用的是<code>|t</code>来处理.<br> 比如:</p>
+<pre><code>    1.首页
+    2.产品介绍
+    3.相关案例
+    4.关于我们
+    5.联系我们
+    输入包装字符命令
+    nav&gt;ul&gt;li*|t
+    即可看到生成的html中自动去掉了序号</code></pre>
+<p>针对上边说的几种情况来演示一下.<br> <img src="https://images2015.cnblogs.com/blog/648483/201706/648483-20170605122015012-1752202759.gif" alt="img"></p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python数据类型分析及常用方法</title>
+    <url>/2020/Python/Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<p>收集的一些经典的爬虫案例</p>
+<p>Python的基础类型分为：</p>
+<ul>
+<li>数值：int、float</li>
+<li>字符串：str</li>
+<li></li>
+</ul>
+<p>扩展数据类型有</p>
+<a id="more"></a>
+
+<hr>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo博客使用经验</title>
+    <url>/2020/%E9%9A%8F%E7%AC%94/Hexo%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9B%B8%E5%85%B3/</url>
+    <content><![CDATA[<p>Hexo使用过程中的一些经验</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="博客搭建"><a href="#博客搭建" class="headerlink" title="博客搭建"></a>博客搭建</h2><h3 id="博客生成"><a href="#博客生成" class="headerlink" title="博客生成"></a>博客生成</h3><blockquote>
+<p>Hexo GitHub项目地址：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2hleG9qcy9oZXhv">https://github.com/hexojs/hexo<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+<p>安装Hexo</p>
+<pre><code class="line-numbers language-bash">$ npm install hexo-cli -g</code></pre>
+<p>创建博客</p>
+<pre><code class="line-numbers language-bash">$ hexo init blog
+$ cd blog</code></pre>
+<p>博客使用</p>
+<pre><code class="line-numbers language-bash">$ hexo clean         # 清理缓存（public文件夹）
+$ hexo generate      # 生成博客静态文件
+$ hexo server        # 开启调试本地服务器</code></pre>
+<h3 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h3><p>安装Next 5：</p>
+<pre><code class="line-numbers language-bash">$ cd hexo-blog
+$ git clone https://github.com/iissnan/hexo-theme-next themes/next</code></pre>
+<p>安装Next 6&amp;7：</p>
+<pre><code class="line-numbers language-bash">$ cd hexo-blog
+$ git clone https://github.com/theme-next/hexo-theme-next themes/next</code></pre>
+<h2 id="博客优化"><a href="#博客优化" class="headerlink" title="博客优化"></a>博客优化</h2><h3 id="1-常规配置"><a href="#1-常规配置" class="headerlink" title="1. 常规配置"></a>1. 常规配置</h3><h4 id="1-1-prism代码高亮"><a href="#1-1-prism代码高亮" class="headerlink" title="1.1 prism代码高亮"></a>1.1 prism代码高亮</h4><p>hexo自带highlight、primsjs代码高亮插件</p>
+<h3 id="2-网页样式修改"><a href="#2-网页样式修改" class="headerlink" title="2. 网页样式修改"></a>2. 网页样式修改</h3><p>next主题配置文件<code>blog/themes/next/ _config.yml</code>，取消行注释</p>
+<pre><code class="line-numbers language-yml">custom_file_path:
+  ···
+  style: source/_data/styles.styl</code></pre>
+<p>新建文件夹及文件：<code>blog/source/_data/styles.styl</code></p>
+<h4 id="2-1-添加网页背景图片"><a href="#2-1-添加网页背景图片" class="headerlink" title="2.1 添加网页背景图片"></a>2.1 添加网页背景图片</h4><pre><code class="line-numbers language-css">body &#123;
+    background:url(/assets/background.jpg);        // 背景图片位置
+    background-repeat: no-repeat;        // 若果背景图片不能全屏，那么是否平铺显示，充满屏幕
+    background-attachment: fixed;        // 背景是否随着网页上下滚动而滚动，fixed为固定
+    background-position:50% 50%;        // 位置
+    opacity: 0.9;
+    background-size:cover;
+&#125;</code></pre>
+<h4 id="2-2-博客网页宽度自适应"><a href="#2-2-博客网页宽度自适应" class="headerlink" title="2.2 博客网页宽度自适应"></a>2.2 博客网页宽度自适应</h4><p>调整<code>line1、3</code>的百分数值可以调整网页宽度</p>
+<pre><code class="line-numbers language-css">header&#123; width: 80% !important; &#125;
+header.post-header &#123;
+  width: auto !important;
+&#125;
+.container .main-inner &#123; width: 80%; &#125;
+.content-wrap &#123; width: calc(100% - 260px); &#125;
+
+.header &#123;
+  +tablet() &#123;
+    width: auto !important;
+  &#125;
+  +mobile() &#123;
+    width: auto !important;
+  &#125;
+&#125;
+
+.container .main-inner &#123;
+  +tablet() &#123;
+    width: auto !important;
+  &#125;
+  +mobile() &#123;
+    width: auto !important;
+  &#125;
+&#125;
+
+.content-wrap &#123;
+  +tablet() &#123;
+    width: 100% !important;
+  &#125;
+  +mobile() &#123;
+    width: 100% !important;
+  &#125;
+&#125;</code></pre>
+<h4 id="2-3-文章标题样式"><a href="#2-3-文章标题样式" class="headerlink" title="2.3 文章标题样式"></a>2.3 文章标题样式</h4><p>CSS样式测试网址：<span class="exturl" data-url="aHR0cHM6Ly93d3cudzNzY2hvb2wuY29tLmNuL3RpeS90LmFzcA==">https://www.w3school.com.cn/tiy/t.asp<i class="fa fa-external-link-alt"></i></span></p>
+<p>蓝色样式</p>
+<pre><code class="line-numbers language-css">.post-body &#123;
+  .h1, h2, h3, h4, h5, h6 &#123;
+    background: #2B6695;
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 0 0 1px #5F5A4B, 1px 1px 6px 1px rgba(10, 10, 0, 0.5);
+    color: #FFFFFF;
+    font-family: &quot;微软雅黑&quot; , &quot;宋体&quot; , &quot;黑体&quot; ,Arial;
+    font-weight: bold;
+    height: 25px;
+    line-height: 22px;
+    margin: 15px 0 !important;
+    padding: 5px 0px 5px 20px;
+    text-shadow: 2px 2px 3px #222222;
+    &#125;
+  &#125;</code></pre>
+<p>透明样式</p>
+<pre><code class="line-numbers language-css">.post-body &#123;
+  .h1, h2, h3, h4, h5, h6 &#123;
+    border-left: 5px solid #21759b;
+    border-right: 5px solid #21759b;
+    background: transparent url(https://images.cnblogs.com/cnblogs_com/Renyi-Fan/1188097/o_33.png) repeat scroll 0% 0%;
+    /* background: linear-gradient(-30deg, rgb(241, 226, 198), rgb(242, 226, 198) 30%, rgb(243, 227, 198) 60%, rgb(244, 230, 189) 100%); */
+    border-radius: 6px 6px 6px 6px !important;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 0 3px 15px;
+    box-shadow: 0 0 0 1px #5F5A4B, 0px 0px 6px 0px rgba(10, 10, 0, 0.5);
+    color: #FF0000 !important;
+    box-shadow: 0 0 8px #aaa;
+    &#125;
+  &#125;</code></pre>
+<h3 id="3-扩展功能（extension）"><a href="#3-扩展功能（extension）" class="headerlink" title="3. 扩展功能（extension）"></a>3. 扩展功能（extension）</h3><h4 id="3-1-本地搜索"><a href="#3-1-本地搜索" class="headerlink" title="3.1 本地搜索"></a>3.1 本地搜索</h4><p>安装包</p>
+<pre><code class="line-numbers language-bash">$ cd blog
+$ npm install hexo-generator-searchdb </code></pre>
+<p>Hexo站点配置文件</p>
+<pre><code class="line-numbers language-yaml">search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000</code></pre>
+<p>Next主题配置文件</p>
+<pre><code class="line-numbers language-yaml"># Local Search
+# Dependencies: https://github.com/theme-next/hexo-generator-searchdb
+local_search:
+  enable: true</code></pre>
+]]></content>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 爬取网页中JavaScript动态添加的内容</title>
+    <url>/2019/Python/Python%20%E7%88%AC%E5%8F%96%E7%BD%91%E9%A1%B5%E4%B8%ADJavaScript%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E7%9A%84%E5%86%85%E5%AE%B9/</url>
+    <content><![CDATA[<p><strong>方法一</strong>：用Web kit，Web kit 可以实现浏览器所能处理的任何事情，Web kit是QT库的一部分，因此如果你已经安装QT和PyQT库，那么你可以直接运行使用。</p>
+<p><strong>方法二</strong>：使用 selenium + phantomjs 实现</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-Web-Kit渲染"><a href="#1-Web-Kit渲染" class="headerlink" title="1. Web Kit渲染"></a>1. Web Kit渲染</h2><p><strong>环境安装</strong></p>
+<ul>
+<li><p>Ubuntu：<code>sudo apt install python-qt4</code></p>
+</li>
+<li><p>Windows：<span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vSmltYy9wLzk3MTcyMzguaHRtbA==">https://www.cnblogs.com/Jimc/p/9717238.html<i class="fa fa-external-link-alt"></i></span></p>
+</li>
+</ul>
+<p><strong>方法</strong>：首先通过 Web kit 发送请求信息，然后等待网页被完全加载后将其赋值到某个变量中。接下来我们利用<code>lxml</code>从 HTML 数据中提取出有效的信息。这个过程需要一点时间。</p>
+<pre><code class="line-numbers language-python">import sys
+from PyQt4.QtWebKit import *
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+class Render(QWebPage):  # 用来渲染网页,将url中的所有信息加载下来并存到一个新的框架中
+    def __init__(self,url):
+        self.app = QApplication(sys.argv)
+        QWebPage.__init__(self)
+        self.loadFinished.connect(self._loadFinished)
+        self.mainFrame().load(QUrl(url))
+        self.app.exec_()
+    def _loadFinished(self, result):
+        self.frame = self.mainFrame()
+        self.app.quit()
+
+url = &#39;http://jandan.net/ooxx&#39;
+r = Render(url)
+html = r.frame.toHtml()
+print(html)</code></pre>
+<h2 id="2-使用selenium-phantomjs"><a href="#2-使用selenium-phantomjs" class="headerlink" title="2. 使用selenium + phantomjs"></a>2. 使用selenium + phantomjs</h2>]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>爬虫</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker部署MySQL数据库及配置</title>
+    <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2Mysql/</url>
+    <content><![CDATA[<p>Docker 部署 Mysql数据库，快速部署、运行、销毁</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h2><p>需要安装指定版本的话，查看远端的版本</p>
+<pre><code class="line-numbers language-bash">$ docker search mysql</code></pre>
+<p>下载MySQL镜像（image）</p>
+<pre><code class="line-numbers language-bash">$ docker pull mysql            # latest
+$ docker pull mysql:5.7        # 5.7</code></pre>
+<p>查看本地镜像</p>
+<pre><code class="line-numbers language-bash">$ docker images
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+mysql                latest              c8ee894bd2bd        2 weeks ago         456MB</code></pre>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>先创建一个临时的mysql，进入容器中</p>
+<pre><code class="line-numbers language-bash">docker run --rm --name mysqlTemp -it -v /usr/local/mysql/:/var/lib/mysql  -e MYSQL_ROOT_PASSWORD=123456 mysql /bin/bash </code></pre>
+<blockquote>
+<p>– rm 退出后就删除该容器<br>-v /usr/local/mysql/:/var/lib/mysql  装主机目录/usr/local/mysql/映射Docker中的/var/lib/mysql目录<br>-it 交互模式<br>/bin/bash 进入 bash 命令模式</p>
+</blockquote>
+<p>查看 my.cnf文件。<br>  <code>cat /etc/mysql/my.cnf</code></p>
+<pre><code class="line-numbers language-bash">$ cat /etc/mysql/my.cnf
+
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+secure-file-priv= NULL
+
+symbolic-links=0
+
+!includedir /etc/mysql/conf.d/</code></pre>
+<p>如果是完整的my.cnf文件，直接复制出去，如果不是，则需要把includedir目录一起复到主机</p>
+<p>拷贝配置文件</p>
+<p>把Docker中的/etc/mysql/my.cnf文件拷贝到Docker的/var/lib/mysql目录，及主机的/usr/local/mysql/目录中</p>
+<pre><code class="line-numbers language-bash">cp /etc/mysql/my.cnf /var/lib/mysql</code></pre>
+<p>把Docker中includedir目录复制出去</p>
+<pre><code class="line-numbers language-bash">cp -R /etc/mysql/conf.d/ /var/lib/mysql/conf.d</code></pre>
+<p>退出bash，Docker中临时用的mysqlTemp会被删除</p>
+<p>然后可以查看/usr/local/mysql/目录下有mysql所有的配置文件</p>
+<pre><code class="line-numbers language-bash">[root@iZbp17pvndv49r9ozf5hbcZ ~]# ls /usr/local/mysql/
+conf.d  my.cnf</code></pre>
+<p>这里就可以修改配置了。<br>改完之后，创建正式的mysql容器</p>
+<pre><code class="line-numbers language-bash">docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123455 -v /usr/local/mysql/data:/var/lib/mysql -v /usr/local/mysql/my.cnf:/etc/mysql/my.cnf -v /usr/local/mysql/conf.d:/etc/mysql/conf.d -d mysql</code></pre>
+<p>如果my.cnf 是完整的配置，这里不需要映射conf.d和mysql.conf.d这二个目录</p>
+<pre><code class="line-numbers language-bash">docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123455 -v /usr/local/mysql/data:/var/lib/mysql -v /usr/local/mysql/my.cnf:/etc/mysql/my.cnf  -d mysql</code></pre>
+<ul>
+<li>–name 容器名称</li>
+<li>-p 端口映射</li>
+<li>-v 配置文件映射：将 宿主机上修改的自定义配置文件，映射到 容器中</li>
+<li>-e MYSQL_ROOT_PASSWORD   设置root密码</li>
+<li>-d 守护进程模式运行</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Xpath选择器语法及常用实例</title>
+    <url>/2019/%E5%AF%B9%E7%85%A7%E8%A1%A8/xpath%E9%80%89%E6%8B%A9%E5%99%A8%E8%AF%AD%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="1-什么是Xpath选择器"><a href="#1-什么是Xpath选择器" class="headerlink" title="1. 什么是Xpath选择器"></a>1. 什么是Xpath选择器</h2><p>XPath 的全称是 XML Path Language，即 XML 路径语言，它是一种在结构化文档（比如 XML 和 HTML 文档）中定位信息的语言。<br>XPath 选择器使用路径表达式来选取 XML 文档中的节点或节点集。节点是通过沿着路径 (path) 或者步 (steps) 来选取的。</p>
+<a id="more"></a>
+
+
+
+<h2 id="2-Xpath选择器语法"><a href="#2-Xpath选择器语法" class="headerlink" title="2. Xpath选择器语法"></a>2. Xpath选择器语法</h2><h3 id="路径表达式"><a href="#路径表达式" class="headerlink" title="路径表达式"></a>路径表达式</h3><table>
+<thead>
+<tr>
+<th align="center">语法</th>
+<th>描述</th>
+<th>实例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">nodename</td>
+<td>选择名称为nodename的所有节点</td>
+<td>div</td>
+</tr>
+<tr>
+<td align="center">/</td>
+<td>从根节点选取</td>
+<td>/div</td>
+</tr>
+<tr>
+<td align="center">//</td>
+<td>选择所有节点，不考虑位置</td>
+<td>//div</td>
+</tr>
+<tr>
+<td align="center">.</td>
+<td>选择当前节点</td>
+<td>./div</td>
+</tr>
+<tr>
+<td align="center">..</td>
+<td>选择当前节点的父节点，用于选择绝对路径</td>
+<td>..</td>
+</tr>
+<tr>
+<td align="center">@</td>
+<td>选择属性</td>
+<td>@href</td>
+</tr>
+<tr>
+<td align="center">text()</td>
+<td>选择文本</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="实例测试"><a href="#实例测试" class="headerlink" title="实例测试"></a>实例测试</h3><table>
+<thead>
+<tr>
+<th align="center">语法</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">div/p</td>
+<td align="center">选取div的子结点p标签</td>
+</tr>
+<tr>
+<td align="center">div//p</td>
+<td align="center">选取div下的所有p标签</td>
+</tr>
+<tr>
+<td align="center">//@class</td>
+<td align="center">选择所有名称中带有class属性的标签</td>
+</tr>
+<tr>
+<td align="center">a/@href</td>
+<td align="center">选取a标签的href属性</td>
+</tr>
+<tr>
+<td align="center">a/@href/text()</td>
+<td align="center">选取a标签的href属性的值</td>
+</tr>
+<tr>
+<td align="center">a/text()</td>
+<td align="center">选取a标签下所有文本</td>
+</tr>
+<tr>
+<td align="center">string(.)</td>
+<td align="center">解析当前节点下所有text并拼接为字符串</td>
+</tr>
+</tbody></table>
+<h3 id="谓语"><a href="#谓语" class="headerlink" title="谓语"></a>谓语</h3><p>谓语被嵌在方括号内，用来查找某个特定的节点或包含某个制定的值的节点</p>
+<table>
+<thead>
+<tr>
+<th align="center">语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">//div/p[1]</td>
+<td>选择div标签下的第一个p标签</td>
+</tr>
+<tr>
+<td align="center">/div/p[last()]</td>
+<td>选择div标签下的最后一个p标签</td>
+</tr>
+<tr>
+<td align="center">/div/p[last()-1]</td>
+<td>选择div标签下的倒数第二个p标签</td>
+</tr>
+<tr>
+<td align="center">/div/p[position()&lt;3]</td>
+<td>选择div下的前两个p标签</td>
+</tr>
+<tr>
+<td align="center">//div[@class]</td>
+<td>选取所有拥有属性为class的div节点</td>
+</tr>
+<tr>
+<td align="center">//div[@class=”main”]</td>
+<td>选取所有div下class属性为main的div节点</td>
+</tr>
+<tr>
+<td align="center">//div[price&gt;3.5]</td>
+<td>选取所有div下元素值price大于3.5的节点</td>
+</tr>
+</tbody></table>
+<h3 id="功能函数"><a href="#功能函数" class="headerlink" title="功能函数"></a>功能函数</h3><table>
+<thead>
+<tr>
+<th align="center">函数</th>
+<th>用法</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">starts-with</td>
+<td>//div[starts-with(@id,”ma”)]</td>
+<td>起点匹配，选取id值以ma开头的div节点</td>
+</tr>
+<tr>
+<td align="center">contains</td>
+<td>//div[contains(@id,”ma”)]</td>
+<td>包含匹配，选取所有id值包含ma的div节点</td>
+</tr>
+<tr>
+<td align="center">and</td>
+<td>//div[contains(@id,”ma”) and contains(@id,”in”)]</td>
+<td>多值匹配，选取id值包含ma和in的div节点</td>
+</tr>
+<tr>
+<td align="center">text()</td>
+<td>//div[contains(text(),”ma”)]</td>
+<td>文本匹配，选取节点文本包含ma的div节</td>
+</tr>
+</tbody></table>
+<h2 id="3-Python中的使用"><a href="#3-Python中的使用" class="headerlink" title="3. Python中的使用"></a>3. Python中的使用</h2><p>Python中xpath常用于爬虫中网页数据的解析，其他也可用在配置文件的解析等（使用方法类似，不做讨论）</p>
+<p>Python中使用xpath需要引入类库，如通用的lxml，scrapy中用于解析网页数据的selector模块（依赖于lxml）等，以lxml类库为例</p>
+<pre><code class="line-numbers language-bash">pip install lxml        # 安装lxml库</code></pre>
+<p><strong>待解析文本</strong></p>
+<pre><code class="line-numbers language-html">html = &quot;&quot;&quot;&lt;html&gt;
+    &lt;head&gt;
+        &lt;base href=&#39;http://example.com/&#39; /&gt;
+        &lt;title&gt;Example website&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id=&#39;images&#39;&gt;
+            &lt;a href=&#39;image1.html&#39;&gt;Name: My image 1 &lt;br/&gt;&lt;img src=&#39;image1_thumb.jpg&#39;/&gt;&lt;/a&gt;
+            &lt;a href=&#39;image2.html&#39;&gt;Name: My image 2 &lt;br/&gt;&lt;img src=&#39;image2_thumb.jpg&#39;/&gt;&lt;/a&gt;
+            &lt;a href=&#39;image3.html&#39;&gt;Name: My image 3 &lt;br/&gt;&lt;img src=&#39;image3_thumb.jpg&#39;/&gt;&lt;/a&gt;
+            &lt;a href=&#39;image4.html&#39;&gt;Name: My image 4 &lt;br/&gt;&lt;img src=&#39;image4_thumb.jpg&#39;/&gt;&lt;/a&gt;
+            &lt;a&gt;Name: My image 5 &lt;br/&gt;&lt;img src=&#39;image5_thumb.jpg&#39;/&gt;&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;&quot;&quot;&quot;</code></pre>
+<p><strong>解析案例</strong></p>
+<pre><code class="line-numbers language-python">from lxml import etree
+
+soup = etree.HTML(html)        # 解析
+
+soup.xpath(&#39;/html/head/base/@href&#39;)     #从根节点开始选取
+soup.xpath(&#39;/html/head//@href&#39;)     #也可以这样选择结果是相同的
+# [&#39;http://example.com/&#39;]
+
+
+soup.xpath(&quot;//title/text()&quot;)    # 选取title下所有文本
+# [&#39;Example website&#39;]
+
+soup.xpath(&#39;//a&#39;)        # 选取HTML下所有a节点
+# [&lt;Element a at 0x7fd3f3eb5a80&gt;,
+# &lt;Element a at 0x7fd3f3eb5a40&gt;,
+# &lt;Element a at 0x7fd3f3e1ba80&gt;,
+# &lt;Element a at 0x7fd3f3e1bac0&gt;,
+# &lt;Element a at 0x7fd3f3e1bb40&gt;]
+
+soup.xpath(&quot;//a[@href=&#39;image1.html&#39;]/img/@src&quot;)        # 选取标签下属性为image.html的scr属性
+# [&#39;image1_thumb.jpg&#39;]
+
+soup.xpath(&quot;//a[contains(@href, &#39;3&#39;)]/@href&quot;)        # 选取a标签下第三个href属性
+# [&#39;image3.html&#39;]
+
+soup.xpath(&quot;//body//a[last()]/img/@src&quot;)        # body最后一个a标签href属性
+# [&#39;image5_thumb.jpg&#39;]</code></pre>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>对照表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>爬虫案例列表</title>
+    <url>/2019/Python/%E7%88%AC%E8%99%AB%E6%A1%88%E4%BE%8B%E5%88%97%E8%A1%A8/</url>
+    <content><![CDATA[<p>收集的一些经典的爬虫案例</p>
+<a id="more"></a>
+
+<hr>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0NoeXJvYy9XZWNoYXRTb2dvdQ==">WechatSogou<i class="fa fa-external-link-alt"></i></span> [1]- 微信公众号爬虫。基于搜狗微信搜索的微信公众号爬虫接口，可以扩展成基于搜狗搜索的爬虫，返回结果是列表，每一项均是公众号具体信息字典。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2xhbmJpbmc1MTAvRG91QmFuU3BpZGVy">DouBanSpider<i class="fa fa-external-link-alt"></i></span> [2]-  豆瓣读书爬虫。可以爬下豆瓣读书标签下的所有图书，按评分排名依次存储，存储到Excel中，可方便大家筛选搜罗，比如筛选评价人数&gt;1000的高分书籍；可依据不同的主题存储到Excel不同的Sheet ，采用User Agent伪装为浏览器进行爬取，并加入随机延时来更好的模仿浏览器行为，避免爬虫被封。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0xpdVJveS96aGlodV9zcGlkZXI=">zhihu_spider<i class="fa fa-external-link-alt"></i></span> [3]- 知乎爬虫。此项目的功能是爬取知乎用户信息以及人际拓扑关系，爬虫框架使用scrapy，数据存储使用mongo。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2FpcmluZ3Vyc2IvYmlsaWJpbGktdXNlcg==">bilibili-user<i class="fa fa-external-link-alt"></i></span> [4]- Bilibili用户爬虫。总数据数：20119918，抓取字段：用户id，昵称，性别，头像，等级，经验值，粉丝数，生日，地址，注册时间，签名，等级与经验值等。抓取之后生成B站用户数据报告。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0xpdVhpbmdNaW5nL1NpbmFTcGlkZXI=">SinaSpider<i class="fa fa-external-link-alt"></i></span> [5]- 新浪微博爬虫。主要爬取新浪微博用户的个人信息、微博信息、粉丝和关注。代码获取新浪微博Cookie进行登录，可通过多账号登录来防止新浪的反扒。主要使用 scrapy 爬虫框架。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2duZW1vdWcvZGlzdHJpYnV0ZV9jcmF3bGVy">distribute_crawler<i class="fa fa-external-link-alt"></i></span> [6]- 小说下载分布式爬虫。使用scrapy,Redis, MongoDB,graphite实现的一个分布式网络爬虫,底层存储mongodb集群,分布式使用redis实现,爬虫状态显示使用graphite实现，主要针对一个小说站点。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3lhbnpob3UvQ25raVNwaWRlcg==">CnkiSpider<i class="fa fa-external-link-alt"></i></span> [7]- 中国知网爬虫。设置检索条件后，执行src/CnkiSpider.py抓取数据，抓取数据存储在/data目录下，每个数据文件的第一行为字段名称。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2xhbmJpbmc1MTAvTGlhbkppYVNwaWRlcg==">LianJiaSpider<i class="fa fa-external-link-alt"></i></span> [8]- 链家网爬虫。爬取北京地区链家历年二手房成交记录。涵盖链家爬虫一文的全部代码，包括链家模拟登录代码。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3RhaXppbG9uZ3h1L3NjcmFweV9qaW5nZG9uZw==">scrapy_jingdong<i class="fa fa-external-link-alt"></i></span> [9]- 京东爬虫。基于scrapy的京东网站爬虫，保存格式为csv。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Nhc3BhcnRzZS9RUS1Hcm91cHMtU3BpZGVy">QQ-Groups-Spider<i class="fa fa-external-link-alt"></i></span> [10]- QQ 群爬虫。批量抓取 QQ 群信息，包括群名称、群号、群人数、群主、群简介等内容，最终生成 XLS(X) / CSV 结果文件。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2hhbmMwMGwvd29veXVuX3B1YmxpYw==">wooyun_public<i class="fa fa-external-link-alt"></i></span>[11]-乌云爬虫。  乌云公开漏洞、知识库爬虫和搜索。全部公开漏洞的列表和每个漏洞的文本内容存在mongodb中，大概约2G内容；如果整站爬全部文本和图片作为离线查询，大概需要10G空间、2小时（10M电信带宽）；爬取全部知识库，总共约500M空间。漏洞搜索使用了Flask作为web server，bootstrap作为前端。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2xpbmluZzA4MDYvUXVuYXJTcGlkZXI=">QunarSpider<i class="fa fa-external-link-alt"></i></span> [12]- 去哪儿网爬虫。 网络爬虫之Selenium使用代理登陆：爬取去哪儿网站，使用selenium模拟浏览器登陆，获取翻页操作。代理可以存入一个文件，程序读取并使用。支持多进程抓取。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbmtjb2Rlci9maW5kdHJpcA==">findtrip<i class="fa fa-external-link-alt"></i></span> [13]- 机票爬虫（去哪儿和携程网）。Findtrip是一个基于Scrapy的机票爬虫，目前整合了国内两大机票网站（去哪儿 + 携程）。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2xleWxlLzE2M3NwaWRlcg==">163spider<i class="fa fa-external-link-alt"></i></span> [14] - 基于requests、MySQLdb、torndb的网易客户端内容爬虫</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2RvbnRjb250YWN0bWUvZG91YmFuc3BpZGVycw==">doubanspiders<i class="fa fa-external-link-alt"></i></span>[15]- 豆瓣电影、书籍、小组、相册、东西等爬虫集</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0xpdVhpbmdNaW5nL1FRU3BpZGVy">QQSpider<i class="fa fa-external-link-alt"></i></span> [16]- QQ空间爬虫，包括日志、说说、个人信息等，一天可抓取 400 万条数据。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL1NodS1KaS9iYWlkdS1tdXNpYy1zcGlkZXI=">baidu-music-spider<i class="fa fa-external-link-alt"></i></span> [17]- 百度mp3全站爬虫，使用redis支持断点续传。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3Bha29vL3RiY3Jhd2xlcg==">tbcrawler<i class="fa fa-external-link-alt"></i></span>[18]- 淘宝和天猫的爬虫,可以根据搜索关键词,物品id来抓去页面的信息，数据存储在mongodb。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Jlbml0b3JvL3N0b2NraG9sbQ==">stockholm<i class="fa fa-external-link-alt"></i></span> [19]- 一个股票数据（沪深）爬虫和选股策略测试框架。根据选定的日期范围抓取所有沪深两市股票的行情数据。支持使用表达式定义选股策略。支持多线程处理。保存数据到JSON文件、CSV文件。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2sxOTk1L0JhaWR1eXVuU3BpZGVy">BaiduyunSpider<i class="fa fa-external-link-alt"></i></span>[20]-百度云盘爬虫。 </p>
+<p>[Spider<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL1F1dGFuL1NwaWRlcg==">21]<i class="fa fa-external-link-alt"></i></span>-社交数据爬虫。支持微博,知乎,豆瓣。</p>
+<p>[proxy pool<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL1F1dGFuL1NwaWRlcg==">22]<i class="fa fa-external-link-alt"></i></span>-Python爬虫代理IP池(proxy pool)。</p>
+<p>[music-163<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL1JpdHRlckhvdS9tdXNpYy0xNjM=">23]<i class="fa fa-external-link-alt"></i></span>-爬取网易云音乐所有歌曲的评论。</p>
+<p>[jandan_spider<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL1JpdHRlckhvdS9tdXNpYy0xNjM=">24]<i class="fa fa-external-link-alt"></i></span>-爬取煎蛋妹纸图片。</p>
+<p>[CnblogsSpider<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL2phY2tnaXRnei9DbmJsb2dzU3BpZGVy">25]<i class="fa fa-external-link-alt"></i></span>-cnblogs列表页爬虫。</p>
+<p>[spider_smooc<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL2phY2tnaXRnei9DbmJsb2dzU3BpZGVy">26]<i class="fa fa-external-link-alt"></i></span>-爬取慕课网视频。</p>
+<p>[CnkiSpider<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL3lhbnpob3UvQ25raVNwaWRlcg==">27]<i class="fa fa-external-link-alt"></i></span>-中国知网爬虫。</p>
+<p>[knowsecSpider2<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL2xpdHRsZXRodW5kZXIva25vd3NlY1NwaWRlcjI=">28]<i class="fa fa-external-link-alt"></i></span>-知道创宇爬虫题目。</p>
+<p>[aiss-spider<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL3gtc3BpZGVycy9haXNzLXNwaWRlcg==">29]<i class="fa fa-external-link-alt"></i></span>-爱丝APP图片爬虫。</p>
+<p>[SinaSpider<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3N6Y2Ytd2VpeWEvU2luYVNwaWRlcg==">30]<i class="fa fa-external-link-alt"></i></span>-动态IP解决新浪的反爬虫机制，快速抓取内容。</p>
+<p>[csdn-spider<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL0tldmluc3NzL2NzZG4tc3BpZGVy">31]<i class="fa fa-external-link-alt"></i></span>-爬取CSDN上的博客文章。</p>
+<p>[ProxySpider<span class="exturl" data-url="aHR0cDovL2xpbmsuemhpaHUuY29tLz90YXJnZXQ9aHR0cHM6Ly9naXRodWIuY29tL2NoYW5nZXRqdXQvUHJveHlTcGlkZXI=">32]<i class="fa fa-external-link-alt"></i></span>-爬取西刺上的代理IP，并验证代理可用性。</p>
+<p>[webspider<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0d1b3podUhlL3dlYnNwaWRlcg==">33]<i class="fa fa-external-link-alt"></i></span>-本系统是一个主要使用python3, celery和requests来爬取职位数据的爬虫，实现了定时任务，出错重试，日志记录，自动更改Cookies等的功能，并使用ECharts + Bootstrap 来构建前端页面，来展示爬取到的数据。</p>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一些有用的Windows软件</title>
+    <url>/2019/%E9%9A%8F%E7%AC%94/Windows%E8%BD%AF%E4%BB%B6/</url>
+    <content><![CDATA[<p>Windows下的一些使用软件、小插件等安装及使用方法</p>
+<a id="more"></a>
+
+<h2 id="Quicklook-空格键文件预览"><a href="#Quicklook-空格键文件预览" class="headerlink" title="Quicklook | 空格键文件预览"></a>Quicklook | 空格键文件预览</h2><blockquote>
+<img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200827223543.jpeg" style="zoom: 50%;" />
+
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL1FMLVdpbi9RdWlja0xvb2s=">GitHub项目地址<i class="fa fa-external-link-alt"></i></span> |  <span class="exturl" data-url="aHR0cHM6Ly93d3cubWljcm9zb2Z0LmNvbS9zdG9yZS9hcHBzLzludjRiczNsMWg0cz9vY2lkPWJhZGdl">Windows Store商店<i class="fa fa-external-link-alt"></i></span> | <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL1FMLVdpbi9RdWlja0xvb2svcmVsZWFzZXM=">安装文件下载<i class="fa fa-external-link-alt"></i></span></p>
+<p>操作说明：</p>
+<ul>
+<li>空格键：预览/关闭预览 </li>
+<li>ESC：关闭预览 </li>
+<li>回车：运行程序并关闭预览 </li>
+<li>CTRL+鼠标滚轮：缩放图片/文档 </li>
+<li>鼠标滚轮：调节音量                    </li>
+</ul>
+</blockquote>
+<h2 id="Everything-全盘文件搜索"><a href="#Everything-全盘文件搜索" class="headerlink" title="Everything | 全盘文件搜索"></a>Everything | 全盘文件搜索</h2><blockquote>
+<p>“Everything”是一个运行于Windows系统，基于文件、文件夹名称的快速搜索引擎。它体积小巧，界面简洁易用，快速建立索引，快速搜索，同时占用极低的系统资源，实时<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTglQjclOUYlRTglQjglQUElRTYlOTYlODclRTQlQkIlQjY=">跟踪文件<i class="fa fa-external-link-alt"></i></span>变化，并且还可以通过http或ftp形式分享搜索。</p>
+<p>官网地址：<span class="exturl" data-url="aHR0cHM6Ly93d3cudm9pZHRvb2xzLmNvbS96aC1jbi8=">https://www.voidtools.com/zh-cn/<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+<h2 id="EarTrumpet-进程音量控制-音频设备选择"><a href="#EarTrumpet-进程音量控制-音频设备选择" class="headerlink" title="EarTrumpet | 进程音量控制/音频设备选择"></a>EarTrumpet | 进程音量控制/音频设备选择</h2><blockquote>
+<p>软件特点：</p>
+<ul>
+<li>Visualize audio with multi-channel aware peaking</li>
+<li>Standalone volume mixer</li>
+<li>Move apps between playback devices</li>
+<li>Default playback device management</li>
+<li>Automatic updates via the Microsoft Store</li>
+<li>Support for light/dark mode and all accent colors</li>
+<li>Configurable hotkeys</li>
+<li>Modern context menus</li>
+<li>Growing multilingual support</li>
+</ul>
+<p>GitHub项目地址：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2lzZWV5by9FYXJUcnVtcGV0">https://github.com/iseeyo/EarTrumpet<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker容器操作命令</title>
+    <url>/2019/Docker/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<ul>
+<li>软件版本/帮助信息</li>
+<li>针对镜像（image）的操作</li>
+<li>针对容器（container，image实例）的操作</li>
+<li>其他操作（image、container的备份与导入等）</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="1-Docker软件相关"><a href="#1-Docker软件相关" class="headerlink" title="1 Docker软件相关"></a>1 Docker软件相关</h2><pre><code class="line-numbers language-shell">docker version        # 查看docker容器版本
+docker info            # 查看docker容器信息
+docker --help        # 查看docker容器帮助</code></pre>
+<h2 id="2-镜像（image）操作"><a href="#2-镜像（image）操作" class="headerlink" title="2 镜像（image）操作"></a>2 镜像（image）操作</h2><p>提示：对于镜像的操作可使用镜像名 镜像长ID和短ID。</p>
+<h3 id="2-1-镜像查看"><a href="#2-1-镜像查看" class="headerlink" title="2.1 镜像查看"></a>2.1 镜像查看</h3><pre><code class="line-numbers language-shell">docker images            # 列出本地images
+docker images -a            # 含中间映像层
+docker images -q            # 只显示镜像ID
+docker images --digests        # 显示镜像摘要信息(DIGEST列)
+docker images --no-trunc        # 显示镜像完整信息</code></pre>
+<p>指定镜像名称</p>
+<pre><code class="line-numbers language-shell"># 显示指定镜像的历史创建；参数：-H 镜像大小和日期，默认为true；--no-trunc  显示完整的提交记录；-q  仅列出提交记录ID
+docker history -H redis</code></pre>
+<h3 id="2-2-镜像搜索"><a href="#2-2-镜像搜索" class="headerlink" title="2.2 镜像搜索"></a>2.2 镜像搜索</h3><pre><code class="line-numbers language-shell">docker search mysql        # 搜索仓库MySQL镜像
+docker search --filter=stars=600 mysql        #  --filter=stars=600：只显示 starts&gt;=600 的镜像
+docker search --no-trunc mysql        #  --no-trunc 显示镜像完整 DESCRIPTION 描述
+docker search  --automated mysql        #  --automated ：只列出 AUTOMATED=OK 的镜像</code></pre>
+<h3 id="2-3-镜像下载"><a href="#2-3-镜像下载" class="headerlink" title="2.3 镜像下载"></a>2.3 镜像下载</h3><pre><code class="line-numbers language-shell"># 下载Redis官方最新镜像，相当于：docker pull redis:latest
+docker pull redis
+# 下载仓库所有Redis镜像
+docker pull -a redis
+# 下载私人仓库镜像
+docker pull bitnami/redis</code></pre>
+<h3 id="2-4-镜像删除"><a href="#2-4-镜像删除" class="headerlink" title="2.4 镜像删除"></a>2.4 镜像删除</h3><pre><code class="line-numbers language-shell"># 单个镜像删除，相当于：docker rmi redis:latest
+docker rmi redis
+# 强制删除(针对基于镜像有运行的容器进程)
+docker rmi -f redis
+# 多个镜像删除，不同镜像间以空格间隔
+docker rmi -f redis tomcat nginx
+# 删除本地全部镜像
+docker rmi -f $(docker images -q)</code></pre>
+<h3 id="2-5-镜像构建"><a href="#2-5-镜像构建" class="headerlink" title="2.5 镜像构建"></a>2.5 镜像构建</h3><pre><code class="line-numbers language-shell"># （1）编写dockerfile
+cd /docker/dockerfile
+vim mycentos
+# （2）构建docker镜像
+docker build -f /docker/dockerfile/mycentos -t mycentos:1.1</code></pre>
+<h2 id="3-容器操作"><a href="#3-容器操作" class="headerlink" title="3 容器操作"></a>3 容器操作</h2><p>提示：对于容器的操作可使用 container id 或 names。</p>
+<h3 id="3-1-容器启动"><a href="#3-1-容器启动" class="headerlink" title="3.1 容器启动"></a>3.1 容器启动</h3><pre><code class="line-numbers language-shell"># 新建并启动容器，参数：-i  以交互模式运行容器；-t  为容器重新分配一个伪输入终端；--name  为容器指定一个名称
+docker run -i -t --name mycentos
+# 后台启动容器，参数：-d  守护方式启动容器
+docker run -d mycentos</code></pre>
+<p>注意在添加run参数的时候，前者为宿主机port，后者为container port，如redis的<code>-p 16379:6379</code></p>
+<pre><code class="line-numbers language-shell"># 启动一个或多个已经被停止的容器
+docker start redis
+# 重启容器
+docker restart redis</code></pre>
+<h3 id="3-2-容器进程"><a href="#3-2-容器进程" class="headerlink" title="3.2 容器进程"></a>3.2 容器进程</h3><pre><code class="line-numbers language-shell"># top支持 ps 命令参数，格式：docker top [OPTIONS] CONTAINER [ps OPTIONS]
+# 列出redis容器中运行进程
+docker top redis
+# 查看所有运行容器的进程信息
+for i in  `docker ps |grep Up|awk &#39;&#123;print $1&#125;&#39;`;do echo \ &amp;&amp;docker top $i; done</code></pre>
+<h3 id="3-3-容器日志"><a href="#3-3-容器日志" class="headerlink" title="3.3 容器日志"></a>3.3 容器日志</h3><pre><code class="line-numbers language-shell"># 查看redis容器日志，默认参数
+docker logs rabbitmq
+# 查看redis容器日志，参数：-f  跟踪日志输出；-t   显示时间戳；--tail  仅列出最新N条容器日志；
+docker logs -f -t --tail=20 redis
+# 查看容器redis从2019年05月21日后的最新10条日志。
+docker logs --since=&quot;2019-05-21&quot; --tail=10 redis</code></pre>
+<h3 id="3-4-容器的进入与退出"><a href="#3-4-容器的进入与退出" class="headerlink" title="3.4 容器的进入与退出"></a>3.4 容器的进入与退出</h3><pre><code class="line-numbers language-shell"># 使用run方式在创建时进入
+docker run -it centos /bin/bash
+# 关闭容器并退出
+exit
+# 仅退出容器，不关闭
+快捷键：Ctrl + P + Q
+# 直接进入centos 容器启动命令的终端，不会启动新进程，多个attach连接共享容器屏幕，参数：--sig-proxy=false  确保CTRL-D或CTRL-C不会关闭容器
+docker attach --sig-proxy=false centos 
+# 在 centos 容器中打开新的交互模式终端，可以启动新进程，参数：-i  即使没有附加也保持STDIN 打开；-t  分配一个伪终端
+docker exec -i -t  centos /bin/bash
+# 以交互模式在容器中执行命令，结果返回到当前终端屏幕
+docker exec -i -t centos ls -l /tmp
+# 以分离模式在容器中执行命令，程序后台运行，结果不会反馈到当前终端
+docker exec -d centos  touch cache.txt </code></pre>
+<h3 id="3-5-查看容器"><a href="#3-5-查看容器" class="headerlink" title="3.5 查看容器"></a>3.5 查看容器</h3><pre><code class="line-numbers language-shell"># 查看正在运行的容器
+docker ps
+# 查看正在运行的容器的ID
+docker ps -q
+# 查看正在运行+历史运行过的容器
+docker ps -a
+# 显示运行容器总文件大小
+docker ps -s
+
+# 显示最近创建容器
+docker ps -l
+# 显示最近创建的3个容器
+docker ps -n 3
+# 不截断输出
+docker ps --no-trunc 
+
+# 获取镜像redis的元信息
+docker inspect redis
+# 获取正在运行的容器redis的 IP
+docker inspect --format=&#39;&#123;&#123;range .NetworkSettings.Networks&#125;&#125;&#123;&#123;.IPAddress&#125;&#125;&#123;&#123;end&#125;&#125;&#39; redis</code></pre>
+<h3 id="3-6-容器的停止与删除"><a href="#3-6-容器的停止与删除" class="headerlink" title="3.6 容器的停止与删除"></a>3.6 容器的停止与删除</h3><pre><code class="line-numbers language-shell"># 停止一个运行中的容器
+docker stop redis
+# 杀掉一个运行中的容器
+docker kill redis
+# 删除一个已停止的容器
+docker rm redis
+# 删除一个运行中的容器
+docker rm -f redis
+# 删除多个容器
+docker rm -f $(docker ps -a -q)
+docker ps -a -q | xargs docker rm
+#  -l 移除容器间的网络连接，连接名为 db
+docker rm -l db 
+#  -v 删除容器，并删除容器挂载的数据卷
+docker rm -v redis</code></pre>
+<h3 id="3-7-生成镜像"><a href="#3-7-生成镜像" class="headerlink" title="3.7 生成镜像"></a>3.7 生成镜像</h3><pre><code class="line-numbers language-shell"># 基于当前redis容器创建一个新的镜像；参数：-a 提交的镜像作者；-c 使用Dockerfile指令来创建镜像；-m :提交时的说明文字；-p :在commit时，将容器暂停
+docker commit -a=&quot;DeepInThought&quot; -m=&quot;my redis&quot; [redis容器ID]  myredis:v1.1</code></pre>
+<h2 id="4-其他操作"><a href="#4-其他操作" class="headerlink" title="4 其他操作"></a>4 其他操作</h2><h3 id="4-1-容器与主机间的数据拷贝"><a href="#4-1-容器与主机间的数据拷贝" class="headerlink" title="4.1 容器与主机间的数据拷贝"></a>4.1 容器与主机间的数据拷贝</h3><pre><code class="line-numbers language-shell"># 将&lt;cname&gt;容器中的文件copy至本地路径
+docker cp &lt;cname&gt;:/[container_path] [local_path]
+
+# 将主机文件copy至&lt;cname&gt;容器
+docker cp [local_path] &lt;cname&gt;:/[container_path]/
+
+# 将主机文件copy至&lt;cname&gt;容器，目录重命名为[container_path]（注意与非重命名copy的区别）
+docker cp [local_path] &lt;cname&gt;:/[container_path]</code></pre>
+<h3 id="4-2-Docker-Image的备份-导入"><a href="#4-2-Docker-Image的备份-导入" class="headerlink" title="4.2 Docker Image的备份/导入"></a>4.2 Docker Image的备份/导入</h3><pre><code class="line-numbers language-shell"># 备份镜像
+docker save redis &gt; /home/yuan/redis_save.tar
+# 导入镜像
+docker load &lt; /home/yuan/redis_save.tar</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200827154931.png"></p>
+<h3 id="4-3-Docker-container的备份-导入"><a href="#4-3-Docker-container的备份-导入" class="headerlink" title="4.3 Docker container的备份/导入"></a>4.3 Docker container的备份/导入</h3><pre><code>docker ps -a
+
+docker export redis_6379 &gt; redis_6379_export.tar
+
+cat /home/yuan/redis_6379_export.tar | sudo docker import - redis:latest</code></pre>
+<h2 id="5-Docker-run的启动参数"><a href="#5-Docker-run的启动参数" class="headerlink" title="5 Docker run的启动参数"></a>5 Docker run的启动参数</h2><pre><code class="line-numbers language-shell">-a, --attach=[] 登录容器（以docker run -d启动的容器）
+-c, --cpu-shares=0 设置容器CPU权重，在CPU共享场景使用
+--cap-add=[] 添加权限，清单详见：http://linux.die.net/man/7/capabilities
+--cap-drop=[] 删除权限，清单详见：http://linux.die.net/man/7/capabilities
+--cidfile=&quot;&quot; 运行容器后，在指定文件中写入容器PID值，一种典型的监控系统用法
+--cpuset=&quot;&quot; 设置容器可以使用哪些CPU，此参数可以用来容器独占CPU
+-d, --detach=false 指定容器运行于前台还是后台
+--device=[] 添加主机设备给容器，相当于设备直通
+--dns=[] 指定容器的dns服务器
+--dns-search=[] 指定容器的dns搜索域名，写入到容器的/etc/resolv.conf文件
+-e, --env=[] 指定环境变量，容器中可以使用该环境变量
+--entrypoint=&quot;&quot; 覆盖image的入口点
+--env-file=[] 指定环境变量文件，文件格式为每行一个环境变量
+--expose=[] 指定容器暴露的端口，即修改镜像的暴露端口
+-h, --hostname=&quot;&quot; 指定容器的主机名
+-i, --interactive=false 打开STDIN，用于控制台交互
+--link=[] 指定容器间的关联，使用其他容器的IP、env等信息
+--lxc-conf=[] 指定容器的配置文件，只有在指定--exec-driver=lxc时使用
+-m, --memory=&quot;&quot; 指定容器的内存上限
+--name=&quot;&quot; 指定容器名字，后续可以通过名字进行容器管理，links特性需要使用名字
+--net=&quot;bridge&quot; 容器网络设置，待详述
+-P, --publish-all=false 指定容器暴露的端口，待详述
+-p, --publish=[] 指定容器暴露的端口，待详述
+--privileged=false 指定容器是否为特权容器，特权容器拥有所有的capabilities
+--restart=&quot;&quot; 指定容器停止后的重启策略，待详述
+--rm=false 指定容器停止后自动删除容器(不支持以docker run -d启动的容器)
+--sig-proxy=true 设置由代理接受并处理信号，但是SIGCHLD、SIGSTOP和SIGKILL不能被代理
+-t, --tty=false 分配tty设备，该可以支持终端登录
+-u, --user=&quot;&quot; 指定容器的用户
+-v, --volume=[] 给容器挂载存储卷，挂载到容器的某个目录
+--volumes-from=[] 给容器挂载其他容器上的卷，挂载到容器的某个目录
+-w, --workdir=&quot;&quot; 指定容器的工作目录</code></pre>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker容器的安装方法</title>
+    <url>/2019/Docker/Docker%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<ul>
+<li>Centos7下的Docker-ce的安装方法</li>
+<li>Ubuntu下Docker-ce的安装方法</li>
+<li>Docker换源方法</li>
+</ul>
+<a id="more"></a>
+
+<hr>
+<h2 id="一、Centos7下的Docker-ce的安装方法"><a href="#一、Centos7下的Docker-ce的安装方法" class="headerlink" title="一、Centos7下的Docker-ce的安装方法"></a>一、Centos7下的Docker-ce的安装方法</h2><p>系统版本信息：<code>Linux centos7 3.10.0-1127.18.2.el7.x86_64 GNU/Linux</code></p>
+<p>安装依赖</p>
+<pre><code class="line-numbers language-bash">yum install -y yum-utils device-mapper-persistent-data lvm2
+# yum-util 提供 yum-config-manager 功能，后两者为devicemapper驱动依赖</code></pre>
+<p>安装Docker软件源（前者为官方源，后者为阿里源，二者选其一即可）</p>
+<pre><code class="line-numbers language-bash">yum-config-manager --add-repo http://download.docker.com/linux/centos/docker-ce.repo
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</code></pre>
+<p>查看安装源中的Docker-ce软件版本方法</p>
+<pre><code class="line-numbers language-bash">yum list docker-ce --showduplicates | sort -r</code></pre>
+<p>安装docker-ce</p>
+<pre><code class="line-numbers language-bash">yum install docker-ce-18.03.1.ce -y        # 安装指定版本
+yum install docker-ce -y        # 安装最新的stable版本</code></pre>
+<p>开启docker服务</p>
+<pre><code class="line-numbers language-bash">systemctl start docker.service        # 开启服务
+systemctl enable docker.service        # 开启开机自启动</code></pre>
+<p>测试</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200825214420.png"></p>
+<hr>
+<h2 id="二、Ubuntu下Docker-ce的安装方法"><a href="#二、Ubuntu下Docker-ce的安装方法" class="headerlink" title="二、Ubuntu下Docker-ce的安装方法"></a>二、Ubuntu下Docker-ce的安装方法</h2><p>APT换源，推荐科大源</p>
+<pre><code class="line-numbers language-bash">sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+sudo sed -i &#39;s/archive.ubuntu.com/mirrors.ustc.edu.cn/g&#39; /etc/apt/sources.list
+sudo apt update</code></pre>
+<p>安装依赖包</p>
+<pre><code class="line-numbers language-bash">sudo apt install apt-transport-https ca-certificates software-properties-common curl -y</code></pre>
+<p>添加 GPG 密钥，并添加 Docker-ce 软件源，然后更新一下缓存</p>
+<pre><code class="line-numbers language-bash">curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository &quot;deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;
+sudo apt update -y</code></pre>
+<p>安装 Docker-ce</p>
+<pre><code class="line-numbers language-bash">sudo apt install docker-ce -y</code></pre>
+<p>设置开机自启动并启动 Docker-ce</p>
+<pre><code class="line-numbers language-bash">sudo systemctl enable docker
+sudo systemctl restart docker</code></pre>
+<p>测试运行</p>
+<pre><code class="line-numbers language-bash">sudo docker --help</code></pre>
+<p>添加当前用户到 docker 用户组，可以不用 sudo 运行 docker（可选）</p>
+<pre><code class="line-numbers language-bash">sudo groupadd docker
+sudo usermod -aG docker $USER
+docker pull hello-world        # 测试</code></pre>
+<h2 id="三、关于WSL中的使用"><a href="#三、关于WSL中的使用" class="headerlink" title="三、关于WSL中的使用"></a>三、关于WSL中的使用</h2><p>wsl中根据Linux发行版本进行安装后还需要执行以下步骤</p>
+<ol>
+<li><p>对socket文件进行赋权：<code>sudo chmod -R 777 /var/run/docker.sock</code>，解决无权限通信error问题</p>
+</li>
+<li><p>关于启动方法的实际测试</p>
+<ul>
+<li><code>systemctl start docker.service</code>，无效</li>
+<li><code>sudo service docker start</code>，有效</li>
+</ul>
+</li>
+</ol>
+<h2 id="Docker仓库的换源问题"><a href="#Docker仓库的换源问题" class="headerlink" title="Docker仓库的换源问题"></a>Docker仓库的换源问题</h2><p><code>vi /etc/docker/daemon.json</code></p>
+<pre><code class="line-numbers language-bash">&#123;
+    &quot;registry-mirrors&quot;: [&quot;https://registry.docker-cn.com&quot;]
+&#125;</code></pre>
+<p><code>systemctl restart docker.service</code></p>
+<ul>
+<li><p>网易：<span class="exturl" data-url="aHR0cDovL2h1Yi1taXJyb3IuYy4xNjMuY29tLw==">http://hub-mirror.c.163.com<i class="fa fa-external-link-alt"></i></span></p>
+</li>
+<li><p>ustc：<span class="exturl" data-url="aHR0cHM6Ly9kb2NrZXIubWlycm9ycy51c3RjLmVkdS5jbi8=">https://docker.mirrors.ustc.edu.cn<i class="fa fa-external-link-alt"></i></span></p>
+</li>
+<li><p>中国科技大学：<span class="exturl" data-url="aHR0cHM6Ly9kb2NrZXIubWlycm9ycy51c3RjLmVkdS5jbi8=">https://docker.mirrors.ustc.edu.cn<i class="fa fa-external-link-alt"></i></span></p>
+</li>
+<li><p>阿里云获取地址：<span class="exturl" data-url="aHR0cHM6Ly9jci5jb25zb2xlLmFsaXl1bi5jb20vY24tYmVpamluZy9pbnN0YW5jZXMvbWlycm9ycw==">https://cr.console.aliyun.com/cn-beijing/instances/mirrors<i class="fa fa-external-link-alt"></i></span></p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Jupyter Notebook安装及配置优化</title>
+    <url>/2019/Python/Jupyter%20notebook/</url>
+    <content><![CDATA[<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200831152020.png"></p>
+<a id="more"></a>
+
+<hr>
+<h3 id="1-安装jupyter-notebook"><a href="#1-安装jupyter-notebook" class="headerlink" title="1. 安装jupyter notebook"></a>1. 安装jupyter notebook</h3><pre><code class="line-numbers language-bash">pip install jupyter notebook        # 安装
+
+jupyter notebook        # 本地启用，浏览器访问localhost:8888即可访问</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200430152348.png"></p>
+<h3 id="2-远程使用"><a href="#2-远程使用" class="headerlink" title="2. 远程使用"></a>2. 远程使用</h3><p>注意：网络服务器应该在<strong>安全组</strong>打开jupyter notebook服务的端口（默认8888）才能进行远程访问！</p>
+<h4 id="2-1-带参数运行"><a href="#2-1-带参数运行" class="headerlink" title="2.1 带参数运行"></a>2.1 带参数运行</h4><p>添加命令行参数方式会比较麻烦，治标不治本，建议配置config</p>
+<pre><code class="line-numbers language-bash">jupyter notebook --ip=&#39;0.0.0.0&#39; --allow-root</code></pre>
+<h4 id="2-2-写入配置文件"><a href="#2-2-写入配置文件" class="headerlink" title="2.2 写入配置文件"></a>2.2 写入配置文件</h4><p>使用命令<code>jupyter notebook --generate-config</code>生成配置文件，编辑配置文件</p>
+<pre><code class="line-numbers language-bash">vim ~/.jupyter/jupyter_notebook_config.jso</code></pre>
+<pre><code class="line-numbers language-bash">c.NotebookApp.ip=&#39;*&#39;                            # 默认localhost仅支持本地访问，修改为0.0.0.0或者*允许所有IP进行访问
+c.NotebookApp.open_browser = False                # 启动自动打开浏览器，默认true
+c.NotebookApp.port = 8888                        # 服务端口，默认8888，被占用可以自行调整
+c.NotebookApp.notebook_dir = &#39;/root/code&#39;        # 根目录，不存在需手动创建文件夹
+c.NotebookApp.allow_root = True                    # 允许以root用户运行</code></pre>
+<pre><code class="line-numbers language-bash">jupyter notebook        # 运行</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200430154113.png"></p>
+<h4 id="2-3-登陆密码"><a href="#2-3-登陆密码" class="headerlink" title="2.3 登陆密码"></a>2.3 登陆密码</h4><p>远程使用一般会有一个登陆token，查看方法：</p>
+<pre><code class="line-numbers language-bash">jupyter notebook list</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200828171037.png"></p>
+<h3 id="3-后台运行"><a href="#3-后台运行" class="headerlink" title="3. 后台运行"></a>3. 后台运行</h3><h4 id="3-1-使用后台运行"><a href="#3-1-使用后台运行" class="headerlink" title="3.1 使用后台运行"></a>3.1 使用后台运行</h4><p>直接运行jupyter notebook会导致两个问题：</p>
+<ul>
+<li>命令的log输出会阻塞占用一个terminal窗口</li>
+<li>关闭terminal进程自动结束</li>
+</ul>
+<p>我们可以用<code>nohup</code>和<code>&amp;</code>两个命令结合解决这个问题</p>
+<ul>
+<li>nohup：将命令输出转入后台，默认保存到<code>./nohup.out</code></li>
+<li>&amp;：后台运行命令，不受ctrl+C/Z的控制，但会前台显示输出，影响terminal的使用</li>
+</ul>
+<pre><code>nohup jupyter notebook &amp; </code></pre>
+<p>这样jupyternotebook就会转到后台执行，logs会保存到<code>./nohup.out</code>，如果想保存到指定文件<code>./logs/jupyter.log</code></p>
+<pre><code class="line-numbers language-bash">mkdir ./logs
+nohup jupyter notebook 1&gt;./logs/jupyter.log 2&gt;&amp;1 &amp;</code></pre>
+<p>操作系统中有三个常用的流： 0：标准输入流 stdin 1：标准输出流 stdout 2：标准错误流 stderr</p>
+<p>对于上面的参数</p>
+<ul>
+<li><code>1&gt;file</code>：将标准输出流1重定向至文件file</li>
+<li><code>2&gt;1&amp;</code>：将标准错误2重定向至标准输出1</li>
+</ul>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200430151828.png"></p>
+<h4 id="3-2-结束进程"><a href="#3-2-结束进程" class="headerlink" title="3.2 结束进程"></a>3.2 结束进程</h4><pre><code class="line-numbers language-bash"># 查询任务PID
+jobs -l                            # 当前tty
+ps aux | grep jupyter             # 任意tty</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200430151901.png"></p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200430152103.png"></p>
+<pre><code class="line-numbers language-bash">kill -9 24891        # 结束任务</code></pre>
+<h3 id="4-jupyter扩展（extension）"><a href="#4-jupyter扩展（extension）" class="headerlink" title="4. jupyter扩展（extension）"></a>4. jupyter扩展（extension）</h3><h4 id="4-1-安装扩展"><a href="#4-1-安装扩展" class="headerlink" title="4.1 安装扩展"></a>4.1 安装扩展</h4><pre><code class="line-numbers language-bash">pip install jupyter_contrib_nbextensions                # 安装nbextensions
+jupyter contrib nbextension install --user                # 安装 javascript and css files
+pip install jupyter_nbextensions_configurator            # 安装configurator</code></pre>
+<p>网络超时可以选择另一种安装方式</p>
+<pre><code class="line-numbers language-bash">pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master
+jupyter contrib nbextension install --user 
+pip install jupyter_nbextensions_configurator</code></pre>
+<h4 id="4-2-好用的插件"><a href="#4-2-好用的插件" class="headerlink" title="4.2 好用的插件"></a>4.2 好用的插件</h4><ul>
+<li>Collapsible Headings        可折叠标题</li>
+<li>Code folding         代码折叠</li>
+<li>Notify       任务完成通知</li>
+<li>zenmode        禅模式</li>
+<li>Table of Contents       添加目录</li>
+<li>Hinterland         补全提示</li>
+</ul>
+<h3 id="5-排错"><a href="#5-排错" class="headerlink" title="5. 排错"></a>5. 排错</h3><h4 id="jupyter-notebook标题栏不显示extension"><a href="#jupyter-notebook标题栏不显示extension" class="headerlink" title="jupyter notebook标题栏不显示extension"></a>jupyter notebook标题栏不显示extension</h4><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200430163959.png"></p>
+<p>没有执行安装的第二步（安装 javascript and css files），执行一次就好了。。</p>
+<h4 id="扩展是灰色的不可开启状态"><a href="#扩展是灰色的不可开启状态" class="headerlink" title="扩展是灰色的不可开启状态"></a>扩展是灰色的不可开启状态</h4><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200430164100.png"></p>
+<p>去掉disable的勾选</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux配置NodeJs环境方法</title>
+    <url>/2019/Docker/ubuntu%E5%AE%89%E8%A3%85Nodejs%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<p>Ubuntu配置NodeJs环境的方法，手动安装理论适合所有发行版本</p>
+<ul>
+<li>自动安装</li>
+<li>手动安装</li>
+</ul>
+<a id="more"></a>
+
+<hr>
+<h3 id="源安装方法"><a href="#源安装方法" class="headerlink" title="源安装方法"></a>源安装方法</h3><p>安装nodejs 12</p>
+<pre><code class="line-numbers language-bash">curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -            # 安装nodejs官方源，12为nodejs的版本号，自由选择
+sudo apt install nodejs -y
+sudo apt install npm -y</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200904223857.png"></p>
+<p>安装yarn包管理器（manager）</p>
+<pre><code class="line-numbers language-bash">curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo &quot;deb https://dl.yarnpkg.com/debian/ stable main&quot; | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update &amp;&amp; sudo apt-get install yarn</code></pre>
+<h3 id="手动安装"><a href="#手动安装" class="headerlink" title="手动安装"></a>手动安装</h3><p>下载解压</p>
+<pre><code class="line-numbers language-bash">wget https://nodejs.org/dist/v12.18.3/node-v12.18.3-linux-x64.tar.xz
+tar xvf node-v12.18.3-linux-x64.tar.xz
+mv node-v12.18.3-linux-x64 node 
+sudo mkdir /opt/env &amp;&amp; sudo mv node /opt/env
+sudo chmod 777 -R /opt/env/node</code></pre>
+<p>测试</p>
+<pre><code class="line-numbers language-bash">/opt/env/node/bin/node --version
+/opt/env/node/bin/npm --version</code></pre>
+<p>添加环境变量</p>
+<pre><code class="line-numbers language-shell">sudo vim /etc/profile.d/node.sh
+# add
+export PATH=$PATH:/opt/env/node/bin</code></pre>
+<p>测试</p>
+<pre><code class="line-numbers language-bash">node -v
+npm -v</code></pre>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker部署httpbin网络测试服务</title>
+    <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2httpbin%E5%8F%8A%E5%B8%B8%E7%94%A8API/</url>
+    <content><![CDATA[<p>httpbin是大神kennethreitz为搭建测试用的http服务而写的一个开源项目，httpbin 这个服务应用能测试HTTP请求及响应的各种信息，比如 cookie、ip、headers 和登录验证等，且支持 GET、POST 等多种方法，对 web 开发和测试具有很大的帮助。</p>
+<a id="more"></a>
+
+<h4 id="Docker部署"><a href="#Docker部署" class="headerlink" title="Docker部署"></a>Docker部署</h4><p>假设你服务器的公网IP为1.2.3.4，那么部署成功后httpbin服务应该开放在1.2.3.4:81上</p>
+<pre><code class="line-numbers language-bash">docker pull kennethreitz/httpbin
+docker run -d -p 81:80 --restart=always kennethreitz/httpbin </code></pre>
+<h4 id="API使用方法"><a href="#API使用方法" class="headerlink" title="API使用方法"></a>API使用方法</h4><p>查询本地IP</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200721222836.png"></p>
+<h4 id="Python使用案例"><a href="#Python使用案例" class="headerlink" title="Python使用案例"></a>Python使用案例</h4><p>比如说测试一个代理的有效性，可以使用</p>
+<pre><code class="line-numbers language-python">import requests
+
+# 待测试代理
+proxy = &#39;http://10.11.12.13:8888&#39;
+
+log = None
+
+try:
+    log = requests.get(&#39;http://aliyun:81/ip&#39;, proxies=&#123;&#39;http&#39;: proxy&#125;, timeout=5).text
+except:
+    log = &quot;无效代理&quot;
+
+print(log)      # 无效代理</code></pre>
+<h4 id="常用接口"><a href="#常用接口" class="headerlink" title="常用接口"></a>常用接口</h4><p>假设服务器IP已在本地映射为aliyun</p>
+<p>/ This page.<br> /ip Returns Origin IP.<br> /user-agent Returns user-agent.<br> /headers Returns header dict.<br> /get Returns GET data.<br> /post Returns POST data.<br> /patch Returns PATCH data.<br> /put Returns PUT data.<br> /delete Returns DELETE data<br> /anything Returns request data, including method used.<br> /anything/:anything Returns request data, including the URL.<br> /encoding/utf8 Returns page containing UTF-8 data.<br> /gzip Returns gzip-encoded data.<br> /deflate Returns deflate-encoded data.<br> /brotli Returns brotli-encoded data.<br> /status/:code Returns given HTTP Status code.<br> /response-headers?key=val Returns given response headers.<br> /redirect/:n 302 Redirects n times.<br> /redirect-to?url=foo 302 Redirects to the foo URL.<br> /redirect-to?url=foo&amp;status_code=307 307 Redirects to the foo URL.<br> /relative-redirect/:n 302 Relative redirects n times.<br> /absolute-redirect/:n 302 Absolute redirects n times.<br> /cookies Returns cookie data.<br> /cookies/set?name=value Sets one or more simple cookies.<br> /cookies/delete?name Deletes one or more simple cookies.<br> /basic-auth/:user/:passwd Challenges HTTPBasic Auth.<br> /hidden-basic-auth/:user/:passwd 404’d BasicAuth.<br> /digest-auth/:qop/:user/:passwd/:algorithm Challenges HTTP Digest Auth.<br> /digest-auth/:qop/:user/:passwd Challenges HTTP Digest Auth.<br> /stream/:n Streams min(n, 100) lines.<br> /delay/:n Delays responding for min(n, 10) seconds.<br> /drip?numbytes=n&amp;duration=s&amp;delay=s&amp;code=code Drips data  over a duration after an optional initial delay, then (optionally)  returns with the given status code.<br> /range/1024?duration=s&amp;chunk_size=code Streams n bytes, and allows  specifying a Range header to select a subset of the data. Accepts a  chunk_size and request duration parameter.<br> /html Renders an HTML Page.<br> /robots.txt Returns some robots.txt rules.<br> /deny Denied by robots.txt file.<br> /cache Returns 200 unless an If-Modified-Since or If-None-Match header is provided, when it returns a 304.<br> /etag/:etag Assumes the resource has the given etag and responds to  If-None-Match header with a 200 or 304 and If-Match with a 200 or 412 as appropriate.<br> /cache/:n Sets a Cache-Control header for n seconds.<br> /bytes/:n Generates n random bytes of binary data, accepts optional seed integer parameter.<br> /stream-bytes/:n Streams n random bytes of binary data in chunked  encoding, accepts optional seed and chunk_size integer parameters.<br> /links/:n Returns page containing n HTML links.<br> /image Returns page containing an image based on sent Accept header.<br> /image/png Returns a PNG image.<br> /image/jpeg Returns a JPEG image.<br> /image/webp Returns a WEBP image.<br> /image/svg Returns a SVG image.<br> /forms/post HTML form that submits to /post<br> /xml Returns some XML</p>
+<blockquote>
+<p>httpbin是大神kennethreitz为搭建测试用的http服务而写的一个开源项目，httpbin 这个服务应用能测试HTTP请求及响应的各种信息，比如 cookie、ip、headers 和登录验证等，且支持 GET、POST 等多种方法，对 web 开发和测试具有很大的帮助，它是用 Python + Flask 编写的.</p>
+<p>Kenneth Reitz: 著名的python首席架构师，requests、python-guide、pipenv、legit、autoenv等一系列大名鼎鼎的python类库及工具的创作者，大神级程序员，据说其身价高达5亿美元。</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python实现经典排序算法</title>
+    <url>/2018/%E7%AE%97%E6%B3%95/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<p>已经学习并实现：冒泡、选择、插入、快速、堆、归并</p>
+<p>待实现：希尔、计数、桶</p>
+<a id="more"></a>
+
+<hr>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200804150652.png"></p>
+<h2 id="1-冒泡排序"><a href="#1-冒泡排序" class="headerlink" title="1. 冒泡排序"></a>1. 冒泡排序</h2><p>冒泡排序是稳定的内部排序算法，时间复杂度为N（有序）~ n^2（反序），排序思想是</p>
+<ol>
+<li>比较相邻的元素。如果第一个比第二个大，就交换它们两个；</li>
+<li>对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对，这样在最后的元素应该会是最大的数；</li>
+<li>针对所有的元素重复以上的步骤，除了最后一个；</li>
+<li>重复步骤1~3，直到排序完成。</li>
+</ol>
+<pre><code class="line-numbers language-python">def bubble_sort(array):
+    &quot;&quot;&quot;
+    冒泡排序
+    &quot;&quot;&quot;
+    for i in range(0, len(array)):    # 控制选择无序区
+        for j in range(0, len(array) - i - 1):    # 无序区元素比较
+            if array[j] &gt; array[j + 1]:    # 浮现元素到有序区一侧，--&gt;
+                array[j + 1], array[j] = array[j], array[j + 1]
+    return array</code></pre>
+<h2 id="2-选择排序"><a href="#2-选择排序" class="headerlink" title="2. 选择排序"></a>2. 选择排序</h2><p>n个记录的直接选择排序可经过n-1趟直接选择排序得到有序结果。算法思想为：</p>
+<ul>
+<li>初始状态：无序区为R[1..n]，有序区为空；</li>
+<li>第i趟排序(i=1,2,3…n-1)开始时，当前有序区和无序区分别为R[1..i-1]和R(i..n）。该趟排序从当前无序区中-选出关键字最小的记录 R[k]，将它与无序区的第1个记录R交换，使R[1..i]和R[i+1..n)分别变为记录个数增加1个的新有序区和记录个数减少1个的新无序区；</li>
+<li>n-1趟结束，数组有序化了。</li>
+</ul>
+<pre><code class="line-numbers language-python">def selection_sort(array):
+    &quot;&quot;&quot;
+    选择排序
+    &quot;&quot;&quot;
+    for i in range(len(array)-1):
+        flag = i
+        for j in range(i+1, len(array)):
+            if array[j] &lt; array[flag]:
+                flag = j
+        array[i], array[flag] = array[flag], array[i]
+    return array</code></pre>
+<h2 id="3-插入排序"><a href="#3-插入排序" class="headerlink" title="3. 插入排序"></a>3. 插入排序</h2><p>工作原理是通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。</p>
+<ul>
+<li>从第一个元素开始，该元素可以认为已经被排序；</li>
+<li>取出下一个元素，在已经排序的元素序列中从后向前扫描；</li>
+<li>如果该元素（已排序）大于新元素，将该元素移到下一位置；</li>
+<li>重复步骤3，直到找到已排序的元素小于或者等于新元素的位置；</li>
+<li>将新元素插入到该位置后；</li>
+<li>重复步骤2~5。</li>
+</ul>
+<pre><code class="line-numbers language-python">def insert_sort(array):
+    &quot;&quot;&quot;
+    插入排序
+    &quot;&quot;&quot;
+    for i in range(1, len(array)):
+        pointer, cur = i - 1, array[i]
+        while pointer &gt;= 0 and array[pointer] &gt; cur:
+            array[pointer+1] = array[pointer]
+            pointer -= 1
+        array[pointer+1] = cur
+    return array</code></pre>
+<h2 id="4-堆排序"><a href="#4-堆排序" class="headerlink" title="4. 堆排序"></a>4. 堆排序</h2><p>堆排序（Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆积是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。</p>
+<ul>
+<li>将初始待排序关键字序列(R1,R2….Rn)构建成大顶堆，此堆为初始的无序区；</li>
+<li>将堆顶元素R[1]与最后一个元素R[n]交换，此时得到新的无序区(R1,R2,……Rn-1)和新的有序区(Rn),且满足R[1,2…n-1]&lt;=R[n]；</li>
+<li>由于交换后新的堆顶R[1]可能违反堆的性质，因此需要对当前无序区(R1,R2,……Rn-1)调整为新堆，然后再次将R[1]与无序区最后一个元素交换，得到新的无序区(R1,R2….Rn-2)和新的有序区(Rn-1,Rn)。不断重复此过程直到有序区的元素个数为n-1，则整个排序过程完成。</li>
+</ul>
+<pre><code class="line-numbers language-python">def heapify(array, length, i):
+    &quot;&quot;&quot;堆化&quot;&quot;&quot;
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    if left &lt; length and array[largest] &lt; array[left]:
+        largest = left
+    if right &lt; length and array[largest] &lt; array[right]:
+        largest = right
+    if largest != i:
+        array[i], array[largest] = array[largest], array[i]
+        heapify(array, length, largest)
+
+def heap_sort(array):
+    &quot;&quot;&quot;堆排序&quot;&quot;&quot;
+    length = len(array)
+    for i in range(length, -1, -1):
+        heapify(array, length, i)
+    for i in range(length-1, 0, -1):
+        array[i], array[0] = array[0], array[i]
+        heapify(array, i, 0)
+    return array</code></pre>
+<h2 id="5-归并排序"><a href="#5-归并排序" class="headerlink" title="5. 归并排序"></a>5. 归并排序</h2><p>归并排序是建立在归并操作上的一种有效的排序算法。该算法是采用分治法（Divide and  Conquer）的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为2-路归并。 </p>
+<p>Python风格的实现方式</p>
+<pre><code class="line-numbers language-python">def merge_sort(array):
+    &quot;&quot;&quot;
+    归并排序
+    &quot;&quot;&quot;
+    if len(array) &lt; 2:
+        return array
+    flag = array.pop()
+    left = [i for i in array if i &lt;= flag]
+    right = [i for i in array if i &gt; flag]
+    # print(left, flag, right)
+    return merge_sort(left) + [flag] + merge_sort(right)</code></pre>
+<p>测试</p>
+<pre><code class="line-numbers language-python">if __name__ == &#39;__main__&#39;:
+    import random
+    array = random.sample(range(99), 10)
+    print(array)
+    print(merge_sort(array.copy()))
+
+# [83, 3, 28, 33, 5, 7, 24, 8, 11, 51]
+# [3, 28, 33, 5, 7, 24, 8, 11] 51 [83]
+# [3, 5, 7, 8] 11 [28, 33, 24]
+# [3, 5, 7] 8 []
+# [3, 5] 7 []
+# [3] 5 []
+# [] 24 [28, 33]
+# [28] 33 []
+# [3, 5, 7, 8, 11, 24, 28, 33, 51, 83]</code></pre>
+<h2 id="6-快速排序"><a href="#6-快速排序" class="headerlink" title="6. 快速排序"></a>6. 快速排序</h2><p>快速排序的基本思想：通过一趟排序将待排记录分隔成独立的两部分，其中一部分记录的关键字均比另一部分的关键字小，则可分别对这两部分记录继续进行排序，以达到整个序列有序。</p>
+<p>快速排序使用分治法来把一个串（list）分为两个子串（sub-lists）。具体算法描述如下：</p>
+<ul>
+<li>从数列中挑出一个元素，称为 “基准”（pivot）；</li>
+<li>重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面（相同的数可以到任一边）。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区（partition）操作；</li>
+<li>递归地（recursive）把小于基准值元素的子数列和大于基准值元素的子数列排序。</li>
+</ul>
+<pre><code class="line-numbers language-python">def quick_sort(array, left, right):
+    if left &gt;= right:
+        return array
+    pivot, i, j = array[left], left, right
+    while i &lt; j:
+        while i &lt; j and array[j] &gt;= pivot:
+            j -= 1
+        array[i] = array[j]
+        while i &lt; j and array[i] &lt;= pivot:
+            i += 1
+        array[j] = array[i]
+    array[j] = pivot
+    quick_sort(array, left, i-1)
+    quick_sort(array, i+1, right)
+    return array</code></pre>
+<h2 id="7-希尔排序"><a href="#7-希尔排序" class="headerlink" title="7. 希尔排序"></a>7. 希尔排序</h2><p>···</p>
+<h2 id="8-计数排序"><a href="#8-计数排序" class="headerlink" title="8. 计数排序"></a>8. 计数排序</h2><p>···</p>
+<h2 id="9-桶排序"><a href="#9-桶排序" class="headerlink" title="9. 桶排序"></a>9. 桶排序</h2><p>···</p>
+]]></content>
+      <tags>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>汉诺塔问题</title>
+    <url>/2018/%E7%AE%97%E6%B3%95/%E6%B1%89%E8%AF%BA%E5%A1%94%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>11</p>
+<a id="more"></a>
+
+<h3 id="1-起源"><a href="#1-起源" class="headerlink" title="1. 起源"></a>1. 起源</h3><p>汉诺塔（又称河内塔）问题是源于印度一个古老传说的益智玩具。大梵天创造世界的时候做了三根<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTklODclOTElRTUlODglOUElRTclOUYlQjMvODA2OTg=">金刚石<i class="fa fa-external-link-alt"></i></span>柱子，在一根柱子上从下往上按照大小顺序摞着64片黄金圆盘。大梵天命令婆罗门把圆盘从下面开始按大小顺序重新摆放在另一根柱子上。并且规定，在小圆盘上不能放大圆盘，在三根柱子之间一次只能移动一个圆盘。</p>
+<h3 id="2-数学归纳"><a href="#2-数学归纳" class="headerlink" title="2. 数学归纳"></a>2. 数学归纳</h3><p>有三根相邻的柱子，标号为A,B,C，A柱子上从下到上按金字塔状叠放着n个不同大小的圆盘，要把所有盘子移动到C上，并且每次移动同一根柱子上都不能出现大盘子在小盘子上方，请问至少需要多少次移动，设移动次数为H(n）。</p>
+<h4 id="1-1-移动"><a href="#1-1-移动" class="headerlink" title="1.1 移动"></a>1.1 移动</h4><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200412095910.jpg" style="zoom:80%;" />
+
+<ul>
+<li><p>1个盘子</p>
+<p><strong>盘1，A –&gt; C</strong></p>
+</li>
+<li><p>2个盘子</p>
+<p>盘1，A –&gt; B</p>
+<p><strong>盘2，A –&gt; C</strong></p>
+<p>盘1，B –&gt; C</p>
+</li>
+<li><p>···</p>
+</li>
+</ul>
+<h4 id="2-2-归纳"><a href="#2-2-归纳" class="headerlink" title="2.2 归纳"></a>2.2 归纳</h4><p>运用归纳法进行归纳，可以将盘子的移动过程归纳为三次移动：</p>
+<ol>
+<li>将n-1个盘子从A借助C移动到B上</li>
+<li>将n号盘移动到C上</li>
+<li>将n-1个盘子从B借助A移动到C上</li>
+</ol>
+<p>也就是说总的移动次数H(n)：<br>$$<br>H(n) = H(n-1) + 1 + H(n-1)</p>
+<p>H(n) = 2^n - 1<br>$$<br>由此可见这个问题就是一个递归求解的过程</p>
+<h3 id="3-什么是递归"><a href="#3-什么是递归" class="headerlink" title="3. 什么是递归"></a>3. 什么是递归</h3><p>递归，即自己调用自己，能用递归处理的问题具有两个必要条件</p>
+<ol>
+<li><p>将较大规模问题能够转化为较小规模的问题。</p>
+</li>
+<li><p>存在递归的终止条件。</p>
+</li>
+</ol>
+<h3 id="4-Python实现"><a href="#4-Python实现" class="headerlink" title="4. Python实现"></a>4. Python实现</h3><p>逻辑</p>
+<pre><code class="line-numbers language-python">def move(x, a, b, c):
+    if x == 1:
+        print(&quot;&#123;&#125; --&gt; &#123;&#125;&quot;.format(a, c))
+    else:
+        move(x - 1, a, c, b)
+        print(&quot;&#123;&#125; --&gt; &#123;&#125;&quot;.format(a, c))
+        move(x - 1, b, a, c)
+
+move(3, &quot;A&quot;, &quot;B&quot; , &quot;C&quot;)
+
+# A --&gt; C
+# A --&gt; B
+# C --&gt; B
+# A --&gt; C
+# B --&gt; A
+# B --&gt; C
+# A --&gt; C</code></pre>
+<p>完善版本</p>
+<pre><code class="line-numbers language-python">class TowerOfHanoi:
+
+    def __init__(self):
+        self.time = 0
+
+    def move(self, n, a, b):
+        # 移动函数
+        self.time += 1
+        print(&quot;第&#123;&#125;次移动：将 &#123;&#125; 号碟从 &#123;&#125; 移动到 &#123;&#125;&quot;.format(self.time, n, a, b))
+    def hanoi(self, n, a, b, c):
+        # 主体逻辑函数
+        if n == 1:
+            self.move(1, a, c)
+        else:
+            self.hanoi(n-1, a, c, b)
+            self.move(n, a, c)
+            self.hanoi(n-1, b, a, c)
+
+t = TowerOfHanoi()
+t.hanoi(3, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;)
+
+# 第1次移动：将 1 号碟从 A 移动到 C
+# 第2次移动：将 2 号碟从 A 移动到 B
+# 第3次移动：将 1 号碟从 C 移动到 B
+# 第4次移动：将 3 号碟从 A 移动到 C
+# 第5次移动：将 1 号碟从 B 移动到 A
+# 第6次移动：将 2 号碟从 B 移动到 C
+# 第7次移动：将 1 号碟从 A 移动到 C
+</code></pre>
+]]></content>
+      <tags>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+</search>

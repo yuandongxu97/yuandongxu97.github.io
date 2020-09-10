@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":15,"onmobile":true},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+<link rel="stylesheet" href="/js/prism/prism.css">
+
+  <meta name="description" content="Emmet是一款提升编写 HTML&#x2F;CSS 代码效率的文本编辑器插件。 本文主要学习记录一下emmet的详细用法（仅html使用emmet，css缩写的语法请参考这里）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web前端代码自动补全插件Emmet">
+<meta property="og:url" content="http://yoursite.com/2020/%E9%9A%8F%E7%AC%94/Emmet%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A1%A5%E5%85%A8%E7%A5%9E%E5%99%A8/index.html">
+<meta property="og:site_name" content="苑东旭的博客">
+<meta property="og:description" content="Emmet是一款提升编写 HTML&#x2F;CSS 代码效率的文本编辑器插件。 本文主要学习记录一下emmet的详细用法（仅html使用emmet，css缩写的语法请参考这里）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/648483/201706/648483-20170605122055715-1250857112.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/648483/201706/648483-20170605122015012-1752202759.gif">
+<meta property="article:published_time" content="2020-01-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-09-02T07:48:38.578Z">
+<meta property="article:author" content="yuandongxu">
+<meta property="article:tag" content="软件">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images2015.cnblogs.com/blog/648483/201706/648483-20170605122055715-1250857112.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/%E9%9A%8F%E7%AC%94/Emmet%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A1%A5%E5%85%A8%E7%A5%9E%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Web前端代码自动补全插件Emmet | 苑东旭的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">苑东旭的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">笔记·归纳·总结</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-工具">
+
+    <a href="/tools" rel="section"><i class="fa fa-th fa-fw"></i>工具</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/%E9%9A%8F%E7%AC%94/Emmet%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E8%A1%A5%E5%85%A8%E7%A5%9E%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/asset/av.jpg">
+      <meta itemprop="name" content="yuandongxu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="苑东旭的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Web前端代码自动补全插件Emmet
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-08 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-08T00:00:00+08:00">2020-01-08</time>
+            </span>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.1k</span>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-tag"></i>
+              </span>
+              <span class="post-meta-item-text">标签：</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/tags/%E8%BD%AF%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">软件</span></a>
+                </span>
+            </span>
+
+
+
+
+
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Emmet是一款提升编写 HTML/CSS 代码效率的文本编辑器插件。</p>
+<p>本文主要学习记录一下emmet的详细用法（仅html使用emmet，css缩写的语法请参考这里）</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-Emmet简述"><a href="#1-Emmet简述" class="headerlink" title="1. Emmet简述"></a>1. Emmet简述</h2><p>Emmet (前身为 Zen Coding) 是一个能大幅度提高前端开发效率的一个工具. 在前端开发的过程中，一大部分的工作是写  HTML、CSS 代码。特别是手动编写 HTML 代码的时候，效率会特别低下，因为需要敲打很多尖括号，而且很多标签都需要闭合标签等。于是，就有了 Emmet，它可以极大的提高代码编写的效率，它提供了一种非常简练的语法规则，然后立刻生成对应的 HTML 结构或者 CSS  代码，同时还有多种实用的功能帮助进行前端开发，emmet语法基本规则如下:</p>
+<pre><code>E 代表HTML标签。
+E#id 代表id属性。
+E.class 代表class属性。
+E[attr=foo] 代表某一个特定属性。
+E&#123;foo&#125; 代表标签包含的内容是foo。
+E&gt;N 代表N是E的子元素。
+E+N 代表N是E的同级元素。
+E^N 代表N是E的上级元素。</code></pre>
+<blockquote>
+<ol>
+<li>pycharm内置集成了emmet，使用方法为：输入完成后<kbd>return</kbd>会自动展开，如果输入完成后输入了<kbd>esc</kbd>的话，使用<kbd>tab</kbd>唤醒emmet</li>
+<li>VsCode同样内置了emmet，使用方法与pycharm大同小异，但要注意：在VsCode新版本中按Tab不再默认启用Emmet展开缩写，需要在首选项配置中将emmet.triggerExpansionOnTab设置为true值!</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="2-基础用法"><a href="#2-基础用法" class="headerlink" title="2. 基础用法"></a>2. 基础用法</h2><p><strong>元素(Elements)</strong><br> 您可以使用元素的名称，如div或p来生成HTML标签。Emmet没有一组可用的标签名称，可以写任何单词并将其转换为标签。也就是只要知道元素的缩写,Emmet会自动转换成对应标签.<br> 形如:</p>
+<pre><code>div =&gt; &lt;div&gt; &lt;/div&gt;
+foo =&gt; &lt;foo&gt; &lt;/foo&gt;
+html:5 =&gt; 将生成html5标准的包含body为空基本dom
+html:xt =&gt; 生成XHTML过渡文档类型,DOCTYPE为XHTML
+html:4s =&gt; 生成HTML4严格文档类型,DOCTYPE为HTML 4.01
+a:mail          =&gt; &lt;a href=&quot;mailto:&quot;&gt;&lt;/a&gt;
+a:link          =&gt; &lt;a href=&quot;http://&quot;&gt;&lt;/a&gt;
+base            =&gt; &lt;base href=&quot;&quot;&gt;
+br              =&gt; &lt;br&gt;
+link            =&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;&quot;&gt;
+script:src      =&gt; &lt;script src=&quot;&quot;&gt;&lt;/script&gt;
+form:get        =&gt; &lt;form action=&quot;&quot; method=&quot;get&quot;&gt;&lt;/form&gt;
+label           =&gt; &lt;label for=&quot;&quot;&gt;&lt;/label&gt;
+input           =&gt; &lt;input type=&quot;text&quot;&gt;
+inp             =&gt; &lt;input type=&quot;text&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:hidden    =&gt; &lt;input type=&quot;hidden&quot; name=&quot;&quot;&gt; input:h亦可
+input:email     =&gt; &lt;input type=&quot;email&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:password  =&gt; &lt;input type=&quot;password&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:checkbox  =&gt; &lt;input type=&quot;checkbox&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+input:radio     =&gt; &lt;input type=&quot;radio&quot; name=&quot;&quot; id=&quot;&quot;&gt;
+select          =&gt; &lt;select name=&quot;&quot; id=&quot;&quot;&gt;&lt;/select&gt;
+option          =&gt; &lt;option value=&quot;&quot;&gt;&lt;/option&gt;
+bq              =&gt; &lt;blockquote&gt;&lt;/blockquote&gt;
+btn             =&gt; &lt;button&gt;&lt;/button&gt;
+btn:s           =&gt; &lt;button type=&quot;submit&quot;&gt;&lt;/button&gt;
+btn:r           =&gt; &lt;button type=&quot;reset&quot;&gt;&lt;/button&gt;</code></pre>
+<p><strong>文本操作符(Text)</strong><br> 如果想在生成元素的同时添加文本内容可以使用{}</p>
+<pre><code>div&#123;这是一段文本&#125;
+&lt;div&gt;这是一段文本&lt;/div&gt;
+a&#123;点我点我&#125;
+&lt;a href=&quot;&quot;&gt;点我点我&lt;/a&gt;  </code></pre>
+<p><strong>属性操作符(Attribute operators)</strong><br> 属性运算符用于修改输出元素的属性.</p>
+<ul>
+<li>Id和Class   (elem#id and elem.class )</li>
+</ul>
+<pre><code>div.test  =&gt; &lt;div class=&quot;test&quot;&gt;&lt;/div&gt;
+div#pageId =&gt; &lt;div id=&quot;pageId&quot;&gt;&lt;/div&gt;</code></pre>
+<p>隐式标签则会自动联想生成对应元素,根据配置规则不同生成的结果也是不同的.</p>
+<pre><code>.class
+=&gt;
+&lt;div class&gt;&lt;/div&gt;
+em&gt;.class
+=&gt;
+&lt;em&gt;&lt;span class&gt;&lt;/span&gt;&lt;/em&gt;
+table&gt;.row&gt;.col
+=&gt;
+&lt;table&gt;
+    &lt;tr class=&quot;row&quot;&gt;
+        &lt;td class=&quot;col&quot;&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+<p>绑定多个类名用.符号连续起来即可</p>
+<pre><code>div.test1.test2.test3
+=&gt;
+&lt;div class=&quot;test1 test2 test3&quot;&gt;&lt;/div&gt;</code></pre>
+<ul>
+<li>自定义属性使用 [attr1=’’ attr2=’’]</li>
+</ul>
+<pre><code>a[href=&#39;#&#39; data-title=&#39;customer&#39; target=&#39;_blank&#39;]
+=&gt;
+&lt;a href=&quot;#&quot; data-title=&quot;customer&quot; target=&quot;_blank&quot;&gt;&lt;/a&gt;</code></pre>
+<p><strong>嵌套操作符(Nesting operators)</strong><br> 嵌套操作符用于将缩写元素放置在生成的树中,是否应放置在上下文元素的内部或附近.</p>
+<ul>
+<li><p>子级:&gt;</p>
+<p>通过&gt;标识元素可以生成嵌套子级元素,可以配合元素属性进行连写</p>
+<pre><code>div#pageId&gt;ul&gt;li 
+=&gt; 
+&lt;div id=&quot;pageId&quot;&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+</li>
+<li><p>同级:+</p>
+<p>+字符表示生成兄弟级元素.</p>
+<pre><code>div#pageId+div.child
+=&gt;
+&lt;div id=&quot;pageId&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;child&quot;&gt;&lt;/div&gt;</code></pre>
+</li>
+<li><p>父级:^</p>
+<p>用于生成父级元素的同级元素,从这个</p>
+<p>字符所在位置开始,查找左侧最近的元素的父级元素并生成其兄弟级元素.</p>
+<pre><code>div&gt;p.parent&gt;span.child^ul.brother&gt;li
+=&gt;
+&lt;div&gt;
+    &lt;p class=&quot;parent&quot;&gt;&lt;span class=&quot;child&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;ul class=&quot;brother&quot;&gt;
+        &lt;li&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+</li>
+</ul>
+<p><strong>分组操作符(Grouping)</strong><br> 分组使用()来实现缩写的分离.比如这个例子,如果不加括号那么a将作为span的子级元素生成.加上括号a将于()内的元素同级.</p>
+<pre><code>div&gt;(ul&gt;li+span)&gt;a
+=&gt;
+&lt;div&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;/li&gt;
+        &lt;span&gt;&lt;/span&gt;
+    &lt;/ul&gt;
+    &lt;a href=&quot;&quot;&gt;&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+<p><strong>乘法(Multiplication)</strong><br> 使用<em>N即可自动生成重复项.N是一个正整数.在使用时请注意</em>N所在位置,位置不同生成的结果不同.</p>
+<pre><code>ul&gt;li*3
+=&gt;
+&lt;ul&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+<p><strong>自动计数(numbering)</strong><br> 这个功能挺方便的对于生成重复项时增加一个序号,只需要加上$符号即可.</p>
+<pre><code>ul&gt;li.item$&#123;item number:$&#125;*3
+&lt;ul&gt;
+    &lt;li class=&quot;item1&quot;&gt;item number:1&lt;/li&gt;
+    &lt;li class=&quot;item2&quot;&gt;item number:2&lt;/li&gt;
+    &lt;li class=&quot;item3&quot;&gt;item number:3&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+<p>如果生成两位数则使用两个连续的$$,更多位数以此类推…<br> 使用@修饰符，可以更改编号方向（升序或降序）和基数（例如起始值）.注意这个操作符在$之后添加<br> @-表示降序,@+表示升序,默认使用升序.<br> @N可以改变起始值.需要注意的是如果配合升降序使用的话N是放到+-符后.</p>
+<pre><code>ul&gt;li.item$@-*3
+=&gt;
+&lt;ul&gt;
+    &lt;li class=&quot;item3&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item2&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item1&quot;&gt;&lt;/li&gt;
+&lt;/ul&gt;
+---------------------------
+ul&gt;li.item$@-10*3
+=&gt;
+&lt;ul&gt;
+    &lt;li class=&quot;item12&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item11&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;item10&quot;&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+<p>上述的操作是可以搭配使用进而得出酷炫的效果,使用时请注意空格的问题,缩写代码不要有空格否则是不会进行转换的.<br> 另外如果你的编辑器中已经有了一些html智能提示代码段,比如我的VsCode还装了HTML Snippets插件,这个与Emmet语法有部分冲突,使用Tab键时会优先使用插件的代码提示,建议禁用.<br> 组合起来看看效果:</p>
+<pre><code>table.table-row[role=&#39;table&#39;]&gt;(thead&gt;tr&gt;td&#123;item $@120&#125;*5)+(tbody&gt;tr&gt;(td.item$$@-)lorem10*5)</code></pre>
+<p>这段目的在于生成一个类名为table-row,且自定义了属性role的table标签,内部包含了thead与tbody,分别生成5个td.<br> thead中td的内容是item加上自增序号,自增序号基数从120开始.<br> tbody中td拥有一个名为item加降序自增符号类名,且每个td内容随机填充10个单词.</p>
+<pre><code>&lt;table class=&quot;table-row&quot; role=&quot;table&quot;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;td&gt;item 120&lt;/td&gt;
+            &lt;td&gt;item 121&lt;/td&gt;
+            &lt;td&gt;item 122&lt;/td&gt;
+            &lt;td&gt;item 123&lt;/td&gt;
+            &lt;td&gt;item 124&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item05&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit, assumenda.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item04&quot;&gt;Magnam possimus molestias ipsum animi rem placeat, ut obcaecati laudantium.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item03&quot;&gt;Consequuntur, labore ad optio cupiditate iusto dolores fugit quidem officiis.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item02&quot;&gt;Veniam, explicabo consequuntur blanditiis at dicta fuga ratione eos beatae.&lt;/td&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;td class=&quot;item01&quot;&gt;Fuga voluptatum illo quis ducimus ad eveniet non. Saepe, eveniet.&lt;/td&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+<p>再来个配合嵌套元素和计数的大栗子.</p>
+<pre><code>div.nav&gt;(nav#navbar&gt;(ul&gt;li&gt;(a[href=&quot;/xxx/product/$&quot; data-index=$]&gt;lorem4)*5))+div.btn[type=&#39;button&#39;]&gt;span&#123;--&#125;^^div#main</code></pre>
+<p>这个有点复杂,看下效果:</p>
+<pre><code>&lt;div class=&quot;nav&quot;&gt;
+    &lt;nav id=&quot;navbar&quot;&gt;
+        &lt;ul&gt;
+            &lt;li&gt;
+                &lt;a href=&quot;/xxx/product/1&quot; data-index=&quot;1&quot;&gt;Lorem ipsum dolor sit.&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/2&quot; data-index=&quot;2&quot;&gt;Dolor vel, quia quas.&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/3&quot; data-index=&quot;3&quot;&gt;Qui hic, corrupti eum!&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/4&quot; data-index=&quot;4&quot;&gt;Necessitatibus perspiciatis, corrupti. Praesentium!&lt;/a&gt;
+                &lt;a href=&quot;/xxx/product/5&quot; data-index=&quot;5&quot;&gt;Nostrum quos, voluptate. Velit!&lt;/a&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+    &lt;div class=&quot;btn&quot; type=&quot;button&quot;&gt;&lt;span&gt;--&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;main&quot;&gt;&lt;/div&gt;</code></pre>
+<h2 id="3-进阶高级用法"><a href="#3-进阶高级用法" class="headerlink" title="3. 进阶高级用法"></a>3. 进阶高级用法</h2><p><strong>模拟文本/随机文本</strong><br> 在开发时经常要填充一些文本内容占位,Emmet内置了Lorem Ipsum功能来实现.loremN或者lipsumN,N表示生成的单词数,正整数.可以不填.</p>
+<pre><code>lorem
+=&gt; Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit quia commodi vero sint omnis fugiat excepturi reiciendis necessitatibus totam asperiores, delectus saepe nulla consequuntur nostrum! Saepe suscipit recusandae repellendus assumenda.
+
+p&gt;lorem4
+=&gt;
+&lt;p&gt;Lorem ipsum dolor sit.&lt;/p&gt;
+
+(p&gt;lorem4)*3
+=&gt;
+&lt;p&gt;Lorem ipsum dolor sit.&lt;/p&gt;
+&lt;p&gt;Labore aperiam, consequuntur architecto.&lt;/p&gt;
+&lt;p&gt;Quidem nisi, cum odio!&lt;/p&gt;</code></pre>
+<p><strong>包装文本</strong><br> 听起来可能有点绕,通俗点解释就是把一段指定的文本包装成我们想要的结构.注意这个功能需要编辑器的支持,举个大栗子:<br> 比如PM给了这样一段文本</p>
+<pre><code>首页
+产品介绍
+相关案例
+关于我们
+联系我们
+而我们预期的效果是这样
+&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li&gt;首页&lt;/li&gt;
+        &lt;li&gt;产品介绍&lt;/li&gt;
+        &lt;li&gt;相关案例&lt;/li&gt;
+        &lt;li&gt;关于我们&lt;/li&gt;
+        &lt;li&gt;联系我们&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+<ol>
+<li>选中文本,按下<code>ctrl+shift+p</code>打开命令窗口输入ewrap</li>
+<li>选择<code>Emmet:使用缩写进行包装(Wrap with Abbreviation)</code>选项<br> <img src="https://images2015.cnblogs.com/blog/648483/201706/648483-20170605122055715-1250857112.png" alt="img"></li>
+<li>输入缩写字符<code>nav&gt;ul&gt;li*</code>按下回车键即可看到效果.<br> 当然也可以在菜单=&gt;编辑=&gt;Emmet(M)..然后输入.</li>
+</ol>
+<blockquote>
+<p>这里需要的注意的地方是输入的缩写代码中*所在位置不同得到的效果也是不同的.</p>
+</blockquote>
+<p>另外如果给的文本带有序号的情况,我们也是可以通过缩写来处理,而不是手动删除,主要用的是<code>|t</code>来处理.<br> 比如:</p>
+<pre><code>    1.首页
+    2.产品介绍
+    3.相关案例
+    4.关于我们
+    5.联系我们
+    输入包装字符命令
+    nav&gt;ul&gt;li*|t
+    即可看到生成的html中自动去掉了序号</code></pre>
+<p>针对上边说的几种情况来演示一下.<br> <img src="https://images2015.cnblogs.com/blog/648483/201706/648483-20170605122015012-1752202759.gif" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag"><i class="fa fa-tag"></i> 软件</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/Linux/Linux%E9%85%8D%E7%BD%AEZSH%E7%BB%88%E7%AB%AF%E7%8E%AF%E5%A2%83/" rel="prev" title="Linux配置ZSH终端环境">
+      <i class="fa fa-chevron-left"></i> Linux配置ZSH终端环境
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/Linux/Linux%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC%E6%9B%B4%E6%8D%A2%E8%BD%AF%E4%BB%B6%E6%BA%90%E7%9A%84%E6%96%B9%E6%B3%95/" rel="next" title="Linxu各种发行版本更换软件源的方法">
+      Linxu各种发行版本更换软件源的方法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Emmet%E7%AE%80%E8%BF%B0"><span class="nav-text">1. Emmet简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="nav-text">2. 基础用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%BF%9B%E9%98%B6%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95"><span class="nav-text">3. 进阶高级用法</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yuandongxu"
+      src="/asset/av.jpg">
+  <p class="site-author-name" itemprop="name">yuandongxu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yuandongxu</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">79k</span>
+</div>
+<script src="/js/prism/prism.js" async></script>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
