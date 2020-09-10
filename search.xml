@@ -1,133 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Linux配置ZSH终端环境</title>
-    <url>/2020/Linux/Linux%E9%85%8D%E7%BD%AEZSH%E7%BB%88%E7%AB%AF%E7%8E%AF%E5%A2%83/</url>
-    <content><![CDATA[<p>ZSH是mac的默认终端，相当于Linux发行版的bash，本文主要记录了Linux中zsh+onmyzsh的配置方法及优化过程，zsh优点：</p>
-<p>1.完全兼容bash,之前bash下的使用习惯,shell脚本都可以完全兼容。 </p>
-<p>2.更强大的tab补全,当你切换目录敲两下tab,他可以列出当前目录下面的所有目录,…</p>
-<p>3.更智能的切换目录,比如你要进入一个很深的目录，zsh会帮助你完成路径的补全</p>
-<p>4.命令选项补齐,比如输入yum,然后按tab,即可显示出yum都有哪些命令选项。 </p>
-<p>5.命令参数补齐,比如要kill一个进程,直接输入kill 进程名,会自动显示出进程的pid</p>
-<p>···</p>
-<a id="more"></a>
-
-<hr>
-<h2 id="1-ZSH的安装"><a href="#1-ZSH的安装" class="headerlink" title="1. ZSH的安装"></a>1. ZSH的安装</h2><h3 id="1-1-安装zsh"><a href="#1-1-安装zsh" class="headerlink" title="1.1 安装zsh"></a>1.1 安装zsh</h3><p>如果你用 Redhat Linux，执行：sudo yum install zsh<br>如果你用 Ubuntu Linux，执行：sudo apt-get install zsh</p>
-<p>查看系统中的shell版本</p>
-<pre><code class="line-numbers language-bash">cat /etc/shells        </code></pre>
-<p>切换系统默认shell为zsh</p>
-<pre><code class="line-numbers language-bash">chsh -s /bin/zsh    </code></pre>
-<h3 id="1-2-安装-ohmyzsh"><a href="#1-2-安装-ohmyzsh" class="headerlink" title="1.2 安装 ohmyzsh"></a>1.2 安装 ohmyzsh</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901232057.png"></p>
-<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL29obXl6c2gvb2hteXpzaC9uZXR3b3Jr">ohmyzsh的GitHub项目地址<i class="fa fa-external-link-alt"></i></span></p>
-<p>自动安装：</p>
-<pre><code class="line-numbers language-bash">wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh</code></pre>
-<p>手动安装：</p>
-<pre><code class="line-numbers language-bash">git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh 
-cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</code></pre>
-<p>或者前两种方式都不合适，可以尝试此种：</p>
-<pre><code class="line-numbers language-tex">1. 到项目仓库下载zip包
-2. 安装unzip
-3. unzip master.zip
-4. cd cd ./ohmyzsh-master/tools/ &amp;&amp; sh install.sh</code></pre>
-<p>都不复杂，安装完成之后退出当前会话重新打开一个终端窗口，你就可以见到彩色的提示了</p>
-<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901210857.png"></p>
-<hr>
-<h2 id="2-ZSH的优化"><a href="#2-ZSH的优化" class="headerlink" title="2. ZSH的优化"></a>2. ZSH的优化</h2><p>zsh 的配置在<code>~/.zshrc</code>文件，用 vim打开.zshrc进行配置，配置项如</p>
-<p>查看zsh的主题：<code>echo $ZSH_THEME</code></p>
-<pre><code class="line-numbers language-shell">ZSH_THEME=&quot;agnoster&quot;        # 主题</code></pre>
-<h3 id="2-1-zsh隐藏终端用户名和计算机名"><a href="#2-1-zsh隐藏终端用户名和计算机名" class="headerlink" title="2.1 zsh隐藏终端用户名和计算机名"></a>2.1 zsh隐藏终端用户名和计算机名</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901215129.png"></p>
-<p>由于<code>oh my zsh</code>会经常更新，为了防止ohmyzsh更新个人配置被覆盖，将本地的主题文件复制出一份</p>
-<pre><code class="line-numbers language-bash">cp ~/.oh-my-zsh/themes/agnoster.zsh-theme ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
-<p>修改主题文件</p>
-<pre><code class="line-numbers language-bash">vim ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
-<p>注释末尾配置</p>
-<pre><code class="line-numbers language-shell"># Main prompt
-build_prompt() &#123;
-  RETVAL=$?
-  prompt_status
-  prompt_virtualenv
- # prompt_context
-  prompt_dir
-  prompt_git
-  prompt_hg
-  prompt_end
-&#125;</code></pre>
-<p>修改<code>~/.zshrc</code></p>
-<pre><code class="line-numbers language-bash">ZSH_THEME=&quot;agnoster-my&quot;</code></pre>
-<p>立即生效环境变量</p>
-<pre><code class="line-numbers language-bash">source ~/.zshrc</code></pre>
-<h2 id="3-插件"><a href="#3-插件" class="headerlink" title="3. 插件"></a>3. 插件</h2><p>插件放置文件夹：<code>$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins</code></p>
-<p>插件启用：<code>~/.zshrc</code>的</p>
-<pre><code class="line-numbers language-bash"># plugins
-plugins=(
-  zsh-history-substring-search
-  sudo
-  git
-)</code></pre>
-<h3 id="sudo"><a href="#sudo" class="headerlink" title="sudo"></a>sudo</h3><p>自带插件。按两下 <code>ESC</code> 键，自动为命令前加上 sudo。</p>
-<h3 id="zsh-autosuggestions"><a href="#zsh-autosuggestions" class="headerlink" title="zsh-autosuggestions"></a>zsh-autosuggestions</h3><p>这个插件会根据历史输入指令的记录即时的提示</p>
-<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-autosuggestions $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-autosuggestions</code></pre>
-<h3 id="zsh-syntax-highlighting"><a href="#zsh-syntax-highlighting" class="headerlink" title="zsh-syntax-highlighting"></a>zsh-syntax-highlighting</h3><p>这是一个命令高亮插件，输入为绿色时表示正确的命令，路径带有下划线时表示可用路径</p>
-<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting</code></pre>
-<h3 id="git-open"><a href="#git-open" class="headerlink" title="git-open"></a>git-open</h3><p>在git目录打开相应的github页面</p>
-<pre><code class="line-numbers language-bash">git clone https://github.com/paulirish/git-open.git $ZSH_CUSTOM/plugins/git-open  </code></pre>
-<h3 id="thefuck"><a href="#thefuck" class="headerlink" title="thefuck"></a>thefuck</h3><p>输入 fuck 纠正前一条输错的命令, 需要先下载</p>
-<pre><code class="line-numbers language-bash">sudo apt install thefuck</code></pre>
-<h3 id="history-substring-search"><a href="#history-substring-search" class="headerlink" title="history-substring-search"></a>history-substring-search</h3><p>强大的历史命令搜索插件</p>
-<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-history-substring-search \
-$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-history-substring-search</code></pre>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker快速部署多种数据库及配置使用</title>
-    <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/</url>
-    <content><![CDATA[<ul>
-<li><strong>redis</strong></li>
-<li><strong>mongodb</strong></li>
-<li><strong>mysql</strong></li>
-</ul>
-<a id="more"></a>
-
-<hr>
-<h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><p>为了方便，我们可以将MongoDB的数据目录映射到主机上来</p>
-<pre><code class="line-numbers language-bash">mkdir -p /data/mongodata        # 创建数据目录</code></pre>
-<p>拉取镜像</p>
-<pre><code class="line-numbers language-bash">docker pull mongo</code></pre>
-<p>启动MongoDB容器</p>
-<pre><code class="line-numbers language-bash">docker run -d --name mongo -v /data/mongodata:/data/db -p 27017:27017 mongo --auth</code></pre>
-<ul>
-<li><p>–name mongo 容器名称</p>
-</li>
-<li><p>–v /data/mongodata:/data/db 映射数据目录</p>
-</li>
-<li><p>-p 27017:27017 端口映射，前面的是主机端口，后面的是docker中的端口</p>
-</li>
-<li><p>mongo –auth 以账号验证模式启动</p>
-</li>
-</ul>
-<p><strong>创建账号</strong></p>
-<p>创建root用户、密码为123，所有数据库读写权限</p>
-<pre><code class="line-numbers language-bash">docker exec -it mongo mongo admin --eval &quot;db.createUser(&#123;user: &#39;root&#39;, pwd: &#39;123&#39;, roles: [ &#123; role: &#39;root&#39;, db: &#39;admin&#39; &#125; , &#39;readWriteAnyDatabase&#39;] &#125;)&quot;</code></pre>
-<p><strong>设置随Docker启动</strong></p>
-<pre><code class="line-numbers language-bash">docker update --restart=always mongo          </code></pre>
-<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>拉取镜像</p>
-<pre><code class="line-numbers language-bash">docker pull redis</code></pre>
-<p>创建容器，容器名称为redis16379、开放在宿主机的16379端口上</p>
-<pre><code class="line-numbers language-bash">docker run -d --name redis16379 -p 16379:6379 redis</code></pre>
-<p>设置随Docker启动</p>
-<pre><code class="line-numbers language-bash">docker update --restart=always redis16379     </code></pre>
-]]></content>
-      <tags>
-        <tag>Docker</tag>
-        <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>WSL（Windows Subsystem for Linux）使用笔记</title>
     <url>/2020/%E9%9A%8F%E7%AC%94/WSL%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<p>Windows Subsystem for Linux（简称WSL）是一个在Windows 10上能够运行原生Linux二进制可执行文件（ELF格式）的兼容层。它是由Microsoft与Canonical公司合作开发，最初目标是使纯正的Ubuntu 14.04 “Trusty Tahr”映像能下载和解压到用户的本地计算机，并且映像内的工具和实用工具能在此子系统上原生运行。</p>
@@ -140,30 +13,25 @@ $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-history-substring-searc
 
 <hr>
 <h2 id="WSL的安装"><a href="#WSL的安装" class="headerlink" title="WSL的安装"></a>WSL的安装</h2><p>WSL一定向前兼容，所以将Windows更新至最新</p>
-<p>以<strong>管理员权限</strong>启动 PowerShell</p>
+<p><strong>开启Windows的虚拟机平台和WSL功能：</strong>以<strong>管理员权限</strong>启动 PowerShell，，完成后重启计算机完成配置。</p>
 <pre><code class="line-numbers language-powershell">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform               # 启用虚拟机平台
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux    # 启用 Linux 子系统功能</code></pre>
-<p>重启计算机应用配置（不必每一步都重启）</p>
-<p>下载：到windows store下载一个Linux发行版本系统，如Ubuntu、Ubuntu18等，注意当下载完成时实际上并没有完成实际的安装</p>
-<p>配置wsl版本为wsl2，wsl2是wsl的升级版本，增加了一些新功能和减少BUG</p>
-<pre><code class="line-numbers language-powershell">wsl -l        # 查看下载的Linux发行版本
-# 适用于 Linux 的 Windows 子系统分发版:
-# Ubuntu (默认)    
-wsl --set-version Ubuntu 2   ## 设置一个 Linux 发行版的 WSL 版本
-# 这里需要下载安装一个插件：wsl_update_x64.msi
-wsl --set-default-version 2   ## 在以后安装 Linux 的时候默认启用 WSL2</code></pre>
-<p>安装：返回桌面按win键搜索下载的Linux名称运行一次完成安装</p>
-<h2 id="WSL的停止与重启"><a href="#WSL的停止与重启" class="headerlink" title="WSL的停止与重启"></a>WSL的停止与重启</h2><p>比如我使用的WSL发行版本为Ubuntu，因为系统控制的某些原因，WSL内执行<code>reboot</code>并不能控制WSL的重启，所以在不重启Windows的情况下需要重启WSL需要使用以下命令</p>
+<p><strong>配置wsl默认版本为wsl2</strong>：在以后安装 Linux 的时候默认启用 WSL2，需要下载安装一个补丁：wsl_update_x64.msi</p>
+<pre><code class="line-numbers language-powershell">wsl --set-default-version 2</code></pre>
+<p><strong>下载系统镜像</strong>：到windows store下载一个Linux发行版本系统，如Ubuntu、Ubuntu18等，注意当下载完成时实际上并没有完成实际的安装</p>
+<p><strong>镜像的安装</strong>：返回桌面按win键搜索下载的Linux名称运行一次完成安装</p>
+<h2 id="WSL的停止与重启"><a href="#WSL的停止与重启" class="headerlink" title="WSL的停止与重启"></a>WSL的停止与重启</h2><p>因为系统控制的某些原因，WSL内执行<code>reboot</code>并不能控制WSL的重启，所以在不重启Windows的情况下需要重启WSL需要使用以下命令</p>
 <p><strong>管理员权限启动CMD/Powershell</strong></p>
 <pre><code class="line-numbers language-powershell">net stop LxssManager         # 停止
 net start LxssManager        # 启动</code></pre>
 <h2 id="使用文件管理器查看WSL文件的方法"><a href="#使用文件管理器查看WSL文件的方法" class="headerlink" title="使用文件管理器查看WSL文件的方法"></a>使用文件管理器查看WSL文件的方法</h2><p>打开文件管理器，点击地址栏，输入<code>\\wsl$</code>回车会显示所有已安装的wsl的文件系统</p>
 <p>比如我只安装了一个wsl发行版本，名称为Ubuntu</p>
 <p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200902153211.png"></p>
-<h2 id="WSL常用命令"><a href="#WSL常用命令" class="headerlink" title="WSL常用命令"></a>WSL常用命令</h2><pre><code class="line-numbers language-powershell">$ wsl --help
+<h2 id="WSL常用命令"><a href="#WSL常用命令" class="headerlink" title="WSL常用命令"></a>WSL常用命令</h2><p>用法：<code>wsl.exe [参数] [选项...] [命令行]</code></p>
+<pre><code class="line-numbers language-powershell">$ wsl --help
 版权所有 (c) Microsoft Corporation。保留所有权利。
 
-用法: wsl.exe [参数] [选项...] [命令行]
+
 
 用于运行 Linux 二进制文件的参数:
 
@@ -244,6 +112,7 @@ net start LxssManager        # 启动</code></pre>
 <li>自定义保存路径</li>
 <li>爬取结果的处理</li>
 </ul>
+<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9tZWRpYS1waXBlbGluZS5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
 <a id="more"></a>
 
 <hr>
@@ -418,18 +287,21 @@ class FilespiderItem(Item):
   <entry>
     <title>使用SSH进行远程主机登录</title>
     <url>/2019/Linux/SSH%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86/</url>
-    <content><![CDATA[<p>SSH 为 [Secure Shell](<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9TZWN1cmU=">https://baike.baidu.com/item/Secure<i class="fa fa-external-link-alt"></i></span> Shell) 的缩写，由 IETF 的网络小组（Network Working Group）所制定；SSH 为建立在应用层基础上的安全协议。SSH 是较可靠，专为<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTglQkYlOUMlRTclQTglOEIlRTclOTklQkIlRTUlQkQlOTUvMTA3MTk5OA==">远程登录<i class="fa fa-external-link-alt"></i></span>会话和其他网络服务提供安全性的协议。利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。SSH最初是UNIX系统上的一个程序，后来又迅速扩展到其他操作平台。SSH在正确使用时可弥补网络中的漏洞。SSH客户端适用于多种平台。几乎所有UNIX平台—包括<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9IUC1VWA==">HP-UX<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9MaW51eA==">Linux<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9BSVg=">AIX<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9Tb2xhcmlzLzM1MTc=">Solaris<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9EaWdpdGFs">Digital<i class="fa fa-external-link-alt"></i></span> <span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9VTklY">UNIX<i class="fa fa-external-link-alt"></i></span>、<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9Jcml4">Irix<i class="fa fa-external-link-alt"></i></span>，以及其他平台，都可运行SSH。</p>
-<p>SSH 为 Secure Shell 的缩写，由 IETF 的网络小组（Network Working Group）所制定；SSH 为建立在应用层基础上的安全协议。SSH 是较可靠，专为远程登录会话和其他网络服务提供安全性的协议。利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。SSH最初是UNIX系统上的一个程序，后来又迅速扩展到其他操作平台。SSH在正确使用时可弥补网络中的漏洞。SSH客户端适用于多种平台。几乎所有UNIX平台—包括HP-UX、Linux、AIX、Solaris、Digital UNIX、Irix，以及其他平台，都可运行SSH。</p>
-<p>SSH 为 Secure Shell 的缩写，是一种建立在应用层基础上专为远程登录会话和其他网络服务提供安全性的通信协议，初始提供于各种Unix平台，windows也年来也提供了ssh服务。</p>
+    <content><![CDATA[<p>SSH 为 Secure Shell 的缩写，是一种建立在应用层基础上专为远程登录会话和其他网络服务提供安全性的通信协议，初始提供于各种Unix平台，windows也年来也提供了ssh服务。</p>
 <a id="more"></a>
 
-<hr>
-<h4 id="1-远程登陆方法"><a href="#1-远程登陆方法" class="headerlink" title="1. 远程登陆方法"></a>1. 远程登陆方法</h4><p>执行远程连接命令后，如果是第一次的端对端连接，会提示是否信任主机的figure，输入yes信任即可，然后会提示输入登录用户的密码（passwd），输入正确后即可完成远程登陆</p>
-<pre><code class="line-numbers language-bash">ssh 远程主机用户名称@远程主机IP地址
+<h4 id="配置服务"><a href="#配置服务" class="headerlink" title="配置服务"></a>配置服务</h4><p><strong>Linux系</strong></p>
+<pre><code class="line-numbers language-bash"># centos
+yum install openssh
+# ubuntu
+apt install openssh</code></pre>
+<p><strong>windows：</strong>直接使用 或者安装git-bash</p>
+<h4 id="远程登陆方法"><a href="#远程登陆方法" class="headerlink" title="远程登陆方法"></a>远程登陆方法</h4><pre><code class="line-numbers language-bash">ssh 远程主机用户名称@远程主机IP地址
 ssh 远程主机用户名称@远程主机在本地hosts文件的域名映射</code></pre>
+<p>执行远程连接命令后，如果是第一次的端对端连接，会提示是否信任主机的figure，输入yes信任即可，然后会提示输入登录用户的密码（passwd），输入正确后即可完成远程登陆</p>
 <p>实例：用户yuan，主机公网IP47.93.230.x</p>
 <pre><code class="line-numbers language-bash">ssh yuan@47.93.230.x</code></pre>
-<h4 id="2-免密登陆配置方法"><a href="#2-免密登陆配置方法" class="headerlink" title="2. 免密登陆配置方法"></a>2. 免密登陆配置方法</h4><p>将本机的公钥保存到需要远程登陆的主机上就可以省略每次连接的输入密码的流程</p>
+<h4 id="免密登陆配置方法"><a href="#免密登陆配置方法" class="headerlink" title="免密登陆配置方法"></a>免密登陆配置方法</h4><p>将本机的公钥保存到需要远程登陆的主机上就可以省略每次连接的输入密码的流程</p>
 <p>（1）本地主机生成密钥对</p>
 <pre><code class="line-numbers language-bash">ssh-keygen</code></pre>
 <blockquote>
@@ -443,7 +315,7 @@ ssh 远程主机用户名称@远程主机在本地hosts文件的域名映射</co
 <pre><code class="line-numbers language-bash"># 语法：ssh-copy-id -i ~/.ssh/id_rsa.pub -p 端口 用户名@IP
 ssh-copy-id root@47.93.230.x</code></pre>
 <p>（3）此时使用远程登陆命令即可直接进行连接</p>
-<h4 id="3-其他方式发送公钥文件"><a href="#3-其他方式发送公钥文件" class="headerlink" title="3. 其他方式发送公钥文件"></a>3. 其他方式发送公钥文件</h4><p>上述步骤是通过<code>ssh-copy-id</code>工具发送公钥文件的, 当然我们也可以通过其他方式实现:</p>
+<h4 id="其他方式发送公钥文件"><a href="#其他方式发送公钥文件" class="headerlink" title="其他方式发送公钥文件"></a>其他方式发送公钥文件</h4><p>上述步骤是通过<code>ssh-copy-id</code>工具发送公钥文件的, 当然我们也可以通过其他方式实现:</p>
 <p>(1)  将本地的公钥文件发给远程主机:</p>
 <p>通过scp命令将本地的 <strong>公钥文件</strong> 发送到远程主机的用户目录下, 因为还没有配置成功免密登录, 所以期间需要输入远程主机对应用户的密码:</p>
 <pre><code class="line-numbers language-bash">[root@localhost .ssh]# scp id_rsa.pub root@47.93.230.x:/root/.ssh 
@@ -458,10 +330,87 @@ id_rsa.pub
 [root@localhost .ssh]# cat authorized_keys 
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC2JpLMqgeg9jB9ZztOCw0WMS8hdVpFxthqG1vOQTOji/cp0+8RUZl3P6NtzqfHbs0iTcY0ypIJGgx4eXyipfLvilV2bSxRINCVV73VnydVYl5gLHsrgOx+372Wovlanq7Mxq06qAONjuRD0c64xqdJFKb1OvS/nyKaOr9D8yq/FxfwKqK7TzJM0cVBAG7+YR8lc9tJTCypmNXNngiSlipzjBcnfT+5VtcFSENfuJd60dmZDzrQTxGFSS2J34CuczTQSsItmYF3DyhqmrXL+cJ2vjZWVZRU6IY7BpqJFWwfYY9m8KaL0PZ+JJuaU7ESVBXf6HJcQhYPp2bTUyff+vdV yuan</code></pre>
 <p>注意: 上述重定向时使用<code>&gt;&gt;</code>进行追加, 不要用<code>&gt;</code>, 那会清空原有内容.</p>
-<h4 id="4-关于密钥对文件的权限问题"><a href="#4-关于密钥对文件的权限问题" class="headerlink" title="4. 关于密钥对文件的权限问题"></a>4. 关于密钥对文件的权限问题</h4><p>为了让私钥文件和公钥文件能够在认证中起作用, 需要确保权限的正确性:</p>
+<h4 id="关于密钥对文件的权限问题"><a href="#关于密钥对文件的权限问题" class="headerlink" title="关于密钥对文件的权限问题"></a>关于密钥对文件的权限问题</h4><p>为了让私钥文件和公钥文件能够在认证中起作用, 需要确保权限的正确性:</p>
 <blockquote>
-<p>①  对于<code>.ssh</code>目录以及其内部的公钥、私钥文件, 当前用户至少要有执行权限, 其他用户最多只能有执行权限.<br>②  不要图省事设置成777权限: 太大的权限不安全, 而且数字签名也不支持这种权限策略.<br>③  对普通用户, 建议设置成600权限: chmod 600  authorized_keys  id_rsa  id_rsa.pub;<br>④  对root用户, 建议设置成644权限: chmod 644  authorized_keys  id_rsa  id_rsa.pub.</p>
+<p>①  对于<code>.ssh</code>目录以及其内部的公钥、私钥文件, 当前用户至少要有执行权限, 其他用户最多只能有执行权限.</p>
+<p>②  不要图省事设置成777权限: 太大的权限不安全, 而且数字签名也不支持这种权限策略.</p>
+<p>③  对普通用户, 建议设置成600权限: chmod 600  authorized_keys  id_rsa  id_rsa.pub;</p>
+<p>④  对root用户, 建议设置成644权限: chmod 644  authorized_keys  id_rsa  id_rsa.pub.</p>
 </blockquote>
+<h4 id="pem密钥认证登陆"><a href="#pem密钥认证登陆" class="headerlink" title="pem密钥认证登陆"></a>pem密钥认证登陆</h4><p>本地pem文件位置：<code>~/.ssh/yuan.pem</code>，普通用户，权限600</p>
+<pre><code>ssh -i ~/.ssh/yuan.pem root@47.93.230.127</code></pre>
+<h4 id="显示登录信息"><a href="#显示登录信息" class="headerlink" title="显示登录信息"></a>显示登录信息</h4><p>有时候登陆发生问题，可以通过查看登陆过程发现问题</p>
+<pre><code>ssh root@47.93.230.127 -v</code></pre>
+<h4 id="无法使用ssh登陆"><a href="#无法使用ssh登陆" class="headerlink" title="无法使用ssh登陆"></a>无法使用ssh登陆</h4><pre><code class="line-numbers language-bash">vim /etc/ssh/sshd.config</code></pre>
+<p>开启sshd守护进程的相关配置</p>
+<pre><code class="line-numbers language-bash">RSAAuthentication yes
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys</code></pre>
+<h4 id="etc-ssh-ssh-config配置文件"><a href="#etc-ssh-ssh-config配置文件" class="headerlink" title="/etc/ssh/ssh_config配置文件"></a><strong>/etc/ssh/ssh_config配置文件</strong></h4><pre><code class="line-numbers language-shell">选项参数                                      说明
+Host *                                    选项“Host”只对能够匹配后面字串的计算机有效。“*”表示所有的计算机。
+ForwardAgent no                           设置连接是否经过验证代理（如果存在）转发给远程计算机。
+ForwardX11 no                             设置X11连接是否被自动重定向到安全的通道和显示集（DISPLAY set）
+RhostsAuthentication no                   设置是否使用基于rhosts的安全验证
+RhostsRSAAuthentication no            设置是否使用用RSA算法的基于rhosts的安全验证
+RSAAuthentication yes                     设置是否使用RSA算法进行安全验证
+PasswordAuthentication yes            设置是否使用口令验证
+FallBackToRsh no                      设置如果用ssh连接出现错误是否自动使用rsh
+UseRsh no                             设置是否在这台计算机上使用“rlogin/rsh”
+BatchMode no                              如果设为“yes”，passphrase/password（交互式输入口令）的提示将被禁止。当不能交互式输入口令的时候，这个选项对脚本文件和批处理任务十分有用
+CheckHostIP yes                           设置ssh是否查看连接到服务器的主机的IP地址以防止DNS欺骗。建议设置为“yes”
+StrictHostKeyChecking no              如果设置成“yes”，ssh就不会自动把计算机的密匙加入“$HOME/.ssh/known_hosts”文件，并且一旦计算机的密匙发生了变化，就拒绝连接
+IdentityFile ~/.ssh/identity              设置从哪个文件读取用户的RSA安全验证标识
+Port 22                                   设置连接到远程主机的端口
+Cipher blowfish                           设置加密用的密码
+EscapeChar ~                              设置escape字符</code></pre>
+<h4 id="sshd配置文件"><a href="#sshd配置文件" class="headerlink" title="sshd配置文件"></a>sshd配置文件</h4><pre><code class="line-numbers language-shell">Port 22                                                         SSH 预设使用 22 这个 port，您也可以使用多的 port ！
+Protocol 2,1                                                    选择的 SSH 协议版本，可以是 1 也可以是 2 ，如果要同时支持两者，就必须要使用 2,1 这个分隔了！
+ListenAddress 0.0.0.0                                           监听的主机适配卡！举个例子来说，如果您有两个 IP，分别是 192.168.0.100 及 192.168.2.20 ，那么只想要开放 192.168.0.100 时，就可以写如同下面的样式：
+ListenAddress 192.168.0.100                                     只监听来自 192.168.0.100 这个 IP 的SSH联机。如果不使用设定的话，则预设所有接口均接受 SSH
+PidFile /var/run/sshd.pid                                       可以放置 SSHD 这个 PID 的档案！左列为默认值
+LoginGraceTime 600                                              当使用者连上 SSH server 之后，会出现输入密码的画面，在该画面中，在多久时间内没有成功连上 SSH server ，就断线！时间为秒！
+Compression yes                                                 是否可以使用压缩指令？
+HostKey /etc/ssh/ssh_host_key                                   SSH version 1 使用的私钥
+HostKey /etc/ssh/ssh_host_rsa_key                               SSH version 2 使用的 RSA 私钥
+HostKey /etc/ssh/ssh_host_dsa_key                               SSH version 2 使用的 DSA 私钥
+KeyRegenerationInterval 3600                                    由前面联机的说明可以知道， version 1 会使用 server 的 Public Key ，每隔一段时间来重新建立一次！时间为秒！
+ServerKeyBits 768                                               Server key 的长度！
+SyslogFacility AUTH                                             当有人使用 SSH 登入系统的时候，SSH会记录信息
+LogLevel INFO                                                   登录记录的等级---》全部
+PermitRootLogin no                                              是否允许 root 登入！预设是允许的，但是建议设定成 no！
+UserLogin no                                                    在 SSH 底下本来就不接受 login 这个程序的登入！
+StrictModes yes                                                 当使用者的 host key 改变之后，Server 就不接受联机
+RSAAuthentication yes                                           是否使用纯的 RSA 认证！？仅针对 version 1 ！
+PubkeyAuthentication yes                                        是否允许 Public Key ？只有 version 2
+AuthorizedKeysFile   .ssh/authorized_keys                       设定若要使用不需要密码登入的账号时，那么那个账号的存放档案所在档名！
+RhostsAuthentication no                                         本机系统不使用 .rhosts ， .rhosts 不安全！
+IgnoreRhosts yes                                                是否取消使用 ~/.ssh/.rhosts 来做为认证！
+RhostsRSAAuthentication no                                      针对 version 1 ，使用 rhosts 档案在/etc/hosts.equiv配合 RSA 演算方式来进行认证！
+HostbasedAuthentication no                                      这个项目与上面的项目类似，不过是给 version 2 使用的！
+IgnoreUserKnownHosts no                                         是否忽略家目录内的 ~/.ssh/known_hosts 这个档案所记录的主机内容
+PasswordAuthentication yes                                      密码验证当然是需要的！
+PermitEmptyPasswords no                                         上面那一项如果设定为 yes 的话，这一项就最好设定为 no ，这个项目在是否允许以空的密码登入！
+ChallengeResponseAuthentication yes                             挑战任何的密码认证！所以，任何 login.conf 规定的认证方式，均可适用！
+PAMAuthenticationViaKbdInt yes                                  是否启用其它的 PAM 模块！启用这个模块将会导致 PasswordAuthentication 设定失效！
+
+与Kerberos 有关的参数设定！底下不用设定
+KerberosAuthentication no
+KerberosOrLocalPasswd yes
+KerberosTicketCleanup yes
+KerberosTgtPassing no
+
+有关在 X-Window 底下使用的相关设定
+X11Forwarding yes
+X11DisplayOffset 10
+X11UseLocalhost yes
+
+PrintMotd no                                                    登入后是否显示出一些信息呢？例如上次登入的时间、地点等，预设是 yes ，但是，如果为了安全，可以考虑改为 no ！
+PrintLastLog yes                                                显示上次登入的信息！预设也是 yes
+KeepAlive yes                                                   一般而言，如果设定这项目的话，那么 SSH Server 会传送KeepAlive 的讯息给 Client 端，以确保两者的联机正常！在这个情况下，任何一端死掉后， SSH 可以立刻知道！而不会有僵尸程序的发生！
+UsePrivilegeSeparation yes                                      使用者的权限设定项目！
+MaxStartups 10                                                  同时允许几个尚未登入的联机画面
+DenyUsers *                                                     设定受抵挡的使用者名称
+AllowUsers *                                                    设定允许的使用者名称</code></pre>
 ]]></content>
       <tags>
         <tag>Linux</tag>
@@ -469,7 +418,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC2JpLMqgeg9jB9ZztOCw0WMS8hdVpFxthqG1vOQTOj
   </entry>
   <entry>
     <title>MongoDB数据库笔记</title>
-    <url>/2019/%E9%9A%8F%E7%AC%94/MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/</url>
+    <url>/2019/%E6%95%B0%E6%8D%AE%E5%BA%93/MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<ul>
 <li>MongoDB数据库的安装</li>
 <li>MongoDB数据库的使用</li>
@@ -618,7 +567,7 @@ db.test_collection.insert( [
 <pre><code class="line-numbers language-bash">db.inventory.deleteMany(&#123; status : &quot;A&quot; &#125;)</code></pre>
 <p>删除 status 等于 D 的一个文档：</p>
 <pre><code class="line-numbers language-bash">db.inventory.deleteOne( &#123; status: &quot;D&quot; &#125; )</code></pre>
-<h2 id="pymongo的安装及使用"><a href="#pymongo的安装及使用" class="headerlink" title="pymongo的安装及使用"></a>pymongo的安装及使用</h2><h3 id="pymongo安装"><a href="#pymongo安装" class="headerlink" title="pymongo安装"></a>pymongo安装</h3><p>使用pip安装</p>
+<h2 id="pymongo的使用（PythonSDK）"><a href="#pymongo的使用（PythonSDK）" class="headerlink" title="pymongo的使用（PythonSDK）"></a>pymongo的使用（PythonSDK）</h2><h3 id="pymongo的安装"><a href="#pymongo的安装" class="headerlink" title="pymongo的安装"></a>pymongo的安装</h3><p>使用pip安装</p>
 <pre><code class="line-numbers language-bash">python -m pip install pymongo</code></pre>
 <p>使用setuptools安装</p>
 <pre><code class="line-numbers language-bash">python -m easy_install pymongo</code></pre>
@@ -626,48 +575,48 @@ db.test_collection.insert( [
 <pre><code class="line-numbers language-bash">python -c &quot;import sys; print(sys.version)&quot;</code></pre>
 <p>显示pymongo版本</p>
 <pre><code class="line-numbers language-bash">python -c &quot;import pymongo; print(pymongo.version); print(pymongo.has_c())&quot;</code></pre>
-<h3 id="pymongo的使用方法"><a href="#pymongo的使用方法" class="headerlink" title="pymongo的使用方法"></a>pymongo的使用方法</h3><pre><code class="line-numbers language-python">#!/usr/bin/env python
+<h3 id="pymongo常用方法"><a href="#pymongo常用方法" class="headerlink" title="pymongo常用方法"></a>pymongo常用方法</h3><p>官方文档：<span class="exturl" data-url="aHR0cDovL2FwaS5tb25nb2RiLmNvbS9weXRob24vY3VycmVudC9hcGkvcHltb25nby8=">http://api.mongodb.com/python/current/api/pymongo/<i class="fa fa-external-link-alt"></i></span></p>
+<pre><code class="line-numbers language-python">#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 &quot;&quot;&quot;
-MongoDB存储
-    在这里我们来看一下Python3下MongoDB的存储操作，在本节开始之前请确保你已经安装好了MongoDB并启动了其服务，另外安装好了Python
-    的PyMongo库。
-
 连接MongoDB
-    连接MongoDB我们需要使用PyMongo库里面的MongoClient，一般来说传入MongoDB的IP及端口即可，第一个参数为地址host，
-    第二个参数为端口port，端口如果不传默认是27017。
+    连接MongoDB我们需要使用PyMongo库里面的MongoClient，一般来说传入MongoDB的IP及端口即可，
+    第一个参数为地址host，第二个参数为端口port，端口如果不传默认是27017。
 &quot;&quot;&quot;
 import pymongo
-client = pymongo.MongoClient(host=&#39;localhost&#39;, port=27017)
-&quot;&quot;&quot;
-这样我们就可以创建一个MongoDB的连接对象了。另外MongoClient的第一个参数host还可以直接传MongoDB的连接字符串，以mongodb开头，
-例如：client = MongoClient(&#39;mongodb://localhost:27017/&#39;)可以达到同样的连接效果。
-&quot;&quot;&quot;
-# 指定数据库
-# MongoDB中还分为一个个数据库，我们接下来的一步就是指定要操作哪个数据库，在这里我以test数据库为例进行说明，所以下一步我们
-# 需要在程序中指定要使用的数据库。
 
+
+# 连接数据库
+# 指定属性值
+client = pymongo.MongoClient(host=&#39;localhost&#39;, port=27017)
+# MongoClient的第一个参数host还可以直接传MongoDB的连接字符串，以mongodb开头，
+client = pymongo.MongoClient(&#39;mongodb://localhost:27017/&#39;)
+
+
+# 指定数据库
+# 调用client的test属性即可返回test数据库，或者以字典方式指定，两种方式是等价的。
 db = client.test
-# 调用client的test属性即可返回test数据库，当然也可以这样来指定：
-# db = client[&#39;test&#39;]
-#　两种方式是等价的。
+db = client[&#39;test&#39;]
+
 
 # 指定集合
 # MongoDB的每个数据库又包含了许多集合Collection，也就类似与关系型数据库中的表，下一步我们需要指定要操作的集合，
 # 在这里我们指定一个集合名称为students，学生集合。还是和指定数据库类似，指定集合也有两种方式。
-
 collection = db.students
-# collection = db[&#39;students&#39;]
-# 插入数据,接下来我们便可以进行数据插入了，对于students这个Collection，我们新建一条学生数据，以字典的形式表示：
+collection = db[&#39;students&#39;]
 
+
+# 插入数据
+# 对于students这个Collection，我们新建一条学生数据，以字典的形式表示：
 student = &#123;
     &#39;id&#39;: &#39;20170101&#39;,
     &#39;name&#39;: &#39;Jordan&#39;,
     &#39;age&#39;: 20,
     &#39;gender&#39;: &#39;male&#39;
 &#125;
-# 在这里我们指定了学生的学号、姓名、年龄和性别，然后接下来直接调用collection的insert()方法即可插入数据。
 
+
+# 在这里我们指定了学生的学号、姓名、年龄和性别，然后接下来直接调用collection的insert()方法即可插入数据。 
 result = collection.insert(student)
 print(result)
 # 在MongoDB中，每条数据其实都有一个_id属性来唯一标识，如果没有显式指明_id，MongoDB会自动产生一个ObjectId类型的_id属性。
@@ -925,12 +874,7 @@ print(result.deleted_count)
 # 另外PyMongo还提供了一些组合方法，如find_one_and_delete()、find_one_and_replace()、find_one_and_update()，
 # 就是查找后删除、替换、更新操作，用法与上述方法基本一致。
 
-# 另外还可以对索引进行操作，如create_index()、create_indexes()、drop_index()等。
-
-# 详细用法可以参见官方文档：http://api.mongodb.com/python/current/api/pymongo/collection.html
-
-# 另外还有对数据库、集合本身以及其他的一些操作，在这不再一一讲解，可以参见
-# 官方文档：http://api.mongodb.com/python/current/api/pymongo/</code></pre>
+# 另外还可以对索引进行操作，如create_index()、create_indexes()、drop_index()等。</code></pre>
 ]]></content>
       <tags>
         <tag>数据库</tag>
@@ -1258,6 +1202,53 @@ bucket.delete_object(key)</code></pre>
       <tags>
         <tag>Python</tag>
         <tag>OSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Awk文本分析命令的使用</title>
+    <url>/2020/Linux/awk%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>AWK 是一种处理文本文件的语言，是一个强大的文本分析工具。</p>
+<p>之所以叫 AWK 是因为其取了三位创始人 Alfred Aho，Peter Weinberger, 和 Brian Kernighan 的 Family Name 的首字符。</p>
+<pre><code class="line-numbers language-bash">awk &#39;&#123;foo argv1,argv2,···&#125;&#39; filename</code></pre>
+<a id="more"></a>
+
+<h2 id="什么是awk"><a href="#什么是awk" class="headerlink" title="什么是awk"></a>什么是awk</h2><pre><code class="line-numbers language-bash">awk &#39;&#123;print $0&#125;&#39; /etc/passwd</code></pre>
+<pre><code class="line-numbers language-bash">root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+···</code></pre>
+<p>调用 awk时，我们指定/etc/passwd 作为输入文件。执行 awk 时，它依次对/etc/passwd 中的每一行执行 print 命令，所有输出都发送到 stdout，所得到的结果与执行 cat /etc/passwd 完全相同。<br>现在，解释{ print }代码块。在 awk 中，花括号用于将几块代码组合到一起，这一点类似于 C 语言。在代码块中只有一条 print 命令。在 awk 中，如果只出现 print 命令，那么将打印当前行的全部内容。</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909221217.jpg"></p>
+<pre><code>文本中每个被记录分隔符（默认为换行符）为一个记录
+记录中每个被字段分隔符（默认为空白字符）分割的为一个字段，-F&quot;:&quot;，将冒号指定为字段分隔符
+</code></pre>
+<h2 id="使用案例"><a href="#使用案例" class="headerlink" title="使用案例"></a>使用案例</h2><h4 id="输出指定字段"><a href="#输出指定字段" class="headerlink" title="输出指定字段"></a>输出指定字段</h4><pre><code class="line-numbers language-bash">awk -F&quot;:&quot; &#39;&#123; print $1 $3 &#125;&#39; /etc/passwd</code></pre>
+<pre><code>root0
+daemon1
+bin2
+sys3
+sync4
+games5</code></pre>
+<pre><code class="line-numbers language-bash">awk -F&quot;:&quot; &#39;&#123; print $1,$3 &#125;&#39; /etc/passwd</code></pre>
+<pre><code>root 0
+daemon 1
+bin 2
+sys 3
+sync 4
+games 5</code></pre>
+<h4 id="格式化输出指定字段"><a href="#格式化输出指定字段" class="headerlink" title="格式化输出指定字段"></a>格式化输出指定字段</h4><pre><code class="line-numbers language-bash">awk [参数] &#123; 函数 函数参数,[变量前缀]变量1,[变量前缀]变量2,··· &#125; 文件</code></pre>
+<pre><code class="line-numbers language-bash">awk -F&quot;:&quot; &#39;&#123; printf &quot;%-30s %-10s\n&quot;,&quot;username: &quot;$1,&quot;uid: &quot;$3 &#125;&#39; /etc/passwd</code></pre>
+<pre><code>username: root                 uid: 0
+username: daemon               uid: 1
+username: bin                  uid: 2
+username: sys                  uid: 3
+username: sync                 uid: 4
+username: games                uid: 5</code></pre>
+<h4 id="统计账户人数"><a href="#统计账户人数" class="headerlink" title="统计账户人数"></a>统计账户人数</h4><pre><code></code></pre>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1638,16 +1629,572 @@ ERROR: Command errored out with exit status 1: python setup.py egg_info Check th
       </tags>
   </entry>
   <entry>
-    <title>Scrapy项目部署工具scrapyd使用详解</title>
-    <url>/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>Scrapy是一个爬虫框架, scrapy爬虫写好后，可以用命令行运行，但是如果能在网页上操作就比较方便.  scrapyd就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大.  。</p>
-<p>还有一个更加强大的国产工具 gerapy!</p>
+    <title>Linux常用命令</title>
+    <url>/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<p>常用的Linxu命令及选项笔记</p>
 <a id="more"></a>
 
 <hr>
-<h2 id="1-Scrapyd服务"><a href="#1-Scrapyd服务" class="headerlink" title="1. Scrapyd服务"></a>1. Scrapyd服务</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><p>服务端安装scrapyd（server）</p>
-<pre><code class="line-numbers language-bash">pip install scrapyd</code></pre>
-<p>本地主机安装scrapyd-client（client）</p>
+<h3 id="目录与文件"><a href="#目录与文件" class="headerlink" title="目录与文件"></a>目录与文件</h3><h4 id="find-查找文件"><a href="#find-查找文件" class="headerlink" title="find    查找文件"></a>find    查找文件</h4><p>使用方法</p>
+<pre><code class="line-numbers language-bash">find [PATH] [option] [action]</code></pre>
+<pre><code class="line-numbers language-bash"># 名称与类型
+-name filename ：找出文件名为filename的文件
+-size [+-]SIZE ：找出比SIZE还要大（+）或小（-）的文件
+-tpye TYPE ：查找文件的类型为TYPE的文件，TYPE的值主要有：一般文件（f)、设备文件（b、c）、
+             目录（d）、连接文件（l）、socket（s）、FIFO管道文件（p）
+# 时间
+-mtime n : n为数字，意思为在n天之前的“一天内”被更改过的文件；
+-mtime +n : 列出在n天之前（不含n天本身）被更改过的文件名；
+-mtime -n : 列出在n天之内（含n天本身）被更改过的文件名；
+-newer file : 列出比file还要新的文件名
+# 权限
+-user name : 列出文件所有者为name的文件
+-group name : 列出文件所属用户组为name的文件
+-uid n : 列出文件所有者为用户ID为n的文件
+-gid n : 列出文件所属用户组为用户组ID为n的文件</code></pre>
+<pre><code class="line-numbers language-bash">find /root -mtime 0 # 在当前目录下查找今天之内有改动的文件
+
+find /home/hadoop -user hadoop # 在目录/home/hadoop中找出所有者为hadoop的文件
+
+find / -name passwd     # 查找文件名为passwd的文件
+find . -perm 0755         # 查找当前目录中文件权限的0755的文件
+find . -size +12k         # 查找当前目录中大于12KB的文件，注意c表示byte</code></pre>
+<h4 id="ls-显示目录内容"><a href="#ls-显示目录内容" class="headerlink" title="ls    显示目录内容"></a>ls    显示目录内容</h4><pre><code class="line-numbers language-bash">-a ：全部的档案，连同隐藏档( 开头为 . 的档案) 一起列出来～ 
+-A ：全部的档案，连同隐藏档，但不包括 . 与 .. 这两个目录，一起列出来～ 
+-d ：仅列出目录本身，而不是列出目录内的档案数据 
+-f ：直接列出结果，而不进行排序 (ls 预设会以档名排序！) 
+-F ：根据档案、目录等信息，给予附加数据结构，例如： 
+*：代表可执行档； /：代表目录； =：代表 socket 档案； |：代表 FIFO 档案； 
+-h ：将档案容量以人类较易读的方式(例如 GB, KB 等等)列出来； 
+-i ：列出 inode 位置，而非列出档案属性； 
+-l ：长数据串行出，包含档案的属性等等数据； 
+-n ：列出 UID 与 GID 而非使用者与群组的名称 (UID与GID会在账号管理提到！) 
+-r ：将排序结果反向输出，例如：原本档名由小到大，反向则为由大到小； 
+-R ：连同子目录内容一起列出来； 
+-S ：以档案容量大小排序！ 
+-t ：依时间排序 
+--color=never ：不要依据档案特性给予颜色显示； 
+--color=always ：显示颜色 
+--color=auto ：让系统自行依据设定来判断是否给予颜色 
+--full-time ：以完整时间模式 (包含年、月、日、时、分) 输出 
+--time=&#123;atime,ctime&#125; ：输出 access 时间或 改变权限属性时间 (ctime) 
+而非内容变更时间 (modification time)  </code></pre>
+<h4 id="cd-目录切换"><a href="#cd-目录切换" class="headerlink" title="cd    目录切换"></a>cd    目录切换</h4><pre><code class="line-numbers language-bash">cd /home/yuan        # 切换至绝对路径
+cd ..                # 切换至上级目录
+cd ./path            # 切换至相对路径</code></pre>
+<h4 id="tree-树状图列出目录的内容"><a href="#tree-树状图列出目录的内容" class="headerlink" title="tree    树状图列出目录的内容"></a>tree    树状图列出目录的内容</h4><p>需要安装，<code>apt install tree</code></p>
+<pre><code class="line-numbers language-bash">-d        # 仅显示目录
+-f        # 显示完整路径
+-L         # level 限制目录显示层级
+-l         # 如遇到性质为符号连接的目录，直接列出该连接所指向的原始目录。</code></pre>
+<h4 id="cp-复制"><a href="#cp-复制" class="headerlink" title="cp    复制"></a>cp    复制</h4><pre><code class="line-numbers language-bash">cp [options] &lt;原始&gt; &lt;目的&gt;</code></pre>
+<pre><code class="line-numbers language-bash">-a         # 将文件的特性一起复制
+-p         # 连同文件的属性一起复制，而非使用默认方式，与-a相似，常用于备份
+-i         # 若目标文件已经存在时，在覆盖时会先询问操作的进行
+-r         # 递归持续复制，用于目录的复制行为
+-u         # 目标文件与源文件有差异时才会复制</code></pre>
+<h4 id="rm-删除"><a href="#rm-删除" class="headerlink" title="rm    删除"></a>rm    删除</h4><pre><code class="line-numbers language-bash">-r    # 递归删除，用于删除目录
+-f    # 无需确认</code></pre>
+<h4 id="rmdir-删除空目录"><a href="#rmdir-删除空目录" class="headerlink" title="rmdir    删除空目录"></a>rmdir    删除空目录</h4><h4 id="mv-移动"><a href="#mv-移动" class="headerlink" title="mv    移动"></a>mv    移动</h4><pre><code class="line-numbers language-bash">-f     # force强制的意思，如果目标文件已经存在，不会询问而直接覆盖</code></pre>
+<h4 id="pwd-显示当前目录"><a href="#pwd-显示当前目录" class="headerlink" title="pwd    显示当前目录"></a>pwd    显示当前目录</h4><h4 id="tar-解压缩"><a href="#tar-解压缩" class="headerlink" title="tar    解压缩"></a>tar    解压缩</h4><ul>
+<li>预览包 - <code>tar jtv &lt;filename&gt;</code></li>
+<li>自动适应模式解压 - <code>tar xvf &lt;filename&gt;</code></li>
+<li>指定目的目录 - <code>tar xvf &lt;filename&gt; -C &lt;path&gt;</code></li>
+</ul>
+<pre><code class="line-numbers language-bash">-x    # 解包或解压缩功能
+-v    # 显示解包过程
+-f    # 其后指定要处理的文件
+-t    # 预览包
+-C    # 其后指定目的目录</code></pre>
+<h4 id="mkdir-创建目录"><a href="#mkdir-创建目录" class="headerlink" title="mkdir    创建目录"></a>mkdir    创建目录</h4><pre><code class="line-numbers language-bash">sudo mkdir -m 700 -p /opt/env/node</code></pre>
+<pre><code class="line-numbers language-bash">-m, --mode=600        # 设定权限，如600
+-p, --parents        # 递归创建
+-v, --verbose        # 输出信息</code></pre>
+<h3 id="进程相关"><a href="#进程相关" class="headerlink" title="进程相关"></a>进程相关</h3><h4 id="ps-进程信息"><a href="#ps-进程信息" class="headerlink" title="ps    进程信息"></a>ps    进程信息</h4><pre><code class="line-numbers language-bash">-A ：所有的进程均显示出来
+-a ：不与terminal有关的所有进程
+-u ：有效用户的相关进程
+-x ：一般与a参数一起使用，可列出较完整的信息
+-l ：较长，较详细地将PID的信息列出</code></pre>
+<pre><code class="line-numbers language-bash"># 进程状态
+USER: 行程拥有者
+PID: pid
+%CPU: 占用的 CPU 使用率
+%MEM: 占用的记忆体使用率
+VSZ: 占用的虚拟记忆体大小
+RSS: 占用的记忆体大小
+TTY: 终端的次要装置号码 (minor device number of tty)
+STAT: 该行程的状态:
+D: 无法中断的休眠状态 (通常 IO 的进程)
+R: 正在执行中
+S: 静止状态
+T: 暂停执行
+Z: 不存在但暂时无法消除
+W: 没有足够的记忆体分页可分配
+&lt;: 高优先序的行程
+N: 低优先序的行程
+L: 有记忆体分页分配并锁在记忆体内 (实时系统或捱A I/O)
+START: 行程开始时间
+TIME: 执行的时间
+COMMAND:所执行的指令</code></pre>
+<h4 id="kill-进程控制（pid）"><a href="#kill-进程控制（pid）" class="headerlink" title="kill    进程控制（pid）"></a>kill    进程控制（pid）</h4><pre><code class="line-numbers language-bash">kill -[signal] PID
+kill -9 1234</code></pre>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>信号值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SIGHUP</td>
+<td>1</td>
+<td>启动被终止的进程</td>
+</tr>
+<tr>
+<td>SIGINT</td>
+<td>2</td>
+<td>ctrl+c，中断一个程序的进行</td>
+</tr>
+<tr>
+<td>SIGKILL</td>
+<td>9</td>
+<td>强制中断一个进程的进行</td>
+</tr>
+<tr>
+<td>SIGTERM</td>
+<td>15</td>
+<td>以正常的结束进程方式来终止进程</td>
+</tr>
+<tr>
+<td>SIGSTOP</td>
+<td>19</td>
+<td>ctrl+z，暂停一个进程的进行</td>
+</tr>
+</tbody></table>
+<h4 id="killall-进程控制（name）"><a href="#killall-进程控制（name）" class="headerlink" title="killall    进程控制（name）"></a>killall    进程控制（name）</h4><pre><code class="line-numbers language-bash">-i 交互模式，杀死进程前先询问用户
+-g 杀死进程组而不是进程
+-l 列出所有的已知信号名称</code></pre>
+<h4 id="pkill"><a href="#pkill" class="headerlink" title="pkill"></a>pkill</h4><h4 id="contrab-定时任务（min级）"><a href="#contrab-定时任务（min级）" class="headerlink" title="contrab    定时任务（min级）"></a>contrab    定时任务（min级）</h4><pre><code class="line-numbers language-bash">usage:  crontab [-u user] file
+        crontab [-u user] [ -e | -l | -r ]
+                (default operation is replace, per 1003.2)
+        -e      (edit user&#39;s crontab)
+        -l      (list user&#39;s crontab)
+        -r      (delete user&#39;s crontab)
+        -i      (prompt before deleting user&#39;s crontab)
+        -s      (selinux context)</code></pre>
+<ul>
+<li>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。 <pre><code>在/etc/crontab文件，这个就是系统任务调度的配置文件。</code></pre>
+</li>
+<li>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。<pre><code>用户可以使用 crontab 工具来定制自己的计划任务。
+在crontab 文件都被保存在/var/spool/cron目录中。其文件名与用户名一致</code></pre>
+</li>
+</ul>
+<pre><code class="line-numbers language-bash">1.系统定时任务：例如清理系统日志，清理系统缓存   --&gt;不过多的关注
+    查询系统定时处理任务的路径：
+        路径1：
+            cd /etc/logrotate.d/        --&gt;可以写定时任务
+            less syslog 
+        路径2：
+            cat /etc/crontab   --&gt;不推荐使用，但是可以看格式
+        路径3：
+             ls /etc/ | grep cron*
+                 anacrontab
+                 cron.d                 --&gt;同路径2 ，可以写定时任务  
+                 cron.daily
+                 cron.deny              --&gt;控制普通用户使用定时任务crontab
+                 cron.hourly
+                 cron.monthly
+                 crontab
+                 cron.weekly
+2.用户的定时任务      --&gt;关注重点</code></pre>
+<pre><code class="line-numbers language-shell"># /etc/crontab: system-wide crontab
+# Unlike any other crontab you don&#39;t have to run the `crontab&#39;
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=
+HOME=
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed
+17 *    * * *   root    cd / &amp;&amp; run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.monthly )</code></pre>
+<pre><code class="line-numbers language-bash">前四行是用来配置crond任务运行的环境变量
+第一行SHELL变量指定了系统要使用哪个shell，这里是bash
+第二行PATH变量指定了系统执行命令的路径
+第三行MAILTO变量指定了crond的任务执行信息将通过电子邮件发送给root用户，如果MAILTO变量的值为空，则表示不发送任务执行信息给用户
+第四行的HOME变量指定了在执行命令或者脚本时使用的主目录。
+
+星号（*）：代表所有可能的值，如month字段为星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。
+逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”
+中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”
+正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。
+
+数字的表示最好用2为阿拉伯数字显示
+周和日最好不要同时用
+定时任务要加注解
+可以定向到日志文件或者空文件
+定时任务一定是绝对路径，且目录必须存在才能出结果
+crontab 服务一定要开启运行</code></pre>
+<pre><code>0 * * * * root run-parts /etc/cron.hourly        # 每小时执行/etc/cron.hourly目录内的脚本
+echo &quot;*/2 * * * * /usr/bin/ntpstat time.windows.com &gt;/dev/null 2&gt;&amp;1&quot; &gt;&gt; /var/spool/cron/root        # 每隔2分钟同步一次互联网时间
+echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&amp;1&quot; &gt;&gt; /var/spool/cron/root        # 每天3-5,17-20每隔30分钟执行一次脚本</code></pre>
+<pre><code class="line-numbers language-bash"># 注意事项
+1.环境变量问题，例如crontab不能识别Java的环境变量
+    crontab执行shell时，只能识别为数不多的环境变量，普通的环境变量是无法识别的，所以在编写shell时，最好使用export重新声明变量，确保脚本执行。 
+2.命令的执行最好用脚本
+3.脚本权限加/bin/sh，规范路径/server/scripts
+4.时间变量用反斜线转义，最好用脚本
+5.定时任务添加注释
+6.&gt;/dev/null 2&gt;&amp;1   ==&gt;&amp;&gt;/dev/null,别随意打印日志文件
+7.定时任务里面的程序脚本尽量用全路径
+8.避免不必要的程序以及命令输出
+9.定时任务之前添加注释
+10.打包到文件目录的上一级</code></pre>
+<h4 id="free-内存信息"><a href="#free-内存信息" class="headerlink" title="free    内存信息"></a>free    内存信息</h4><pre><code class="line-numbers language-bash">free [参数]
+-b 　以Byte为单位显示内存使用情况。 
+-k 　以KB为单位显示内存使用情况。 
+-m 　以MB为单位显示内存使用情况。
+-g   以GB为单位显示内存使用情况。 
+-o 　不显示缓冲区调节列。 
+-s&lt;间隔秒数&gt; 　持续观察内存使用状况。 
+-t 　显示内存总和列。 
+-V 　显示版本信息。</code></pre>
+<pre><code class="line-numbers language-bash"></code></pre>
+<p>top    系统性能分析</p>
+<pre><code class="line-numbers language-bash">top [参数]
+-b 批处理
+-c 显示完整的治命令
+-I 忽略失效过程
+-s 保密模式
+-S 累积模式
+-i&lt;时间&gt; 设置间隔时间
+-u&lt;用户名&gt; 指定用户名
+-p&lt;进程号&gt; 指定进程
+-n&lt;次数&gt; 循环显示的次数</code></pre>
+<h3 id="账户与权限"><a href="#账户与权限" class="headerlink" title="账户与权限"></a>账户与权限</h3><h4 id="sudo-以其他用户身份执行命令"><a href="#sudo-以其他用户身份执行命令" class="headerlink" title="sudo    以其他用户身份执行命令"></a>sudo    以其他用户身份执行命令</h4><pre><code class="line-numbers language-bash"># 默认root
+-b：在后台执行指令；
+-h：显示帮助；
+-H：将HOME环境变量设为新身份的HOME环境变量；
+-k：结束密码的有效期限，也就是下次再执行sudo时便需要输入密码；。
+-l：列出目前用户可执行与无法执行的指令；
+-p：改变询问密码的提示符号；
+-s：执行指定的shell；
+-u&lt;用户&gt;：以指定的用户作为新的身份。若不加上此参数，则预设以root作为新的身份；
+-v：延长密码有效期限5分钟；
+-V ：显示版本信息。</code></pre>
+<h4 id="passwd-设置用户密码"><a href="#passwd-设置用户密码" class="headerlink" title="passwd    设置用户密码"></a>passwd    设置用户密码</h4><pre><code class="line-numbers language-bash"># passwd [options] &lt;UserName&gt;
+-S    # 账户状态</code></pre>
+<h4 id="groups-显示用户组"><a href="#groups-显示用户组" class="headerlink" title="groups    显示用户组"></a>groups    显示用户组</h4><pre><code class="line-numbers language-bash">groups &lt;UserName&gt;</code></pre>
+<h4 id="useradd-添加用户"><a href="#useradd-添加用户" class="headerlink" title="useradd    添加用户"></a>useradd    添加用户</h4><pre><code class="line-numbers language-bash">useradd [-mMnr][-c &lt;备注&gt;][-d &lt;登入目录&gt;][-e &lt;有效期限&gt;][-f &lt;缓冲天数&gt;][-g &lt;群组&gt;][-G &lt;群组&gt;][-s ][-u ][用户帐号] </code></pre>
+<pre><code class="line-numbers language-bash">-c #&lt;备注&gt; 　加上备注文字。备注文字会保存在passwd的备注栏位中。　
+-d #&lt;登入目录&gt; 　指定用户登入时的启始目录。
+-D #　变更预设值．
+-e # &lt;有效期限&gt; 　指定帐号的有效期限。
+-f # &lt;缓冲天数&gt; 　指定在密码过期后多少天即关闭该帐号。
+-g # &lt;群组&gt; 　指定用户所属的群组。
+-G # &lt;群组&gt; 　指定用户所属的附加群组。
+-m # 自动建立用户的登入目录。
+-M # 不要自动建立用户的登入目录。
+-n # 取消建立以用户名称为名的群组．
+-r # 建立系统帐号。
+-s # 指定用户登入后所使用的shell。
+-u # 指定用户ID。</code></pre>
+<h4 id="usermod-修改用户信息"><a href="#usermod-修改用户信息" class="headerlink" title="usermod    修改用户信息"></a>usermod    修改用户信息</h4><pre><code># 同useradd</code></pre>
+<h4 id="userdel-删除用户"><a href="#userdel-删除用户" class="headerlink" title="userdel    删除用户"></a>userdel    删除用户</h4><pre><code class="line-numbers language-bash">-r    # 删除家目录和用户邮件池
+-f    # 强制删除，包括用户的一切相关内容，这个参数是危险的参数，不建议大家使用。详细说明看MAN</code></pre>
+<h4 id="groupadd-生成新用户组"><a href="#groupadd-生成新用户组" class="headerlink" title="groupadd    生成新用户组"></a>groupadd    生成新用户组</h4><pre><code class="line-numbers language-bash">－g gid：指定组ID号。
+－o：允许组ID号，不必惟一。
+－r：加入组ID号，低于499系统账号。
+－f：加入已经有的组时，发展程序退出。</code></pre>
+<h4 id="groupdel-删除用户组"><a href="#groupdel-删除用户组" class="headerlink" title="groupdel    删除用户组"></a>groupdel    删除用户组</h4><h4 id="chmod-权限更改"><a href="#chmod-权限更改" class="headerlink" title="chmod    权限更改"></a>chmod    权限更改</h4><pre><code class="line-numbers language-bash">-R：进行递归的持续更改，即连同子目录下的所有文件都会更改</code></pre>
+<pre><code class="line-numbers language-bash">chmod 0755 file # 把file的文件权限改变为-rxwr-xr-x
+chmod g+w file # 向file的文件权限中加入用户组可写权限</code></pre>
+<h4 id="chown-拥有者更改"><a href="#chown-拥有者更改" class="headerlink" title="chown    拥有者更改"></a>chown    拥有者更改</h4><pre><code class="line-numbers language-bash">chown &lt;username&gt; &lt;file_or_path&gt;</code></pre>
+<h4 id="chgrp-所属组更改"><a href="#chgrp-所属组更改" class="headerlink" title="chgrp    所属组更改"></a>chgrp    所属组更改</h4><pre><code class="line-numbers language-bash"># usermod [options] LOGIN
+usermod -h
+ -c #后面接账号的说明，即/etc/passwd第五栏的说明栏，可以加入一些账号的说明
+ -d #后面接账号的家目录，即修改/etc/passwd的第六栏
+ -e #后面接日期，格式是YYYY-MM-DD也就是在/etc/shadow内的第八栏
+ -f #后面接天数，修改shadow的第七栏
+ -g #后面接主群组，修改/etc/passwd的第四个字段，即是GID的字段
+ -G #后面接附加群组，修改这个使用者能够支持的群组，修改的是/etc/group
+ -a #与 -G 合用，可增加附加群组的支持而非设定
+ -l #后面接账号名称。修改账号名称，/etc/passwd的第一栏
+ -s #后面接Shell的文件，例如/bin/bash或/bin/csh等等
+ -u #后面接 UID 数字，修改用户的UID /etc/passwd第三栏
+ -L #暂时将用户的密码冻结，让他无法登入。其实就是在/etc/shadow的密码栏前面加上了“!”
+ -U #将/etc/shadow 密码栏的“!”去掉</code></pre>
+<h3 id="文本操作"><a href="#文本操作" class="headerlink" title="文本操作"></a>文本操作</h3><h4 id="vi-vim-使用编辑器打开文件"><a href="#vi-vim-使用编辑器打开文件" class="headerlink" title="vi/vim    使用编辑器打开文件"></a>vi/vim    使用编辑器打开文件</h4><pre><code class="line-numbers language-bash"></code></pre>
+<h4 id="cat-全文查看"><a href="#cat-全文查看" class="headerlink" title="cat    全文查看"></a>cat    全文查看</h4><pre><code class="line-numbers language-bash"># cat [选项] [文件]...
+-n, --number             # 带行号输出，1+
+-s, --squeeze-blank      # n行空白替换为1行</code></pre>
+<h4 id="more-分页查看"><a href="#more-分页查看" class="headerlink" title="more    分页查看"></a>more    分页查看</h4><pre><code class="line-numbers language-bash">more [-dlfpcsu ] [-num ] [+/ pattern] [+ linenum] [file ... ] </code></pre>
+<pre><code class="line-numbers language-bash">Enter 
+ 向下滚动一屏
+空格键 向下滚动一屏
+Ctrl+B 返回上一屏
+= 输出当前行的行号
+：f 输出文件名和当前行的行号
+V 调用vi编辑器
+!命令 调用Shell，并执行命令 
+q 退出more</code></pre>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Enter</td>
+<td>向下n行，需要定义。默认为1行</td>
+<td></td>
+</tr>
+<tr>
+<td>Ctrl+F / 空格</td>
+<td>向下滚动一屏</td>
+<td></td>
+</tr>
+<tr>
+<td>ctrl+B</td>
+<td>返回上一屏</td>
+<td></td>
+</tr>
+<tr>
+<td>=</td>
+<td>输出当前行号</td>
+<td></td>
+</tr>
+<tr>
+<td>！</td>
+<td>调出shell并执行命令</td>
+<td></td>
+</tr>
+<tr>
+<td>v</td>
+<td>调用vi编辑器</td>
+<td></td>
+</tr>
+<tr>
+<td>q</td>
+<td>退出</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="less-更强大的more"><a href="#less-更强大的more" class="headerlink" title="less    更强大的more"></a>less    更强大的more</h4><h4 id="tail-输出文件最后部分"><a href="#tail-输出文件最后部分" class="headerlink" title="tail    输出文件最后部分"></a>tail    输出文件最后部分</h4><pre><code class="line-numbers language-bash">-f         动态循环读取
+-q         不显示处理信息
+-v         显示详细的处理信息
+-c        &lt;数目&gt; 显示的字节数
+-n        &lt;行数&gt; 显示行数
+--pid=PID                     与-f合用,表示在进程ID,PID死掉之后结束. 
+-q, --quiet, --silent         从不输出给出文件名的首部 
+-s, --sleep-interval=S         与-f合用,表示在每次反复的间隔休眠S秒 </code></pre>
+<h4 id="head-输出文件前10行"><a href="#head-输出文件前10行" class="headerlink" title="head    输出文件前10行"></a>head    输出文件前10行</h4><pre><code class="line-numbers language-bash">head [参数]... [文件]...  </code></pre>
+<pre><code class="line-numbers language-baash">-q         隐藏文件名
+-v         显示文件名
+-c&lt;字节&gt;     显示字节数
+-n&lt;行数&gt;     显示的行数</code></pre>
+<h4 id="diff-显示差异"><a href="#diff-显示差异" class="headerlink" title="diff    显示差异"></a>diff    显示差异</h4><pre><code class="line-numbers language-bash">diff[参数][文件1或目录1][文件2或目录2]</code></pre>
+<h4 id="awk-文本分析"><a href="#awk-文本分析" class="headerlink" title="awk    文本分析"></a>awk    文本分析</h4><pre><code class="line-numbers language-shell"># log.txt
+2 this is a test
+3 Are you like awk
+This&#39;s a test
+10 There are orange,apple,mongo</code></pre>
+<pre><code class="line-numbers language-bash"># 每行按空格或TAB分割，输出文本中的1、4项
+awk &#39;&#123;print $1,$4&#125;&#39; log.txt        
+# 2 a
+# 3 like
+# This&#39;s
+# 10 orange,apple,mongo</code></pre>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><h4 id="ping-网络测试"><a href="#ping-网络测试" class="headerlink" title="ping    网络测试"></a>ping    网络测试</h4><pre><code class="line-numbers language-bash">ping [参数] [主机名或IP地址]</code></pre>
+<pre><code class="line-numbers language-bash">-d         使用Socket的SO_DEBUG功能。
+-f      极限检测。大量且快速地送网络封包给一台机器，看它的回应。
+-n         只输出数值。
+-q         不显示任何传送封包的信息，只显示最后的结果。
+-r         忽略普通的Routing Table，直接将数据包送到远端主机上。通常是查看本机的网络接口是否有问题。
+-R         记录路由过程。
+-v         详细显示指令的执行过程。
+&lt;p&gt;-c     数目：在发送指定数目的包后停止。
+-i         秒数：设定间隔几秒送一个网络封包给一台机器，预设值是一秒送一次。
+-I         网络界面：使用指定的网络界面送出数据包。
+-l         前置载入：设置在送出要求信息之前，先行发出的数据包。
+-p         范本样式：设置填满数据包的范本样式。
+-s         字节数：指定发送的数据字节数，预设值是56，加上8字节的ICMP头，一共是64ICMP数据字节。
+-t         存活数值：设置存活数值TTL的大小。</code></pre>
+<h4 id="ssh-远程登陆主机"><a href="#ssh-远程登陆主机" class="headerlink" title="ssh    远程登陆主机"></a>ssh    远程登陆主机</h4><pre><code class="line-numbers language-bash">ssh [-l login_name] [-p port] [user@]hostname</code></pre>
+<h4 id="scp-远程拷贝（secure-copy）"><a href="#scp-远程拷贝（secure-copy）" class="headerlink" title="scp    远程拷贝（secure copy）"></a>scp    远程拷贝（secure copy）</h4><pre><code class="line-numbers language-bash">scp [参数] [原路径] [目标路径]</code></pre>
+<pre><code class="line-numbers language-bash">-r 递归复制整个目录。 
+-v 详细方式显示输出，用于调试连接，验证和配置问题。 
+-i identity_file 指定密钥文件，此参数直接传递给ssh。 
+-l limit 限定用户所能使用的带宽，以Kbit/s为单位。 
+-P port 注意是大写的P, port是指定数据传输用到的端口号 </code></pre>
+<h4 id="telnet-端口测试"><a href="#telnet-端口测试" class="headerlink" title="telnet    端口测试"></a>telnet    端口测试</h4><p>多用于远程登陆，现常用于测试端口是否开启</p>
+<pre><code class="line-numbers language-bash">telnet IP/域名 端口</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909204431.png"></p>
+<h4 id="netstat-TCP和UDP监听"><a href="#netstat-TCP和UDP监听" class="headerlink" title="netstat    TCP和UDP监听"></a>netstat    TCP和UDP监听</h4><pre><code class="line-numbers language-bash">netstat -a        # 详细的网络状况
+netstat -nu        # 当前用户UDP连接状况
+netstat -apu    # UDP端口号的使用情况
+netstat -i        # 显示网卡列表
+netstat -g        # 组播组的关系
+netstat -s        # 网络统计信息
+netstat -l        # 监听的套接口</code></pre>
+<h4 id="wget-下载工具"><a href="#wget-下载工具" class="headerlink" title="wget    下载工具"></a>wget    下载工具</h4><pre><code class="line-numbers language-bash">wget [参数] [URL]</code></pre>
+<pre><code class="line-numbers language-bash"># 启动参数
+-V, –version 显示wget的版本后退出
+-h, –help 打印语法帮助
+-b, –background 启动后转入后台执行
+-e, –execute=COMMAND 执行`.wgetrc’格式的命令，wgetrc格式参见/etc/wgetrc或~/.wgetrc
+
+# 记录和输入文件参数：
+-o, –output-file=FILE 把记录写到FILE文件中
+-a, –append-output=FILE 把记录追加到FILE文件中
+-d, –debug 打印调试输出
+-q, –quiet 安静模式(没有输出)
+-v, –verbose 冗长模式(这是缺省设置)
+-nv, –non-verbose 关掉冗长模式，但不是安静模式
+-i, –input-file=FILE 下载在FILE文件中出现的URLs
+-F, –force-html 把输入文件当作HTML格式文件对待
+-B, –base=URL 将URL作为在-F -i参数指定的文件中出现的相对链接的前缀
+–sslcertfile=FILE 可选客户端证书
+–sslcertkey=KEYFILE 可选客户端证书的KEYFILE
+–egd-file=FILE 指定EGD socket的文件名
+
+# 下载参数：
+–bind-address=ADDRESS 指定本地使用地址(主机名或IP，当本地有多个IP或名字时使用)
+-t, –tries=NUMBER 设定最大尝试链接次数(0 表示无限制).
+-O –output-document=FILE 把文档写到FILE文件中
+-nc, –no-clobber 不要覆盖存在的文件或使用.#前缀
+-c, –continue 接着下载没下载完的文件
+–progress=TYPE 设定进程条标记
+-N, –timestamping 不要重新下载文件除非比本地文件新
+-S, –server-response 打印服务器的回应
+–spider 不下载任何东西
+-T, –timeout=SECONDS 设定响应超时的秒数
+-w, –wait=SECONDS 两次尝试之间间隔SECONDS秒
+–waitretry=SECONDS 在重新链接之间等待1…SECONDS秒
+–random-wait 在下载之间等待0…2*WAIT秒
+-Y, –proxy=on/off 打开或关闭代理
+-Q, –quota=NUMBER 设置下载的容量限制
+–limit-rate=RATE 限定下载输率
+
+# 目录参数：
+-nd –no-directories 不创建目录
+-x, –force-directories 强制创建目录
+-nH, –no-host-directories 不创建主机目录
+-P, –directory-prefix=PREFIX 将文件保存到目录 PREFIX/…
+–cut-dirs=NUMBER 忽略 NUMBER层远程目录
+
+# HTTP 选项参数：
+–http-user=USER 设定HTTP用户名为 USER.
+–http-passwd=PASS 设定http密码为 PASS
+-C, –cache=on/off 允许/不允许服务器端的数据缓存 (一般情况下允许)
+-E, –html-extension 将所有text/html文档以.html扩展名保存
+–ignore-length 忽略 `Content-Length’头域
+–header=STRING 在headers中插入字符串 STRING
+–proxy-user=USER 设定代理的用户名为 USER
+–proxy-passwd=PASS 设定代理的密码为 PASS
+–referer=URL 在HTTP请求中包含 `Referer: URL’头
+-s, –save-headers 保存HTTP头到文件
+-U, –user-agent=AGENT 设定代理的名称为 AGENT而不是 Wget/VERSION
+–no-http-keep-alive 关闭 HTTP活动链接 (永远链接)
+–cookies=off 不使用 cookies
+–load-cookies=FILE 在开始会话前从文件 FILE中加载cookie
+–save-cookies=FILE 在会话结束后将 cookies保存到 FILE文件中
+
+# FTP 选项参数：
+-nr, –dont-remove-listing 不移走 `.listing’文件
+-g, –glob=on/off 打开或关闭文件名的 globbing机制
+–passive-ftp 使用被动传输模式 (缺省值).
+–active-ftp 使用主动传输模式
+–retr-symlinks 在递归的时候，将链接指向文件(而不是目录)
+
+# 递归下载参数：
+-r, –recursive 递归下载－－慎用!
+-l, –level=NUMBER 最大递归深度 (inf 或 0 代表无穷)
+–delete-after 在现在完毕后局部删除文件
+-k, –convert-links 转换非相对链接为相对链接
+-K, –backup-converted 在转换文件X之前，将之备份为 X.orig
+-m, –mirror 等价于 -r -N -l inf -nr
+-p, –page-requisites 下载显示HTML文件的所有图片
+
+# 递归下载中的包含和不包含(accept/reject)：
+-A, –accept=LIST 分号分隔的被接受扩展名的列表
+-R, –reject=LIST 分号分隔的不被接受的扩展名的列表
+-D, –domains=LIST 分号分隔的被接受域的列表
+–exclude-domains=LIST 分号分隔的不被接受的域的列表
+–follow-ftp 跟踪HTML文档中的FTP链接
+–follow-tags=LIST 分号分隔的被跟踪的HTML标签的列表
+-G, –ignore-tags=LIST 分号分隔的被忽略的HTML标签的列表
+-H, –span-hosts 当递归时转到外部主机
+-L, –relative 仅仅跟踪相对链接
+-I, –include-directories=LIST 允许目录的列表
+-X, –exclude-directories=LIST 不被包含目录的列表
+-np, –no-parent 不要追溯到父目录
+wget -S –spider url 不下载只显示过程</code></pre>
+<h4 id="ifconfig-查看-配置网卡"><a href="#ifconfig-查看-配置网卡" class="headerlink" title="ifconfig    查看/配置网卡"></a>ifconfig    查看/配置网卡</h4><h4 id="route-路由配置"><a href="#route-路由配置" class="headerlink" title="route    路由配置"></a>route    路由配置</h4><h3 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h3><h4 id="whereis-查找程序名"><a href="#whereis-查找程序名" class="headerlink" title="whereis    查找程序名"></a>whereis    查找程序名</h4><pre><code class="line-numbers language-bash">whereis命令只能用于程序名的搜索，而且只搜索
+- 二进制文件（参数-b）
+- man说明文件（参数-m）
+- 源代码文件（参数-s）。如果省略参数，则返回所有信息。
+和find相比，whereis查找的速度非常快，这是因为linux系统会将系统内的所有文件都记录在一个数据库文件中。
+但是该数据库文件并不是实时更新，默认情况下时一星期更新一次</code></pre>
+<h4 id="which-查找可执行文件"><a href="#which-查找可执行文件" class="headerlink" title="which    查找可执行文件"></a>which    查找可执行文件</h4><pre><code class="line-numbers language-bash"># 会在PATH变量指定的路径中，搜索某个系统命令的位置，并且返回第一个搜索结果
+-n 　指定文件名长度，指定的长度必须大于或等于所有文件中最长的文件名。
+-p 　与-n参数相同，但此处的包括了文件的路径。
+-w 　指定输出时栏位的宽度。
+-V 　显示版本信息</code></pre>
+<h4 id="grep-分析输出"><a href="#grep-分析输出" class="headerlink" title="grep    分析输出"></a>grep    分析输出</h4><p>该命令常用于分析一行的信息，若当中有我们所需要的信息，就将该行显示出来，该命令通常与管道命令一起使用，用于对一些命令的输出进行筛选加工等等，比如可以加在ps, tail, cat后面</p>
+<pre><code class="line-numbers language-bash">grep [-acinv] [--color=auto] &#39;查找字符串&#39; filename</code></pre>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="clear-清屏"><a href="#clear-清屏" class="headerlink" title="clear    清屏"></a>clear    清屏</h4><h4 id="date-日期显示"><a href="#date-日期显示" class="headerlink" title="date    日期显示"></a>date    日期显示</h4><pre><code class="line-numbers language-bash">$ date &#39;+%T&#39;
+# 21:03:51</code></pre>
+<h4 id="ln-创建链接"><a href="#ln-创建链接" class="headerlink" title="ln    创建链接"></a>ln    创建链接</h4><pre><code class="line-numbers language-bash">软链接：
+1.软链接，以路径的形式存在。类似于Windows操作系统中的快捷方式
+2.软链接可以 跨文件系统 ，硬链接不可以
+3.软链接可以对一个不存在的文件名进行链接
+4.软链接可以对目录进行链接
+
+硬链接:
+1.硬链接，以文件副本的形式存在。但不占用实际空间。
+2.不允许给目录创建硬链接
+3.硬链接只有在同一个文件系统中才能创建</code></pre>
+<pre><code class="line-numbers language-bash">ln [参数][源文件或目录][目标文件或目录]</code></pre>
+<pre><code class="line-numbers language-bash"># 必要参数:
+-b 删除，覆盖以前建立的链接
+-d 允许超级用户制作目录的硬链接
+-f 强制执行
+-i 交互模式，文件存在则提示用户是否覆盖
+-n 把符号链接视为一般目录
+-s 软链接(符号链接)
+-v 显示详细的处理过程
+
+# 选择参数:
+-S “-S&lt;字尾备份字符串&gt; ”或 “--suffix=&lt;字尾备份字符串&gt;”
+-V “-V&lt;备份方式&gt;”或“--version-control=&lt;备份方式&gt;”</code></pre>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy项目部署工具scrapyd使用详解</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>Scrapyd是一个scrapy框架爬虫的端对端部署工具，scrapyd能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务。</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-Scrapyd服务"><a href="#1-Scrapyd服务" class="headerlink" title="1. Scrapyd服务"></a>1. Scrapyd服务</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><pre><code class="line-numbers language-bash">pip install scrapyd</code></pre>
 <pre><code class="line-numbers language-bash">pip install scrapyd-client</code></pre>
 <h3 id="1-2-启动Scrapyd服务"><a href="#1-2-启动Scrapyd服务" class="headerlink" title="1.2 启动Scrapyd服务"></a>1.2 启动Scrapyd服务</h3><p>作为测试，本地主机（localhost）安装完成服务端后运行<code>scrapyd</code>开启服务端，浏览器访问<code>localhost:6800</code>即可访问scrapyd服务</p>
 <pre><code class="line-numbers language-bash">scrapyd</code></pre>
@@ -1694,9 +2241,169 @@ project = filespider</code></pre>
 <p>扫描项目中的deploy配置信息</p>
 <pre><code class="line-numbers language-bash">scrapyd-deploy -l
 # aliyun               http://47.93.230.127:6800/</code></pre>
-<h3 id="1-4-部署项目"><a href="#1-4-部署项目" class="headerlink" title="1.4 部署项目"></a>1.4 部署项目</h3><p>编译项目</p>
+<h3 id="1-4-项目部署"><a href="#1-4-项目部署" class="headerlink" title="1.4 项目部署"></a>1.4 项目部署</h3><p>编译项目</p>
 <pre><code class="line-numbers language-bash"># scrapyd-deploy &lt;target&gt; -p &lt;project&gt; --version &lt;version&gt;
 scrapy</code></pre>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy命令行解析</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<p>scrapy命令行包括：</p>
+<ul>
+<li>全局命令：包括创建项目、创建spider、shell、测试等方法</li>
+<li>项目命令：运行爬虫等</li>
+</ul>
+<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
+<a id="more"></a>
+
+<h2 id="全局命令"><a href="#全局命令" class="headerlink" title="全局命令"></a>全局命令</h2><ul>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-startproject"><code>startproject</code></a>： 创建项目，不指定project_dir会使用project_name作为文件夹名称</p>
+<pre><code class="line-numbers language-bash">scrapy startproject &lt;project_name&gt; [project_dir]</code></pre>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-genspider"><code>genspider</code></a>：生成spider</p>
+<pre><code class="line-numbers language-bash">scrapy genspider [-t template] &lt;name&gt; &lt;domain&gt;</code></pre>
+<pre><code>[-t template] - 模板
+    basic    默认
+    crawl    
+      csvfeed    
+      xmlfeed    
+&lt;name&gt; - spider.name
+&lt;domain&gt; - spider.allowed_domains 和 spider.start_urls</code></pre>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-settings"><code>settings</code></a>：输出scrapy设置信息</p>
+<pre><code class="line-numbers language-bash">Usage
+=====
+  scrapy settings [options]
+
+Get settings values
+
+Options
+=======
+--help, -h              show this help message and exit
+--get=SETTING           print raw setting value
+--getbool=SETTING       print setting value, interpreted as a boolean
+--getint=SETTING        print setting value, interpreted as an integer
+--getfloat=SETTING      print setting value, interpreted as a float
+--getlist=SETTING       print setting value, interpreted as a list</code></pre>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-runspider"><code>runspider</code></a>：运行爬虫文件</p>
+<pre><code class="line-numbers language-bash">scrapy runspider &lt;spider_file.py&gt;</code></pre>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-shell"><code>shell</code></a>：调试shell</p>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-bench"><code>fetch</code></a>：将网页内容下载下来，然后在终端打印当前返回的内容，相当于 request 和 urllib 方法</p>
+<pre><code class="line-numbers language-bash">$ scrapy fetch --headers http://www.baidu.com --nolog
+&gt; Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+&gt; Accept-Language: zh
+&gt; User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0
+&gt; Accept-Encoding: gzip, deflate
+&gt; Cookie: BD_LAST_QID=15460141949146650168; BAIDUID=2FF1A075ECD55EC599C8BD353B1850A0:FG=1;\
+BIDUPSID=2FF1A075ECD55EC53959A8386AEC227B; PSTM=1599746512
+&gt;
+&lt; Bdpagetype: 1
+&lt; Bdqid: 0x95ab807d0000113c
+&lt; Cache-Control: private
+&lt; Content-Type: text/html;charset=utf-8
+&lt; Date: Thu, 10 Sep 2020 14:01:53 GMT
+&lt; Expires: Thu, 10 Sep 2020 14:01:53 GMT
+&lt; Server: BWS/1.1
+&lt; Set-Cookie: BDSVRTM=13; path=/
+&lt; Set-Cookie: BD_HOME=1; path=/
+&lt; Set-Cookie: H_PS_PSSID=7511_32617_1437_32693_7567_7543_32327_7612_32673_7623_32117_7565; path=/; domain=.baidu.com
+&lt; Strict-Transport-Security: max-age=172800
+&lt; Traceid: 1599746513242128615410784855007028056380
+&lt; X-Ua-Compatible: IE=Edge,chrome=1</code></pre>
+<p>Supported options:</p>
+<ul>
+<li><p><code>--spider=SPIDER</code>: bypass spider autodetection and force use of specific spider</p>
+</li>
+<li><p><code>--a NAME=VALUE</code>: set spider argument (may be repeated)</p>
+</li>
+<li><p><code>--callback</code> or <code>-c</code>: spider method to use as callback for parsing the response</p>
+</li>
+<li><p><code>--meta</code> or <code>-m</code>: additional request meta that will be passed to the callback request. This must be a valid json string. Example: –meta=’{“foo” : “bar”}’</p>
+</li>
+<li><p><code>--cbkwargs</code>: additional keyword arguments that will be passed to the callback. This must be a valid json string. Example: –cbkwargs=’{“foo” : “bar”}’</p>
+</li>
+<li><p><code>--pipelines</code>: process items through pipelines</p>
+</li>
+<li><p><code>--rules</code> or <code>-r</code>: use <a href="https://docs.scrapy.org/en/latest/topics/spiders.html#scrapy.spiders.CrawlSpider"><code>CrawlSpider</code></a> rules to discover the callback (i.e. spider method) to use for parsing the response</p>
+</li>
+<li><p><code>--noitems</code>: don’t show scraped items</p>
+</li>
+<li><p><code>--nolinks</code>: don’t show extracted links</p>
+</li>
+<li><p><code>--nocolour</code>: avoid using pygments to colorize the output</p>
+</li>
+<li><p><code>--depth</code> or <code>-d</code>: depth level for which the requests should be followed recursively (default: 1)</p>
+</li>
+<li><p><code>--verbose</code> or <code>-v</code>: display information for each depth level</p>
+</li>
+<li><p><code>--output</code> or <code>-o</code>: dump scraped items to a file</p>
+<p>New in version 2.3.</p>
+</li>
+</ul>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-view"><code>view</code></a>：将网页内容保存下来，并在浏览器中打开当前网页内容，直观呈现要爬取网页的内容</p>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-version"><code>version</code></a></p>
+</li>
+</ul>
+<h2 id="项目级命令"><a href="#项目级命令" class="headerlink" title="项目级命令"></a>项目级命令</h2><ul>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-crawl"><code>crawl</code></a>：运行爬虫</p>
+<pre><code class="line-numbers language-bash">scrapy crawl &lt;spider.name&gt;
+[ ... myspider starts crawling ... ]</code></pre>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-check"><code>check</code></a>：检查spider文件有无语法错误</p>
+<pre><code class="line-numbers language-bash">scrapy check [-l] &lt;spider&gt;</code></pre>
+<pre><code class="line-numbers language-bash">$ scrapy check -l
+first_spider
+  * parse
+  * parse_item
+second_spider
+  * parse
+  * parse_item
+
+$ scrapy check
+[FAILED] first_spider:parse_item
+&gt;&gt;&gt; &#39;RetailPricex&#39; field is missing
+
+[FAILED] first_spider:parse
+&gt;&gt;&gt; Returned 92 requests, expected 0..4</code></pre>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-list"><code>list</code></a>：列出当前项目的所有spider.name</p>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-edit"><code>edit</code></a>：vim编辑spider文件，其实IDE方式更为合适</p>
+</li>
+<li><p><a href="https://docs.scrapy.org/en/latest/topics/commands.html#std-command-parse"><code>parse</code></a>：输出格式化内容</p>
+</li>
+<li><p>bench：测试爬取性能</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy配置与设置</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%E8%AE%BE%E7%BD%AE%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
+<a id="more"></a>
+
+<hr>
+<h2 id="scrapy标准配置文件"><a href="#scrapy标准配置文件" class="headerlink" title="scrapy标准配置文件"></a>scrapy标准配置文件</h2><p>Scrapy将查找ini样式的<code>scrapy.cfg</code> 标准配置文件，优先级项目配置最高、系统级最低</p>
+<ul>
+<li>系统级：<code>/etc/scrapy.cfg</code> 或 <code>c:\scrapy\scrapy.cfg</code></li>
+<li>用户级：<code>~/.config/scrapy.cfg</code> (<code>$XDG_CONFIG_HOME</code>) and <code>~/.scrapy.cfg</code> (<code>$HOME</code>)</li>
+<li>项目级：项目根目录的<code>scrapy.cfg</code></li>
+</ul>
 ]]></content>
       <tags>
         <tag>爬虫</tag>
@@ -1772,6 +2479,82 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-B
 ]]></content>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy Shell框架调试模式</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20shell/</url>
+    <content><![CDATA[<p>scrapy shell是一个交互式shell，可以在其中调试爬虫代码而不必运行spider，它常用于测试xpath或css表达式尝试抓取的网页中提取的数据。它允许在编写spider时交互地测试表达式，而不必运行spider来测试每个更改，它是开发和调试蜘蛛的宝贵工具。</p>
+<pre><code class="line-numbers language-bash">scrapy shell [options] [HtmlPage]</code></pre>
+<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9zaGVsbC5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
+<a id="more"></a>
+
+<h3 id="配置scrapy-shell"><a href="#配置scrapy-shell" class="headerlink" title="配置scrapy shell"></a>配置scrapy shell</h3><p>默认使用标准python shell，当安装ipython后会变更为ipython，可以提供智能完成和色彩提示等功能</p>
+<pre><code class="line-numbers language-bash">pip install ipython</code></pre>
+<p>当然还可以通过环境变量<code>SCRAPY_PYTHON_SHELL</code>指定其他shell，如bpython，项目中单独配置方法为</p>
+<pre><code class="line-numbers language-bash">vim scrpay.cfg</code></pre>
+<pre><code>[settings]
+shell = bpython</code></pre>
+<h3 id="scrapy-shell的使用"><a href="#scrapy-shell的使用" class="headerlink" title="scrapy shell的使用"></a>scrapy shell的使用</h3><h4 id="启动调试"><a href="#启动调试" class="headerlink" title="启动调试"></a>启动调试</h4><p>调试一个在线网页</p>
+<pre><code class="line-numbers language-bash"># scrapy shell &lt;url&gt;
+scrapy shell www.baidu.com</code></pre>
+<p>当然还可以调试一个本地网页，注意使用当前文件夹的文件要指定为<code>./</code></p>
+<pre><code class="line-numbers language-bash">scrapy shell /root/file.html
+# 或者
+scrapy shell file:///absolute/path/to/file.html</code></pre>
+<h4 id="options"><a href="#options" class="headerlink" title="options"></a>options</h4><pre><code class="line-numbers language-bash"># 不显示日志
+scrapy shell www.baidu.com --nolog</code></pre>
+<pre><code class="line-numbers language-bash"># 指定headers UA
+scrapy shell www.baidu.com</code></pre>
+<h4 id="调试方法"><a href="#调试方法" class="headerlink" title="调试方法"></a>调试方法</h4><pre><code class="line-numbers language-shell"># 重新调试一个新的URL，并相应地更新所有相关对象
+fetch(&#39;www.baidu.com&#39;)
+fetch(&#39;www.baidu.com&#39;, redirect=True)</code></pre>
+<pre><code class="line-numbers language-shell"># 刷新请求
+fetch(request)</code></pre>
+<pre><code class="line-numbers language-shell"># 浏览器查看响应
+view(response)</code></pre>
+<h4 id="调试对象"><a href="#调试对象" class="headerlink" title="调试对象"></a>调试对象</h4><p>crawler - 当前爬虫对象<br>spider - 可处理当前URL的spider，或者一个新的spider对象<br>request - URL的请求对象，使用<a href="https://docs.scrapy.org/en/latest/topics/request-response.html#scrapy.http.Request.replace"><code>replace()</code></a>变更<br>response - 当前URL的响应对象<br>settings - 当前scrapy setting对象</p>
+<h3 id="使用案例"><a href="#使用案例" class="headerlink" title="使用案例"></a>使用案例</h3><p>启动</p>
+<pre><code class="line-numbers language-bash">scrapy shell &quot;https://scrapy.org&quot; --nolog</code></pre>
+<p>获取文本</p>
+<pre><code class="line-numbers language-bash">&gt;&gt;&gt; response.xpath(&#39;//title/text()&#39;).get()
+&#39;Scrapy | A Fast and Powerful Scraping and Web Crawling Framework&#39;</code></pre>
+<p>请求一个新的URL</p>
+<pre><code class="line-numbers language-bash">&gt;&gt;&gt; fetch(&quot;https://old.reddit.com/&quot;)</code></pre>
+<p>变更请求对象</p>
+<pre><code class="line-numbers language-bash">&gt;&gt;&gt; request = request.replace(method=&quot;POST&quot;)</code></pre>
+<p>查看请求头</p>
+<pre><code class="line-numbers language-bash">from pprint import pprint
+pprint(request.headers)</code></pre>
+<pre><code>&#123;b&#39;Accept&#39;: [b&#39;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=&#39;
+             b&#39;0.8&#39;],
+ b&#39;Accept-Encoding&#39;: [b&#39;gzip, deflate&#39;],
+ b&#39;Accept-Language&#39;: [b&#39;en&#39;],
+ b&#39;User-Agent&#39;: [b&#39;Scrapy/2.3.0 (+https://scrapy.org)&#39;]&#125;</code></pre>
+<h3 id="spider中的使用"><a href="#spider中的使用" class="headerlink" title="spider中的使用"></a>spider中的使用</h3><p>在spider的编写中集成shell可以调试某个点的response，调用的方法为</p>
+<pre><code class="line-numbers language-python">from scrapy.shell import inspect_response
+inspect_response(response, self)</code></pre>
+<p>案例</p>
+<pre><code class="line-numbers language-python">import scrapy
+
+class MySpider(scrapy.Spider):
+    name = &quot;myspider&quot;
+    start_urls = [
+        &quot;http://example.com&quot;,
+        &quot;http://example.org&quot;,
+        &quot;http://example.net&quot;,
+    ]
+
+    def parse(self, response):
+        # We want to inspect one specific response.
+        if &quot;.org&quot; in response.url:
+            from scrapy.shell import inspect_response
+            inspect_response(response, self)</code></pre>
+<p>代码运行到if语句会进入到scrapyshell中，使用ctrl-d（Linux）或ctrl-z（Windows）退出</p>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
       </tags>
   </entry>
   <entry>
@@ -2037,6 +2820,91 @@ p&gt;lorem4
       </tags>
   </entry>
   <entry>
+    <title>Linux配置ZSH终端环境</title>
+    <url>/2020/Linux/Linux%E9%85%8D%E7%BD%AEZSH%E7%BB%88%E7%AB%AF%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<p>ZSH是mac的默认终端，相当于Linux发行版的bash，本文主要记录了Linux中zsh+onmyzsh的配置方法及优化过程，zsh优点：</p>
+<p>1.完全兼容bash,之前bash下的使用习惯,shell脚本都可以完全兼容。 </p>
+<p>2.更强大的tab补全,当你切换目录敲两下tab,他可以列出当前目录下面的所有目录,…</p>
+<p>3.更智能的切换目录,比如你要进入一个很深的目录，zsh会帮助你完成路径的补全</p>
+<p>4.命令选项补齐,比如输入yum,然后按tab,即可显示出yum都有哪些命令选项。 </p>
+<p>5.命令参数补齐,比如要kill一个进程,直接输入kill 进程名,会自动显示出进程的pid</p>
+<p>···</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-ZSH的安装"><a href="#1-ZSH的安装" class="headerlink" title="1. ZSH的安装"></a>1. ZSH的安装</h2><h3 id="1-1-安装zsh"><a href="#1-1-安装zsh" class="headerlink" title="1.1 安装zsh"></a>1.1 安装zsh</h3><p>如果你用 Redhat Linux，执行：sudo yum install zsh<br>如果你用 Ubuntu Linux，执行：sudo apt-get install zsh</p>
+<p>查看系统中的shell版本</p>
+<pre><code class="line-numbers language-bash">cat /etc/shells        </code></pre>
+<p>切换系统默认shell为zsh</p>
+<pre><code class="line-numbers language-bash">chsh -s /bin/zsh    </code></pre>
+<h3 id="1-2-安装-ohmyzsh"><a href="#1-2-安装-ohmyzsh" class="headerlink" title="1.2 安装 ohmyzsh"></a>1.2 安装 ohmyzsh</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901232057.png"></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL29obXl6c2gvb2hteXpzaC9uZXR3b3Jr">ohmyzsh的GitHub项目地址<i class="fa fa-external-link-alt"></i></span></p>
+<p>自动安装：</p>
+<pre><code class="line-numbers language-bash">wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh</code></pre>
+<p>手动安装：</p>
+<pre><code class="line-numbers language-bash">git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh 
+cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</code></pre>
+<p>或者前两种方式都不合适，可以尝试此种：</p>
+<pre><code class="line-numbers language-tex">1. 到项目仓库下载zip包
+2. 安装unzip
+3. unzip master.zip
+4. cd cd ./ohmyzsh-master/tools/ &amp;&amp; sh install.sh</code></pre>
+<p>都不复杂，安装完成之后退出当前会话重新打开一个终端窗口，你就可以见到彩色的提示了</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901210857.png"></p>
+<hr>
+<h2 id="2-ZSH的优化"><a href="#2-ZSH的优化" class="headerlink" title="2. ZSH的优化"></a>2. ZSH的优化</h2><p>zsh 的配置在<code>~/.zshrc</code>文件</p>
+<h3 id="2-1-配置主题"><a href="#2-1-配置主题" class="headerlink" title="2.1 配置主题"></a>2.1 配置主题</h3><p><strong>ohmyzsh默认主题为robbyrussell，更换为agnoster</strong></p>
+<p>由于<code>oh my zsh</code>会经常更新，为了防止ohmyzsh更新个人配置被覆盖，将本地的主题文件复制出一份</p>
+<pre><code class="line-numbers language-bash">cp ~/.oh-my-zsh/themes/agnoster.zsh-theme ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
+<pre><code class="line-numbers language-bash">vim ~/.zshrc</code></pre>
+<pre><code class="line-numbers language-bash">ZSH_THEME=&quot;agnoster-my&quot;</code></pre>
+<pre><code class="line-numbers language-bash">source .zshrc</code></pre>
+<h3 id="2-2-zsh隐藏终端用户名和计算机名"><a href="#2-2-zsh隐藏终端用户名和计算机名" class="headerlink" title="2.2 zsh隐藏终端用户名和计算机名"></a>2.2 zsh隐藏终端用户名和计算机名</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901215129.png"></p>
+<p>修改主题文件</p>
+<pre><code class="line-numbers language-bash">vim ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
+<p>注释末尾配置</p>
+<pre><code class="line-numbers language-shell"># Main prompt
+build_prompt() &#123;
+  RETVAL=$?
+  prompt_status
+  prompt_virtualenv
+ # prompt_context
+  prompt_dir
+  prompt_git
+  prompt_hg
+  prompt_end
+&#125;</code></pre>
+<p>修改<code>~/.zshrc</code></p>
+<pre><code class="line-numbers language-bash">ZSH_THEME=&quot;agnoster-my&quot;</code></pre>
+<p>立即生效环境变量</p>
+<pre><code class="line-numbers language-bash">source ~/.zshrc</code></pre>
+<h2 id="3-插件"><a href="#3-插件" class="headerlink" title="3. 插件"></a>3. 插件</h2><p>插件放置文件夹：<code>$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins</code></p>
+<p>插件启用：<code>~/.zshrc</code>的</p>
+<pre><code class="line-numbers language-bash"># plugins
+plugins=(
+  zsh-history-substring-search
+  sudo
+  git
+)</code></pre>
+<h3 id="sudo"><a href="#sudo" class="headerlink" title="sudo"></a>sudo</h3><p>自带插件。按两下 <code>ESC</code> 键，自动为命令前加上 sudo。</p>
+<h3 id="zsh-autosuggestions"><a href="#zsh-autosuggestions" class="headerlink" title="zsh-autosuggestions"></a>zsh-autosuggestions</h3><p>这个插件会根据历史输入指令的记录即时的提示</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-autosuggestions $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-autosuggestions</code></pre>
+<h3 id="zsh-syntax-highlighting"><a href="#zsh-syntax-highlighting" class="headerlink" title="zsh-syntax-highlighting"></a>zsh-syntax-highlighting</h3><p>这是一个命令高亮插件，输入为绿色时表示正确的命令，路径带有下划线时表示可用路径</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting</code></pre>
+<h3 id="git-open"><a href="#git-open" class="headerlink" title="git-open"></a>git-open</h3><p>在git目录打开相应的github页面</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/paulirish/git-open.git $ZSH_CUSTOM/plugins/git-open  </code></pre>
+<h3 id="thefuck"><a href="#thefuck" class="headerlink" title="thefuck"></a>thefuck</h3><p>输入 fuck 纠正前一条输错的命令, 需要先下载</p>
+<pre><code class="line-numbers language-bash">sudo apt install thefuck</code></pre>
+<h3 id="history-substring-search"><a href="#history-substring-search" class="headerlink" title="history-substring-search"></a>history-substring-search</h3><p>强大的历史命令搜索插件</p>
+<pre><code class="line-numbers language-bash">git clone https://github.com/zsh-users/zsh-history-substring-search \
+$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-history-substring-search</code></pre>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python数据类型分析及常用方法</title>
     <url>/2020/Python/Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<p>收集的一些经典的爬虫案例</p>
@@ -2222,13 +3090,44 @@ print(html)</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>Docker部署MySQL数据库及配置</title>
-    <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2Mysql/</url>
-    <content><![CDATA[<p>Docker 部署 Mysql数据库，快速部署、运行、销毁</p>
+    <title>Docker快速部署多种数据库及配置使用</title>
+    <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/</url>
+    <content><![CDATA[<ul>
+<li><strong>redis</strong></li>
+<li><strong>mongodb</strong></li>
+<li><strong>mysql</strong></li>
+</ul>
 <a id="more"></a>
 
 <hr>
-<h2 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h2><p>需要安装指定版本的话，查看远端的版本</p>
+<h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><p>为了方便，我们可以将MongoDB的数据目录映射到主机上来</p>
+<pre><code class="line-numbers language-bash">mkdir -p /data/mongodata        # 创建数据目录</code></pre>
+<p>拉取镜像</p>
+<pre><code class="line-numbers language-bash">docker pull mongo</code></pre>
+<p>启动MongoDB容器</p>
+<pre><code class="line-numbers language-bash">docker run -d --name mongo -v /data/mongodata:/data/db -p 27017:27017 mongo --auth</code></pre>
+<ul>
+<li><p>–name mongo 容器名称</p>
+</li>
+<li><p>–v /data/mongodata:/data/db 映射数据目录</p>
+</li>
+<li><p>-p 27017:27017 端口映射，前面的是主机端口，后面的是docker中的端口</p>
+</li>
+<li><p>mongo –auth 以账号验证模式启动</p>
+</li>
+</ul>
+<p><strong>创建账号</strong></p>
+<p>创建root用户、密码为123，所有数据库读写权限</p>
+<pre><code class="line-numbers language-bash">docker exec -it mongo mongo admin --eval &quot;db.createUser(&#123;user: &#39;root&#39;, pwd: &#39;123&#39;, roles: [ &#123; role: &#39;root&#39;, db: &#39;admin&#39; &#125; , &#39;readWriteAnyDatabase&#39;] &#125;)&quot;</code></pre>
+<p><strong>设置随Docker启动</strong></p>
+<pre><code class="line-numbers language-bash">docker update --restart=always mongo          </code></pre>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>拉取镜像</p>
+<pre><code class="line-numbers language-bash">docker pull redis</code></pre>
+<p>创建容器，容器名称为redis16379、开放在宿主机的16379端口上</p>
+<pre><code class="line-numbers language-bash">docker run -d --name redis16379 -p 16379:6379 redis</code></pre>
+<p>设置随Docker启动</p>
+<pre><code class="line-numbers language-bash">docker update --restart=always redis16379     </code></pre>
+<h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><p>需要安装指定版本的话，查看远端的版本</p>
 <pre><code class="line-numbers language-bash">$ docker search mysql</code></pre>
 <p>下载MySQL镜像（image）</p>
 <pre><code class="line-numbers language-bash">$ docker pull mysql            # latest
@@ -2237,7 +3136,7 @@ $ docker pull mysql:5.7        # 5.7</code></pre>
 <pre><code class="line-numbers language-bash">$ docker images
 REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
 mysql                latest              c8ee894bd2bd        2 weeks ago         456MB</code></pre>
-<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>先创建一个临时的mysql，进入容器中</p>
+<p>先创建一个临时的mysql，进入容器中</p>
 <pre><code class="line-numbers language-bash">docker run --rm --name mysqlTemp -it -v /usr/local/mysql/:/var/lib/mysql  -e MYSQL_ROOT_PASSWORD=123456 mysql /bin/bash </code></pre>
 <blockquote>
 <p>– rm 退出后就删除该容器<br>-v /usr/local/mysql/:/var/lib/mysql  装主机目录/usr/local/mysql/映射Docker中的/var/lib/mysql目录<br>-it 交互模式<br>/bin/bash 进入 bash 命令模式</p>
@@ -2278,11 +3177,12 @@ conf.d  my.cnf</code></pre>
 ]]></content>
       <tags>
         <tag>Docker</tag>
+        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
     <title>Xpath选择器语法及常用实例</title>
-    <url>/2019/%E5%AF%B9%E7%85%A7%E8%A1%A8/xpath%E9%80%89%E6%8B%A9%E5%99%A8%E8%AF%AD%E6%B3%95/</url>
+    <url>/2019/%E7%88%AC%E8%99%AB/xpath%E9%80%89%E6%8B%A9%E5%99%A8%E8%AF%AD%E6%B3%95/</url>
     <content><![CDATA[<h2 id="1-什么是Xpath选择器"><a href="#1-什么是Xpath选择器" class="headerlink" title="1. 什么是Xpath选择器"></a>1. 什么是Xpath选择器</h2><p>XPath 的全称是 XML Path Language，即 XML 路径语言，它是一种在结构化文档（比如 XML 和 HTML 文档）中定位信息的语言。<br>XPath 选择器使用路径表达式来选取 XML 文档中的节点或节点集。节点是通过沿着路径 (path) 或者步 (steps) 来选取的。</p>
 <a id="more"></a>
 
@@ -2908,7 +3808,7 @@ pip install jupyter_nbextensions_configurator</code></pre>
   </entry>
   <entry>
     <title>Linux配置NodeJs环境方法</title>
-    <url>/2019/Docker/ubuntu%E5%AE%89%E8%A3%85Nodejs%E7%8E%AF%E5%A2%83/</url>
+    <url>/2019/Linux/ubuntu%E5%AE%89%E8%A3%85Nodejs%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<p>Ubuntu配置NodeJs环境的方法，手动安装理论适合所有发行版本</p>
 <ul>
 <li>自动安装</li>

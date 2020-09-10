@@ -30,7 +30,7 @@
 <meta property="og:description" content="redis mongodb mysql">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-05-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-09-08T04:56:58.182Z">
+<meta property="article:modified_time" content="2020-09-10T15:38:15.535Z">
 <meta property="article:author" content="yuandongxu">
 <meta property="article:tag" content="Docker">
 <meta property="article:tag" content="数据库">
@@ -219,7 +219,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>270</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -285,6 +285,53 @@
 <pre><code class="line-numbers language-bash">docker run -d --name redis16379 -p 16379:6379 redis</code></pre>
 <p>设置随Docker启动</p>
 <pre><code class="line-numbers language-bash">docker update --restart=always redis16379     </code></pre>
+<h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><p>需要安装指定版本的话，查看远端的版本</p>
+<pre><code class="line-numbers language-bash">$ docker search mysql</code></pre>
+<p>下载MySQL镜像（image）</p>
+<pre><code class="line-numbers language-bash">$ docker pull mysql            # latest
+$ docker pull mysql:5.7        # 5.7</code></pre>
+<p>查看本地镜像</p>
+<pre><code class="line-numbers language-bash">$ docker images
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+mysql                latest              c8ee894bd2bd        2 weeks ago         456MB</code></pre>
+<p>先创建一个临时的mysql，进入容器中</p>
+<pre><code class="line-numbers language-bash">docker run --rm --name mysqlTemp -it -v /usr/local/mysql/:/var/lib/mysql  -e MYSQL_ROOT_PASSWORD=123456 mysql /bin/bash </code></pre>
+<blockquote>
+<p>– rm 退出后就删除该容器<br>-v /usr/local/mysql/:/var/lib/mysql  装主机目录/usr/local/mysql/映射Docker中的/var/lib/mysql目录<br>-it 交互模式<br>/bin/bash 进入 bash 命令模式</p>
+</blockquote>
+<p>查看 my.cnf文件。<br>  <code>cat /etc/mysql/my.cnf</code></p>
+<pre><code class="line-numbers language-bash">$ cat /etc/mysql/my.cnf
+
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+secure-file-priv= NULL
+
+symbolic-links=0
+
+!includedir /etc/mysql/conf.d/</code></pre>
+<p>如果是完整的my.cnf文件，直接复制出去，如果不是，则需要把includedir目录一起复到主机</p>
+<p>拷贝配置文件</p>
+<p>把Docker中的/etc/mysql/my.cnf文件拷贝到Docker的/var/lib/mysql目录，及主机的/usr/local/mysql/目录中</p>
+<pre><code class="line-numbers language-bash">cp /etc/mysql/my.cnf /var/lib/mysql</code></pre>
+<p>把Docker中includedir目录复制出去</p>
+<pre><code class="line-numbers language-bash">cp -R /etc/mysql/conf.d/ /var/lib/mysql/conf.d</code></pre>
+<p>退出bash，Docker中临时用的mysqlTemp会被删除</p>
+<p>然后可以查看/usr/local/mysql/目录下有mysql所有的配置文件</p>
+<pre><code class="line-numbers language-bash">[root@iZbp17pvndv49r9ozf5hbcZ ~]# ls /usr/local/mysql/
+conf.d  my.cnf</code></pre>
+<p>这里就可以修改配置了。<br>改完之后，创建正式的mysql容器</p>
+<pre><code class="line-numbers language-bash">docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123455 -v /usr/local/mysql/data:/var/lib/mysql -v /usr/local/mysql/my.cnf:/etc/mysql/my.cnf -v /usr/local/mysql/conf.d:/etc/mysql/conf.d -d mysql</code></pre>
+<p>如果my.cnf 是完整的配置，这里不需要映射conf.d和mysql.conf.d这二个目录</p>
+<pre><code class="line-numbers language-bash">docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123455 -v /usr/local/mysql/data:/var/lib/mysql -v /usr/local/mysql/my.cnf:/etc/mysql/my.cnf  -d mysql</code></pre>
+<ul>
+<li>–name 容器名称</li>
+<li>-p 端口映射</li>
+<li>-v 配置文件映射：将 宿主机上修改的自定义配置文件，映射到 容器中</li>
+<li>-e MYSQL_ROOT_PASSWORD   设置root密码</li>
+<li>-d 守护进程模式运行</li>
+</ul>
 
     </div>
 
@@ -305,12 +352,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/%E5%AF%B9%E7%85%A7%E8%A1%A8/xpath%E9%80%89%E6%8B%A9%E5%99%A8%E8%AF%AD%E6%B3%95/" rel="prev" title="Xpath选择器语法及常用实例">
+    <a href="/2019/%E7%88%AC%E8%99%AB/xpath%E9%80%89%E6%8B%A9%E5%99%A8%E8%AF%AD%E6%B3%95/" rel="prev" title="Xpath选择器语法及常用实例">
       <i class="fa fa-chevron-left"></i> Xpath选择器语法及常用实例
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/Docker/Docker%E9%83%A8%E7%BD%B2Mysql/" rel="next" title="Docker部署MySQL数据库及配置">
-      Docker部署MySQL数据库及配置 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/Python/Python%20%E7%88%AC%E5%8F%96%E7%BD%91%E9%A1%B5%E4%B8%ADJavaScript%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E7%9A%84%E5%86%85%E5%AE%B9/" rel="next" title="Python 爬取网页中JavaScript动态添加的内容">
+      Python 爬取网页中JavaScript动态添加的内容 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -370,7 +417,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB"><span class="nav-text">MongoDB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis"><span class="nav-text">Redis</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB"><span class="nav-text">MongoDB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis"><span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL"><span class="nav-text">MySQL</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -385,7 +432,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -441,7 +488,7 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">79k</span>
+    <span title="站点总字数">98k</span>
 </div>
 <script src="/js/prism/prism.js" async></script>
 

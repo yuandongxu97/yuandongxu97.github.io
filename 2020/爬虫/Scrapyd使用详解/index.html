@@ -22,16 +22,16 @@
   </script>
 <link rel="stylesheet" href="/js/prism/prism.css">
 
-  <meta name="description" content="Scrapy是一个爬虫框架, scrapy爬虫写好后，可以用命令行运行，但是如果能在网页上操作就比较方便.  scrapyd就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大.  。 还有一个更加强大的国产工具 gerapy!">
+  <meta name="description" content="Scrapyd是一个scrapy框架爬虫的端对端部署工具，scrapyd能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Scrapy项目部署工具scrapyd使用详解">
 <meta property="og:url" content="http://yoursite.com/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/index.html">
 <meta property="og:site_name" content="苑东旭的博客">
-<meta property="og:description" content="Scrapy是一个爬虫框架, scrapy爬虫写好后，可以用命令行运行，但是如果能在网页上操作就比较方便.  scrapyd就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大.  。 还有一个更加强大的国产工具 gerapy!">
+<meta property="og:description" content="Scrapyd是一个scrapy框架爬虫的端对端部署工具，scrapyd能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200906142415.png">
 <meta property="article:published_time" content="2020-03-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-09-08T05:06:52.091Z">
+<meta property="article:modified_time" content="2020-09-08T14:08:59.768Z">
 <meta property="article:author" content="yuandongxu">
 <meta property="article:tag" content="爬虫">
 <meta property="article:tag" content="Scrapy">
@@ -221,7 +221,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1k</span>
+              <span>926</span>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,14 +252,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Scrapy是一个爬虫框架, scrapy爬虫写好后，可以用命令行运行，但是如果能在网页上操作就比较方便.  scrapyd就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大.  。</p>
-<p>还有一个更加强大的国产工具 gerapy!</p>
+        <p>Scrapyd是一个scrapy框架爬虫的端对端部署工具，scrapyd能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务。</p>
 <a id="more"></a>
 
 <hr>
-<h2 id="1-Scrapyd服务"><a href="#1-Scrapyd服务" class="headerlink" title="1. Scrapyd服务"></a>1. Scrapyd服务</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><p>服务端安装scrapyd（server）</p>
-<pre><code class="line-numbers language-bash">pip install scrapyd</code></pre>
-<p>本地主机安装scrapyd-client（client）</p>
+<h2 id="1-Scrapyd服务"><a href="#1-Scrapyd服务" class="headerlink" title="1. Scrapyd服务"></a>1. Scrapyd服务</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><pre><code class="line-numbers language-bash">pip install scrapyd</code></pre>
 <pre><code class="line-numbers language-bash">pip install scrapyd-client</code></pre>
 <h3 id="1-2-启动Scrapyd服务"><a href="#1-2-启动Scrapyd服务" class="headerlink" title="1.2 启动Scrapyd服务"></a>1.2 启动Scrapyd服务</h3><p>作为测试，本地主机（localhost）安装完成服务端后运行<code>scrapyd</code>开启服务端，浏览器访问<code>localhost:6800</code>即可访问scrapyd服务</p>
 <pre><code class="line-numbers language-bash">scrapyd</code></pre>
@@ -306,7 +303,7 @@ project = filespider</code></pre>
 <p>扫描项目中的deploy配置信息</p>
 <pre><code class="line-numbers language-bash">scrapyd-deploy -l
 # aliyun               http://47.93.230.127:6800/</code></pre>
-<h3 id="1-4-部署项目"><a href="#1-4-部署项目" class="headerlink" title="1.4 部署项目"></a>1.4 部署项目</h3><p>编译项目</p>
+<h3 id="1-4-项目部署"><a href="#1-4-项目部署" class="headerlink" title="1.4 项目部署"></a>1.4 项目部署</h3><p>编译项目</p>
 <pre><code class="line-numbers language-bash"># scrapyd-deploy &lt;target&gt; -p &lt;project&gt; --version &lt;version&gt;
 scrapy</code></pre>
 
@@ -333,8 +330,8 @@ scrapy</code></pre>
       <i class="fa fa-chevron-left"></i> Scrapy框架爬取文件和图片
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/Python/pip/" rel="next" title="Python包管理器PIP配置使用">
-      Python包管理器PIP配置使用 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="Linux常用命令">
+      Linux常用命令 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -394,7 +391,7 @@ scrapy</code></pre>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Scrapyd%E6%9C%8D%E5%8A%A1"><span class="nav-text">1. Scrapyd服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AE%89%E8%A3%85"><span class="nav-text">1.1 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%90%AF%E5%8A%A8Scrapyd%E6%9C%8D%E5%8A%A1"><span class="nav-text">1.2 启动Scrapyd服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%9A%84%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AE"><span class="nav-text">服务端的外网访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E9%85%8D%E7%BD%AEScrapy%E9%A1%B9%E7%9B%AE"><span class="nav-text">1.3 配置Scrapy项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE"><span class="nav-text">1.4 部署项目</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Scrapyd%E6%9C%8D%E5%8A%A1"><span class="nav-text">1. Scrapyd服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AE%89%E8%A3%85"><span class="nav-text">1.1 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%90%AF%E5%8A%A8Scrapyd%E6%9C%8D%E5%8A%A1"><span class="nav-text">1.2 启动Scrapyd服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%9A%84%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AE"><span class="nav-text">服务端的外网访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E9%85%8D%E7%BD%AEScrapy%E9%A1%B9%E7%9B%AE"><span class="nav-text">1.3 配置Scrapy项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2"><span class="nav-text">1.4 项目部署</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -409,7 +406,7 @@ scrapy</code></pre>
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -465,7 +462,7 @@ scrapy</code></pre>
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">79k</span>
+    <span title="站点总字数">98k</span>
 </div>
 <script src="/js/prism/prism.js" async></script>
 

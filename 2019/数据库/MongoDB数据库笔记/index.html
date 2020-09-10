@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":15,"onmobile":true},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+<link rel="stylesheet" href="/js/prism/prism.css">
+
+  <meta name="description" content="MongoDB数据库的安装 MongoDB数据库的使用 Python操作库pymongo的安装及使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB数据库笔记">
+<meta property="og:url" content="http://yoursite.com/2019/%E6%95%B0%E6%8D%AE%E5%BA%93/MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="苑东旭的博客">
+<meta property="og:description" content="MongoDB数据库的安装 MongoDB数据库的使用 Python操作库pymongo的安装及使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200903145040.jpg">
+<meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200903145100.jpg">
+<meta property="article:published_time" content="2019-03-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-09-08T06:17:59.166Z">
+<meta property="article:author" content="yuandongxu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200903145040.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2019/%E6%95%B0%E6%8D%AE%E5%BA%93/MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MongoDB数据库笔记 | 苑东旭的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">苑东旭的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">笔记·归纳·总结</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-工具">
+
+    <a href="/tools" rel="section"><i class="fa fa-th fa-fw"></i>工具</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/%E6%95%B0%E6%8D%AE%E5%BA%93/MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/asset/av.jpg">
+      <meta itemprop="name" content="yuandongxu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="苑东旭的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB数据库笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-05 00:00:00" itemprop="dateCreated datePublished" datetime="2019-03-05T00:00:00+08:00">2019-03-05</time>
+            </span>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-tag"></i>
+              </span>
+              <span class="post-meta-item-text">标签：</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/tags/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+
+
+
+
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li>MongoDB数据库的安装</li>
+<li>MongoDB数据库的使用</li>
+<li>Python操作库pymongo的安装及使用</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="MongoDB的安装"><a href="#MongoDB的安装" class="headerlink" title="MongoDB的安装"></a>MongoDB的安装</h2><p>MongoDB 源码及安装包下载地址：<span class="exturl" data-url="aHR0cHM6Ly93d3cubW9uZ29kYi5jb20vZG93bmxvYWQtY2VudGVyI2NvbW11bml0eQ==">https://www.mongodb.com/download-center#community<i class="fa fa-external-link-alt"></i></span></p>
+<h3 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h3><p>比若说下载Ubuntu 下的安装包方法如下：</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200903145040.jpg"></p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200903145100.jpg"></p>
+<p>当我们得到下载链接后</p>
+<pre><code class="line-numbers language-bash">wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.8.tgz    # 下载
+tar -zxvf mongodb-linux-x86_64-ubuntu1604-4.2.8.tgz        # 解压
+
+mv mongodb-src-r4.2.8  /opt/mongo        # 将解压包拷贝到指定目录</code></pre>
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>MongoDB 的可执行文件位于文件夹的bin 目录下，所以可以将其添加到系统环境变量 <strong>PATH</strong> 中：</p>
+<pre><code class="line-numbers language-bash">vim /etc/profile.d/mongo.sh</code></pre>
+<pre><code class="line-numbers language-bash">export PATH=/opt/mongo/bin:$PATH</code></pre>
+<pre><code class="line-numbers language-bash">source /etc/profile.d/mongo.sh</code></pre>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><pre><code class="line-numbers language-bash">/etc/mongod.conf.orig</code></pre>
+<pre><code class="line-numbers language-yaml"># mongod.conf
+
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongodb
+  journal:
+    enabled: true
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+# network interfaces
+net:
+  port: 27017
+  bindIp: 127.0.0.1</code></pre>
+<h3 id="MongoShell"><a href="#MongoShell" class="headerlink" title="MongoShell"></a>MongoShell</h3><p>Mongosh是MongoDB自带javascript shell, 可在shell中使用命令行与MongoDB实列交互，可以执行管理操作，检查运行实列等等操作。</p>
+<p>当我们使用docker部署mongodb时，可以在宿主机上单独配置mongoshell使用，下载地址：<span class="exturl" data-url="aHR0cHM6Ly93d3cubW9uZ29kYi5jb20vdHJ5L2Rvd25sb2FkL3NoZWxs">https://www.mongodb.com/try/download/shell<i class="fa fa-external-link-alt"></i></span></p>
+<p>下载得到的压缩包解压后得到的是一个可执行文件<code>mongosh</code>，直接使用即可进行连接，默认输出 ：</p>
+<pre><code class="line-numbers language-shell">$ mongosh
+Current sessionID:  52c39be56c73153cee1840d7
+Connecting to:      mongodb://127.0.0.1:27017
+Using MongoDB:      4.4.0
+Using Mongosh Beta: 0.2.2
+
+For more information about mongosh, please see our docs: https://docs.mongodb.com/mongodb-shell/
+
+&gt; &lt;your_order&gt;</code></pre>
+<p>URL连接</p>
+<pre><code class="line-numbers language-bash">#  Start mongosh using &#39;ships&#39; database on specified connection string:
+$ mongosh mongodb://192.168.0.5:9999/ships</code></pre>
+<p>连接选项帮助</p>
+<pre><code class="line-numbers language-bash">$ mongosh --help</code></pre>
+<h2 id="MongoDB使用方法"><a href="#MongoDB使用方法" class="headerlink" title="MongoDB使用方法"></a>MongoDB使用方法</h2><h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><p>我想创建一个scrapy数据库，其中有一个info集合（类mysql表），添加以下数据</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>age</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>张三</td>
+<td>15</td>
+</tr>
+<tr>
+<td>李四</td>
+<td>16</td>
+</tr>
+<tr>
+<td>王五</td>
+<td>17</td>
+</tr>
+</tbody></table>
+<p>mongosh代码</p>
+<pre><code class="line-numbers language-shell">&gt; db    # 显示当前数据库
+# test
+
+&gt; use scrapy    # 创建/选择scrapy数据库
+# switched to db scrapy
+
+&gt; show dbs        # 显示所有数据库，不包含空库
+# admin    102 kB
+# config   111 kB
+# local   73.7 kB</code></pre>
+<p>插入数据</p>
+<pre><code class="line-numbers language-bash"># 插入数据行1
+&gt; db.info.insert(&#123;&quot;name&quot;:&quot;张三&quot;, &quot;age&quot;:&quot;15&quot;&#125;)        
+&#123;
+  acknowledged: 1,
+  insertedIds: &#123; &#39;0&#39;: ObjectId(&quot;5f50a59ee4c079078fab16f4&quot;) &#125;
+&#125;
+
+# 插入数据行2
+&gt; db.info.insert(&#123;&quot;name&quot;:&quot;李四&quot;, &quot;age&quot;:&quot;16&quot;&#125;)        
+&#123;
+  acknowledged: 1,
+  insertedIds: &#123; &#39;0&#39;: ObjectId(&quot;5f50a59ee4c079078fab16f4&quot;) &#125;
+&#125;
+
+# 插入数据行3
+&gt; db.info.insert(&#123;&quot;name&quot;:&quot;王五&quot;, &quot;age&quot;:&quot;17&quot;&#125;)        
+&#123;
+  acknowledged: 1,
+  insertedIds: &#123; &#39;0&#39;: ObjectId(&quot;5f50a59ee4c079078fab16f4&quot;) &#125;
+&#125;</code></pre>
+<p>查看数据</p>
+<pre><code class="line-numbers language-bash">&gt; db.info.find()
+# [
+#   &#123; _id: ObjectId(&quot;5f50a88fe8320e0817d3c1c2&quot;), name: &#39;张三&#39;, age: &#39;15&#39; &#125;,
+#   &#123; _id: ObjectId(&quot;5f50a892e8320e0817d3c1c3&quot;), name: &#39;李四&#39;, age: &#39;16&#39; &#125;,
+#   &#123; _id: ObjectId(&quot;5f50a896e8320e0817d3c1c4&quot;), name: &#39;王五&#39;, age: &#39;17&#39; &#125;
+# ]</code></pre>
+<p>删除集合、数据库</p>
+<pre><code class="line-numbers language-bash">db.info.drop()        # true
+db.dropDatabase()        # &#123; ok: 1, dropped: &#39;scrapy&#39; &#125;</code></pre>
+<h3 id="更新文档数据"><a href="#更新文档数据" class="headerlink" title="更新文档数据"></a>更新文档数据</h3><p>首先我们在test集合里插入测试数据</p>
+<pre><code class="line-numbers language-bash">use test
+db.test_collection.insert( [
+&#123;&quot;name&quot;:&quot;abc&quot;,&quot;age&quot;:&quot;25&quot;,&quot;status&quot;:&quot;zxc&quot;&#125;,
+&#123;&quot;name&quot;:&quot;dec&quot;,&quot;age&quot;:&quot;19&quot;,&quot;status&quot;:&quot;qwe&quot;&#125;,
+&#123;&quot;name&quot;:&quot;asd&quot;,&quot;age&quot;:&quot;30&quot;,&quot;status&quot;:&quot;nmn&quot;&#125;,
+] )</code></pre>
+<p>更新单个文档</p>
+<pre><code class="line-numbers language-bash">&gt; db.test_collection.updateOne(&#123;&quot;name&quot;:&quot;abc&quot;&#125;,&#123;$set:&#123;&quot;age&quot;:&quot;28&quot;&#125;&#125;)
+&#123; &quot;acknowledged&quot; : true, &quot;matchedCount&quot; : 1, &quot;modifiedCount&quot; : 1 &#125;
+&gt; db.test_collection.find()
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716af&quot;), &quot;name&quot; : &quot;abc&quot;, &quot;age&quot; : &quot;28&quot;, &quot;status&quot; : &quot;zxc&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b0&quot;), &quot;name&quot; : &quot;dec&quot;, &quot;age&quot; : &quot;19&quot;, &quot;status&quot; : &quot;qwe&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b1&quot;), &quot;name&quot; : &quot;asd&quot;, &quot;age&quot; : &quot;30&quot;, &quot;status&quot; : &quot;nmn&quot; &#125;
+&gt;</code></pre>
+<p>更新多个文档</p>
+<pre><code class="line-numbers language-bash">&gt; db.test_collection.updateMany(&#123;&quot;age&quot;:&#123;$gt:&quot;10&quot;&#125;&#125;,&#123;$set:&#123;&quot;status&quot;:&quot;xyz&quot;&#125;&#125;)
+&#123; &quot;acknowledged&quot; : true, &quot;matchedCount&quot; : 3, &quot;modifiedCount&quot; : 3 &#125;
+&gt; db.test_collection.find()
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716af&quot;), &quot;name&quot; : &quot;abc&quot;, &quot;age&quot; : &quot;28&quot;, &quot;status&quot; : &quot;xyz&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b0&quot;), &quot;name&quot; : &quot;dec&quot;, &quot;age&quot; : &quot;19&quot;, &quot;status&quot; : &quot;xyz&quot; &#125;
+&#123; &quot;_id&quot; : ObjectId(&quot;59c8ba673b92ae498a5716b1&quot;), &quot;name&quot; : &quot;asd&quot;, &quot;age&quot; : &quot;30&quot;, &quot;status&quot; : &quot;xyz&quot; &#125;
+&gt;</code></pre>
+<h3 id="删除集合数据"><a href="#删除集合数据" class="headerlink" title="删除集合数据"></a>删除集合数据</h3><p>如删除集合下全部文档：</p>
+<pre><code class="line-numbers language-bash">db.inventory.deleteMany(&#123;&#125;)</code></pre>
+<p>删除 status 等于 A 的全部文档：</p>
+<pre><code class="line-numbers language-bash">db.inventory.deleteMany(&#123; status : &quot;A&quot; &#125;)</code></pre>
+<p>删除 status 等于 D 的一个文档：</p>
+<pre><code class="line-numbers language-bash">db.inventory.deleteOne( &#123; status: &quot;D&quot; &#125; )</code></pre>
+<h2 id="pymongo的使用（PythonSDK）"><a href="#pymongo的使用（PythonSDK）" class="headerlink" title="pymongo的使用（PythonSDK）"></a>pymongo的使用（PythonSDK）</h2><h3 id="pymongo的安装"><a href="#pymongo的安装" class="headerlink" title="pymongo的安装"></a>pymongo的安装</h3><p>使用pip安装</p>
+<pre><code class="line-numbers language-bash">python -m pip install pymongo</code></pre>
+<p>使用setuptools安装</p>
+<pre><code class="line-numbers language-bash">python -m easy_install pymongo</code></pre>
+<p>显示python版本</p>
+<pre><code class="line-numbers language-bash">python -c &quot;import sys; print(sys.version)&quot;</code></pre>
+<p>显示pymongo版本</p>
+<pre><code class="line-numbers language-bash">python -c &quot;import pymongo; print(pymongo.version); print(pymongo.has_c())&quot;</code></pre>
+<h3 id="pymongo常用方法"><a href="#pymongo常用方法" class="headerlink" title="pymongo常用方法"></a>pymongo常用方法</h3><p>官方文档：<span class="exturl" data-url="aHR0cDovL2FwaS5tb25nb2RiLmNvbS9weXRob24vY3VycmVudC9hcGkvcHltb25nby8=">http://api.mongodb.com/python/current/api/pymongo/<i class="fa fa-external-link-alt"></i></span></p>
+<pre><code class="line-numbers language-python">#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+&quot;&quot;&quot;
+连接MongoDB
+    连接MongoDB我们需要使用PyMongo库里面的MongoClient，一般来说传入MongoDB的IP及端口即可，
+    第一个参数为地址host，第二个参数为端口port，端口如果不传默认是27017。
+&quot;&quot;&quot;
+import pymongo
+
+
+# 连接数据库
+# 指定属性值
+client = pymongo.MongoClient(host=&#39;localhost&#39;, port=27017)
+# MongoClient的第一个参数host还可以直接传MongoDB的连接字符串，以mongodb开头，
+client = pymongo.MongoClient(&#39;mongodb://localhost:27017/&#39;)
+
+
+# 指定数据库
+# 调用client的test属性即可返回test数据库，或者以字典方式指定，两种方式是等价的。
+db = client.test
+db = client[&#39;test&#39;]
+
+
+# 指定集合
+# MongoDB的每个数据库又包含了许多集合Collection，也就类似与关系型数据库中的表，下一步我们需要指定要操作的集合，
+# 在这里我们指定一个集合名称为students，学生集合。还是和指定数据库类似，指定集合也有两种方式。
+collection = db.students
+collection = db[&#39;students&#39;]
+
+
+# 插入数据
+# 对于students这个Collection，我们新建一条学生数据，以字典的形式表示：
+student = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+
+# 在这里我们指定了学生的学号、姓名、年龄和性别，然后接下来直接调用collection的insert()方法即可插入数据。 
+result = collection.insert(student)
+print(result)
+# 在MongoDB中，每条数据其实都有一个_id属性来唯一标识，如果没有显式指明_id，MongoDB会自动产生一个ObjectId类型的_id属性。
+# insert()方法会在执行后返回的_id值。
+
+# 运行结果：
+# 5932a68615c2606814c91f3d
+# 当然我们也可以同时插入多条数据，只需要以列表形式传递即可，示例如下：
+
+student1 = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+student2 = &#123;
+    &#39;id&#39;: &#39;20170202&#39;,
+    &#39;name&#39;: &#39;Mike&#39;,
+    &#39;age&#39;: 21,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+result = collection.insert([student1, student2])
+print(result)
+# 返回的结果是对应的_id的集合，运行结果：
+# [ObjectId(&#39;5932a80115c2606a59e8a048&#39;), ObjectId(&#39;5932a80115c2606a59e8a049&#39;)]
+# 实际上在PyMongo 3.X版本中，insert()方法官方已经不推荐使用了，当然继续使用也没有什么问题，
+# 官方推荐使用insert_one()和insert_many()方法将插入单条和多条记录分开。
+
+student = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+result = collection.insert_one(student)
+print(result)
+print(result.inserted_id)
+# 运行结果：
+# &lt;pymongo.results.InsertOneResult object at 0x10d68b558&gt;
+# 5932ab0f15c2606f0c1cf6c5
+# 返回结果和insert()方法不同，这次返回的是InsertOneResult对象，我们可以调用其inserted_id属性获取_id。
+
+# 对于insert_many()方法，我们可以将数据以列表形式传递即可，示例如下：
+
+student1 = &#123;
+    &#39;id&#39;: &#39;20170101&#39;,
+    &#39;name&#39;: &#39;Jordan&#39;,
+    &#39;age&#39;: 20,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+student2 = &#123;
+    &#39;id&#39;: &#39;20170202&#39;,
+    &#39;name&#39;: &#39;Mike&#39;,
+    &#39;age&#39;: 21,
+    &#39;gender&#39;: &#39;male&#39;
+&#125;
+
+result = collection.insert_many([student1, student2])
+print(result)
+print(result.inserted_ids)
+# insert_many()方法返回的类型是InsertManyResult，调用inserted_ids属性可以获取插入数据的_id列表，运行结果：
+
+# &lt;pymongo.results.InsertManyResult object at 0x101dea558&gt;
+# [ObjectId(&#39;5932abf415c2607083d3b2ac&#39;), ObjectId(&#39;5932abf415c2607083d3b2ad&#39;)]
+# 查询，插入数据后我们可以利用find_one()或find()方法进行查询，find_one()查询得到是单个结果，find()则返回多个结果。
+
+result = collection.find_one(&#123;&#39;name&#39;: &#39;Mike&#39;&#125;)
+print(type(result))
+print(result)
+# 在这里我们查询name为Mike的数据，它的返回结果是字典类型，运行结果：
+# &lt;class&#39;dict&#39;&gt;
+# &#123;&#39;_id&#39;: ObjectId(&#39;5932a80115c2606a59e8a049&#39;), &#39;id&#39;: &#39;20170202&#39;, &#39;name&#39;: &#39;Mike&#39;, &#39;age&#39;: 21, &#39;gender&#39;: &#39;male&#39;&#125;
+# 可以发现它多了一个_id属性，这就是MongoDB在插入的过程中自动添加的。
+
+# 我们也可以直接根据ObjectId来查询，这里需要使用bson库里面的ObjectId。
+
+from bson.objectid import ObjectId
+
+result = collection.find_one(&#123;&#39;_id&#39;: ObjectId(&#39;593278c115c2602667ec6bae&#39;)&#125;)
+print(result)
+# 其查询结果依然是字典类型，运行结果：
+
+# &#123;&#39; ObjectId(&#39;593278c115c2602667ec6bae&#39;), &#39;id&#39;: &#39;20170101&#39;, &#39;name&#39;: &#39;Jordan&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# 当然如果查询_id&#39;:结果不存在则会返回None。
+
+# 对于多条数据的查询，我们可以使用find()方法，例如在这里查找年龄为20的数据，示例如下：
+
+results = collection.find(&#123;&#39;age&#39;: 20&#125;)
+print(results)
+for result in results:
+    print(result)
+# 运行结果：
+
+# &lt;pymongo.cursor.Cursor object at 0x1032d5128&gt;
+# &#123;&#39;_id&#39;: ObjectId(&#39;593278c115c2602667ec6bae&#39;), &#39;id&#39;: &#39;20170101&#39;, &#39;name&#39;: &#39;Jordan&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# &#123;&#39;_id&#39;: ObjectId(&#39;593278c815c2602678bb2b8d&#39;), &#39;id&#39;: &#39;20170102&#39;, &#39;name&#39;: &#39;Kevin&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# &#123;&#39;_id&#39;: ObjectId(&#39;593278d815c260269d7645a8&#39;), &#39;id&#39;: &#39;20170103&#39;, &#39;name&#39;: &#39;Harden&#39;, &#39;age&#39;: 20, &#39;gender&#39;: &#39;male&#39;&#125;
+# 返回结果是Cursor类型，相当于一个生成器，我们需要遍历取到所有的结果，每一个结果都是字典类型。
+
+# 如果要查询年龄大于20的数据，则写法如下：
+
+results = collection.find(&#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;)
+# 在这里查询的条件键值已经不是单纯的数字了，而是一个字典，其键名为比较符号$gt，意思是大于，键值为20，这样便可以查询出所有
+# 年龄大于20的数据。
+
+# 在这里将比较符号归纳如下表：
+&quot;&quot;&quot;
+符号含义示例
+$lt小于&#123;&#39;age&#39;: &#123;&#39;$lt&#39;: 20&#125;&#125;
+$gt大于&#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;
+$lte小于等于&#123;&#39;age&#39;: &#123;&#39;$lte&#39;: 20&#125;&#125;
+$gte大于等于&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 20&#125;&#125;
+$ne不等于&#123;&#39;age&#39;: &#123;&#39;$ne&#39;: 20&#125;&#125;
+$in在范围内&#123;&#39;age&#39;: &#123;&#39;$in&#39;: [20, 23]&#125;&#125;
+$nin不在范围内&#123;&#39;age&#39;: &#123;&#39;$nin&#39;: [20, 23]&#125;&#125;
+&quot;&quot;&quot;
+# 另外还可以进行正则匹配查询，例如查询名字以M开头的学生数据，示例如下：
+
+results = collection.find(&#123;&#39;name&#39;: &#123;&#39;$regex&#39;: &#39;^M.*&#39;&#125;&#125;)
+# 在这里使用了$regex来指定正则匹配，^M.*代表以M开头的正则表达式，这样就可以查询所有符合该正则的结果。
+
+# 在这里将一些功能符号再归类如下：
+&quot;&quot;&quot;
+符号含义示例示例含义
+$regex匹配正则&#123;&#39;name&#39;: &#123;&#39;$regex&#39;: &#39;^M.*&#39;&#125;&#125;name以M开头
+$exists属性是否存在&#123;&#39;name&#39;: &#123;&#39;$exists&#39;: True&#125;&#125;name属性存在
+$type类型判断&#123;&#39;age&#39;: &#123;&#39;$type&#39;: &#39;int&#39;&#125;&#125;age的类型为int
+$mod数字模操作&#123;&#39;age&#39;: &#123;&#39;$mod&#39;: [5, 0]&#125;&#125;年龄模5余0
+$text文本查询&#123;&#39;$text&#39;: &#123;&#39;$search&#39;: &#39;Mike&#39;&#125;&#125;text类型的属性中包含Mike字符串
+$where高级条件查询&#123;&#39;$where&#39;: &#39;obj.fans_count == obj.follows_count&#39;&#125;自身粉丝数等于关注数
+&quot;&quot;&quot;
+# 这些操作的更详细用法在可以在MongoDB官方文档找到：
+# https://docs.mongodb.com/manual/reference/operator/query/
+
+# 计数
+# 要统计查询结果有多少条数据，可以调用count()方法，如统计所有数据条数：
+
+count = collection.find().count()
+print(count)
+# 或者统计符合某个条件的数据：
+
+count = collection.find(&#123;&#39;age&#39;: 20&#125;).count()
+print(count)
+# 排序
+# 可以调用sort方法，传入排序的字段及升降序标志即可，示例如下：
+
+results = collection.find().sort(&#39;name&#39;, pymongo.ASCENDING)
+print([result[&#39;name&#39;] for result in results])
+# 运行结果：
+
+# [&#39;Harden&#39;, &#39;Jordan&#39;, &#39;Kevin&#39;, &#39;Mark&#39;, &#39;Mike&#39;]
+# 偏移,可能想只取某几个元素，在这里可以利用skip()方法偏移几个位置，比如偏移2，就忽略前2个元素，得到第三个及以后的元素。
+
+results = collection.find().sort(&#39;name&#39;, pymongo.ASCENDING).skip(2)
+print([result[&#39;name&#39;] for result in results])
+# 运行结果：
+# [&#39;Kevin&#39;, &#39;Mark&#39;, &#39;Mike&#39;]
+# 另外还可以用limit()方法指定要取的结果个数，示例如下：
+
+results = collection.find().sort(&#39;name&#39;, pymongo.ASCENDING).skip(2).limit(2)
+print([result[&#39;name&#39;] for result in results])
+# 运行结果：
+# [&#39;Kevin&#39;, &#39;Mark&#39;]
+# 如果不加limit()原本会返回三个结果，加了限制之后，会截取2个结果返回。
+
+# 值得注意的是，在数据库数量非常庞大的时候，如千万、亿级别，最好不要使用大的偏移量来查询数据，很可能会导致内存溢出，
+# 可以使用类似find(&#123;&#39;_id&#39;: &#123;&#39;$gt&#39;: ObjectId(&#39;593278c815c2602678bb2b8d&#39;)&#125;&#125;) 这样的方法来查询，记录好上次查询的_id。
+
+# 更新
+# 对于数据更新可以使用update()方法，指定更新的条件和更新后的数据即可，例如：
+
+condition = &#123;&#39;name&#39;: &#39;Kevin&#39;&#125;
+student = collection.find_one(condition)
+student[&#39;age&#39;] = 25
+result = collection.update(condition, student)
+print(result)
+# 在这里我们将name为Kevin的数据的年龄进行更新，首先指定查询条件，然后将数据查询出来，修改年龄，
+# 之后调用update方法将原条件和修改后的数据传入，即可完成数据的更新。
+
+# 运行结果：
+
+# &#123;&#39;ok&#39;: 1, &#39;nModified&#39;: 1, &#39;n&#39;: 1, &#39;updatedExisting&#39;: True&#125;
+# 返回结果是字典形式，ok即代表执行成功，nModified代表影响的数据条数。
+
+# 另外update()方法其实也是官方不推荐使用的方法，在这里也分了update_one()方法和update_many()方法，用法更加严格，
+# 第二个参数需要使用$类型操作符作为字典的键名，我们用示例感受一下。
+
+condition = &#123;&#39;name&#39;: &#39;Kevin&#39;&#125;
+student = collection.find_one(condition)
+student[&#39;age&#39;] = 26
+result = collection.update_one(condition, &#123;&#39;$set&#39;: student&#125;)
+print(result)
+print(result.matched_count, result.modified_count)
+# 在这里调用了update_one方法，第二个参数不能再直接传入修改后的字典，而是需要使用&#123;&#39;$set&#39;: student&#125;这样的形式，
+# 其返回结果是UpdateResult类型，然后调用matched_count和modified_count属性分别可以获得匹配的数据条数和影响的数据条数。
+
+# 运行结果：
+#
+# &lt;pymongo.results.UpdateResult object at 0x10d17b678&gt;
+# 1 0
+# 我们再看一个例子：
+
+condition = &#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;
+result = collection.update_one(condition, &#123;&#39;$inc&#39;: &#123;&#39;age&#39;: 1&#125;&#125;)
+print(result)
+print(result.matched_count, result.modified_count)
+# 在这里我们指定查询条件为年龄大于20，然后更新条件为&#123;&#39;$inc&#39;: &#123;&#39;age&#39;: 1&#125;&#125;，执行之后会讲第一条符合条件的数据年龄加1。
+
+# 运行结果：
+#
+# &lt;pymongo.results.UpdateResult object at 0x10b8874c8&gt;
+# 1 1
+# 可以看到匹配条数为1条，影响条数也为1条。
+
+# 如果调用update_many()方法，则会将所有符合条件的数据都更新，示例如下：
+
+condition = &#123;&#39;age&#39;: &#123;&#39;$gt&#39;: 20&#125;&#125;
+result = collection.update_many(condition, &#123;&#39;$inc&#39;: &#123;&#39;age&#39;: 1&#125;&#125;)
+print(result)
+print(result.matched_count, result.modified_count)
+# 这时候匹配条数就不再为1条了，运行结果如下：
+#
+# &lt;pymongo.results.UpdateResult object at 0x10c6384c8&gt;
+# 3 3
+# 可以看到这时所有匹配到的数据都会被更新。
+
+# 删除
+# 删除操作比较简单，直接调用remove()方法指定删除的条件即可，符合条件的所有数据均会被删除，示例如下：
+
+result = collection.remove(&#123;&#39;name&#39;: &#39;Kevin&#39;&#125;)
+print(result)
+# 运行结果：
+#
+# &#123;&#39;ok&#39;: 1, &#39;n&#39;: 1&#125;
+# 另外依然存在两个新的推荐方法，delete_one()和delete_many()方法，示例如下：
+
+result = collection.delete_one(&#123;&#39;name&#39;: &#39;Kevin&#39;&#125;)
+print(result)
+print(result.deleted_count)
+result = collection.delete_many(&#123;&#39;age&#39;: &#123;&#39;$lt&#39;: 25&#125;&#125;)
+print(result.deleted_count)
+# 运行结果：
+
+# &lt;pymongo.results.DeleteResult object at 0x10e6ba4c8&gt;
+# 1
+# 4
+# delete_one()即删除第一条符合条件的数据，delete_many()即删除所有符合条件的数据，返回结果是DeleteResult类型，
+# 可以调用deleted_count属性获取删除的数据条数。
+
+# 更多
+# 另外PyMongo还提供了一些组合方法，如find_one_and_delete()、find_one_and_replace()、find_one_and_update()，
+# 就是查找后删除、替换、更新操作，用法与上述方法基本一致。
+
+# 另外还可以对索引进行操作，如create_index()、create_indexes()、drop_index()等。</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> 数据库</a>
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/Docker/Docker%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/" rel="prev" title="Docker容器的安装方法">
+      <i class="fa fa-chevron-left"></i> Docker容器的安装方法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/Docker/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="Docker容器操作命令">
+      Docker容器操作命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-text">MongoDB的安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-text">下载安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">配置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MongoShell"><span class="nav-text">MongoShell</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-text">MongoDB使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-text">使用示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE"><span class="nav-text">更新文档数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE"><span class="nav-text">删除集合数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pymongo%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%88PythonSDK%EF%BC%89"><span class="nav-text">pymongo的使用（PythonSDK）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pymongo%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-text">pymongo的安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pymongo%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-text">pymongo常用方法</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yuandongxu"
+      src="/asset/av.jpg">
+  <p class="site-author-name" itemprop="name">yuandongxu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yuandongxu</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">98k</span>
+</div>
+<script src="/js/prism/prism.js" async></script>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

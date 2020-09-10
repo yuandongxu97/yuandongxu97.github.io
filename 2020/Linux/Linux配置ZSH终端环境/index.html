@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901210857.png">
 <meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901215129.png">
 <meta property="article:published_time" content="2020-01-03T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-09-03T04:45:39.535Z">
+<meta property="article:modified_time" content="2020-09-10T15:36:59.970Z">
 <meta property="article:author" content="yuandongxu">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -280,12 +280,14 @@ cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</code></pre>
 <p>都不复杂，安装完成之后退出当前会话重新打开一个终端窗口，你就可以见到彩色的提示了</p>
 <p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901210857.png"></p>
 <hr>
-<h2 id="2-ZSH的优化"><a href="#2-ZSH的优化" class="headerlink" title="2. ZSH的优化"></a>2. ZSH的优化</h2><p>zsh 的配置在<code>~/.zshrc</code>文件，用 vim打开.zshrc进行配置，配置项如</p>
-<p>查看zsh的主题：<code>echo $ZSH_THEME</code></p>
-<pre><code class="line-numbers language-shell">ZSH_THEME=&quot;agnoster&quot;        # 主题</code></pre>
-<h3 id="2-1-zsh隐藏终端用户名和计算机名"><a href="#2-1-zsh隐藏终端用户名和计算机名" class="headerlink" title="2.1 zsh隐藏终端用户名和计算机名"></a>2.1 zsh隐藏终端用户名和计算机名</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901215129.png"></p>
+<h2 id="2-ZSH的优化"><a href="#2-ZSH的优化" class="headerlink" title="2. ZSH的优化"></a>2. ZSH的优化</h2><p>zsh 的配置在<code>~/.zshrc</code>文件</p>
+<h3 id="2-1-配置主题"><a href="#2-1-配置主题" class="headerlink" title="2.1 配置主题"></a>2.1 配置主题</h3><p><strong>ohmyzsh默认主题为robbyrussell，更换为agnoster</strong></p>
 <p>由于<code>oh my zsh</code>会经常更新，为了防止ohmyzsh更新个人配置被覆盖，将本地的主题文件复制出一份</p>
 <pre><code class="line-numbers language-bash">cp ~/.oh-my-zsh/themes/agnoster.zsh-theme ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
+<pre><code class="line-numbers language-bash">vim ~/.zshrc</code></pre>
+<pre><code class="line-numbers language-bash">ZSH_THEME=&quot;agnoster-my&quot;</code></pre>
+<pre><code class="line-numbers language-bash">source .zshrc</code></pre>
+<h3 id="2-2-zsh隐藏终端用户名和计算机名"><a href="#2-2-zsh隐藏终端用户名和计算机名" class="headerlink" title="2.2 zsh隐藏终端用户名和计算机名"></a>2.2 zsh隐藏终端用户名和计算机名</h3><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200901215129.png"></p>
 <p>修改主题文件</p>
 <pre><code class="line-numbers language-bash">vim ~/.oh-my-zsh/themes/agnoster-my.zsh-theme</code></pre>
 <p>注释末尾配置</p>
@@ -409,7 +411,7 @@ $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-history-substring-searc
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-ZSH%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-text">1. ZSH的安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AE%89%E8%A3%85zsh"><span class="nav-text">1.1 安装zsh</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%AE%89%E8%A3%85-ohmyzsh"><span class="nav-text">1.2 安装 ohmyzsh</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ZSH%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-text">2. ZSH的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-zsh%E9%9A%90%E8%97%8F%E7%BB%88%E7%AB%AF%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%90%8D"><span class="nav-text">2.1 zsh隐藏终端用户名和计算机名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%8F%92%E4%BB%B6"><span class="nav-text">3. 插件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sudo"><span class="nav-text">sudo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zsh-autosuggestions"><span class="nav-text">zsh-autosuggestions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zsh-syntax-highlighting"><span class="nav-text">zsh-syntax-highlighting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-open"><span class="nav-text">git-open</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#thefuck"><span class="nav-text">thefuck</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#history-substring-search"><span class="nav-text">history-substring-search</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-ZSH%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-text">1. ZSH的安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AE%89%E8%A3%85zsh"><span class="nav-text">1.1 安装zsh</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%AE%89%E8%A3%85-ohmyzsh"><span class="nav-text">1.2 安装 ohmyzsh</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ZSH%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-text">2. ZSH的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98"><span class="nav-text">2.1 配置主题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-zsh%E9%9A%90%E8%97%8F%E7%BB%88%E7%AB%AF%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%90%8D"><span class="nav-text">2.2 zsh隐藏终端用户名和计算机名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%8F%92%E4%BB%B6"><span class="nav-text">3. 插件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sudo"><span class="nav-text">sudo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zsh-autosuggestions"><span class="nav-text">zsh-autosuggestions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zsh-syntax-highlighting"><span class="nav-text">zsh-syntax-highlighting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-open"><span class="nav-text">git-open</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#thefuck"><span class="nav-text">thefuck</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#history-substring-search"><span class="nav-text">history-substring-search</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -424,7 +426,7 @@ $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-history-substring-searc
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -480,7 +482,7 @@ $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-history-substring-searc
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">79k</span>
+    <span title="站点总字数">98k</span>
 </div>
 <script src="/js/prism/prism.js" async></script>
 
