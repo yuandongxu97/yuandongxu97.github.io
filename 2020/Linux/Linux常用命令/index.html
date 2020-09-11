@@ -1,260 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":15,"onmobile":true},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-<link rel="stylesheet" href="/js/prism/prism.css">
-
-  <meta name="description" content="常用的Linxu命令及选项笔记">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Linux常用命令">
-<meta property="og:url" content="http://yoursite.com/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
-<meta property="og:site_name" content="苑东旭的博客">
-<meta property="og:description" content="常用的Linxu命令及选项笔记">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909204431.png">
-<meta property="article:published_time" content="2020-04-03T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-09-09T13:34:56.959Z">
-<meta property="article:author" content="yuandongxu">
-<meta property="article:tag" content="Linux">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909204431.png">
-
-<link rel="canonical" href="http://yoursite.com/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>Linux常用命令 | 苑东旭的博客</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
-
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">苑东旭的博客</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">笔记·归纳·总结</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a>
-
-  </li>
-        <li class="menu-item menu-item-时间线">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a>
-
-  </li>
-        <li class="menu-item menu-item-工具">
-
-    <a href="/tools" rel="section"><i class="fa fa-th fa-fw"></i>工具</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/asset/av.jpg">
-      <meta itemprop="name" content="yuandongxu">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="苑东旭的博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Linux常用命令
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-04 00:00:00" itemprop="dateCreated datePublished" datetime="2020-04-04T00:00:00+08:00">2020-04-04</time>
-            </span>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-tag"></i>
-              </span>
-              <span class="post-meta-item-text">标签：</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/tags/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-                </span>
-            </span>
-
-
-
-
-
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>常用的Linxu命令及选项笔记</p>
-<a id="more"></a>
-
-<hr>
-<h3 id="目录与文件"><a href="#目录与文件" class="headerlink" title="目录与文件"></a>目录与文件</h3><h4 id="find-查找文件"><a href="#find-查找文件" class="headerlink" title="find    查找文件"></a>find    查找文件</h4><p>使用方法</p>
-<pre><code class="line-numbers language-bash">find [PATH] [option] [action]</code></pre>
-<pre><code class="line-numbers language-bash"># 名称与类型
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css"><script src="/lib/pace/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yoursite.com",root:"/",scheme:"Gemini",version:"7.8.0",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:15,onmobile:!0},copycode:{enable:!0,show_result:!1,style:"mac"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!0,lazyload:!1,pangu:!0,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!0,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><link rel="stylesheet" href="/js/prism/prism.css"><meta name="description" content="常用的Linxu命令及选项笔记"><meta property="og:type" content="article"><meta property="og:title" content="Linux常用命令"><meta property="og:url" content="http://yoursite.com/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html"><meta property="og:site_name" content="苑东旭的博客"><meta property="og:description" content="常用的Linxu命令及选项笔记"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909204431.png"><meta property="article:published_time" content="2020-04-03T16:00:00.000Z"><meta property="article:modified_time" content="2020-09-09T13:34:56.959Z"><meta property="article:author" content="yuandongxu"><meta property="article:tag" content="Linux"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909204431.png"><link rel="canonical" href="http://yoursite.com/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>Linux常用命令 | 苑东旭的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">苑东旭的博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">笔记·归纳·总结</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li><li class="menu-item menu-item-时间线"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-工具"><a href="/tools" rel="section"><i class="fa fa-th fa-fw"></i>工具</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/asset/av.jpg"><meta itemprop="name" content="yuandongxu"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="苑东旭的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Linux常用命令</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2020-04-04 00:00:00" itemprop="dateCreated datePublished" datetime="2020-04-04T00:00:00+08:00">2020-04-04</time> </span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>11k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-tag"></i> </span><span class="post-meta-item-text">标签：</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span></span></div></header><div class="post-body" itemprop="articleBody"><p>常用的Linxu命令及选项笔记</p><a id="more"></a><hr><h3 id="目录与文件"><a href="#目录与文件" class="headerlink" title="目录与文件"></a>目录与文件</h3><h4 id="find-查找文件"><a href="#find-查找文件" class="headerlink" title="find    查找文件"></a>find 查找文件</h4><p>使用方法</p><pre><code class="line-numbers language-bash">find [PATH] [option] [action]</code></pre><pre><code class="line-numbers language-bash"># 名称与类型
 -name filename ：找出文件名为filename的文件
 -size [+-]SIZE ：找出比SIZE还要大（+）或小（-）的文件
 -tpye TYPE ：查找文件的类型为TYPE的文件，TYPE的值主要有：一般文件（f)、设备文件（b、c）、
@@ -268,15 +12,13 @@
 -user name : 列出文件所有者为name的文件
 -group name : 列出文件所属用户组为name的文件
 -uid n : 列出文件所有者为用户ID为n的文件
--gid n : 列出文件所属用户组为用户组ID为n的文件</code></pre>
-<pre><code class="line-numbers language-bash">find /root -mtime 0 # 在当前目录下查找今天之内有改动的文件
+-gid n : 列出文件所属用户组为用户组ID为n的文件</code></pre><pre><code class="line-numbers language-bash">find /root -mtime 0 # 在当前目录下查找今天之内有改动的文件
 
 find /home/hadoop -user hadoop # 在目录/home/hadoop中找出所有者为hadoop的文件
 
 find / -name passwd     # 查找文件名为passwd的文件
 find . -perm 0755         # 查找当前目录中文件权限的0755的文件
-find . -size +12k         # 查找当前目录中大于12KB的文件，注意c表示byte</code></pre>
-<h4 id="ls-显示目录内容"><a href="#ls-显示目录内容" class="headerlink" title="ls    显示目录内容"></a>ls    显示目录内容</h4><pre><code class="line-numbers language-bash">-a ：全部的档案，连同隐藏档( 开头为 . 的档案) 一起列出来～ 
+find . -size +12k         # 查找当前目录中大于12KB的文件，注意c表示byte</code></pre><h4 id="ls-显示目录内容"><a href="#ls-显示目录内容" class="headerlink" title="ls    显示目录内容"></a>ls 显示目录内容</h4><pre><code class="line-numbers language-bash">-a ：全部的档案，连同隐藏档( 开头为 . 的档案) 一起列出来～ 
 -A ：全部的档案，连同隐藏档，但不包括 . 与 .. 这两个目录，一起列出来～ 
 -d ：仅列出目录本身，而不是列出目录内的档案数据 
 -f ：直接列出结果，而不进行排序 (ls 预设会以档名排序！) 
@@ -295,44 +37,27 @@ find . -size +12k         # 查找当前目录中大于12KB的文件，注意c�
 --color=auto ：让系统自行依据设定来判断是否给予颜色 
 --full-time ：以完整时间模式 (包含年、月、日、时、分) 输出 
 --time=&#123;atime,ctime&#125; ：输出 access 时间或 改变权限属性时间 (ctime) 
-而非内容变更时间 (modification time)  </code></pre>
-<h4 id="cd-目录切换"><a href="#cd-目录切换" class="headerlink" title="cd    目录切换"></a>cd    目录切换</h4><pre><code class="line-numbers language-bash">cd /home/yuan        # 切换至绝对路径
+而非内容变更时间 (modification time)  </code></pre><h4 id="cd-目录切换"><a href="#cd-目录切换" class="headerlink" title="cd    目录切换"></a>cd 目录切换</h4><pre><code class="line-numbers language-bash">cd /home/yuan        # 切换至绝对路径
 cd ..                # 切换至上级目录
-cd ./path            # 切换至相对路径</code></pre>
-<h4 id="tree-树状图列出目录的内容"><a href="#tree-树状图列出目录的内容" class="headerlink" title="tree    树状图列出目录的内容"></a>tree    树状图列出目录的内容</h4><p>需要安装，<code>apt install tree</code></p>
-<pre><code class="line-numbers language-bash">-d        # 仅显示目录
+cd ./path            # 切换至相对路径</code></pre><h4 id="tree-树状图列出目录的内容"><a href="#tree-树状图列出目录的内容" class="headerlink" title="tree    树状图列出目录的内容"></a>tree 树状图列出目录的内容</h4><p>需要安装，<code>apt install tree</code></p><pre><code class="line-numbers language-bash">-d        # 仅显示目录
 -f        # 显示完整路径
 -L         # level 限制目录显示层级
--l         # 如遇到性质为符号连接的目录，直接列出该连接所指向的原始目录。</code></pre>
-<h4 id="cp-复制"><a href="#cp-复制" class="headerlink" title="cp    复制"></a>cp    复制</h4><pre><code class="line-numbers language-bash">cp [options] &lt;原始&gt; &lt;目的&gt;</code></pre>
-<pre><code class="line-numbers language-bash">-a         # 将文件的特性一起复制
+-l         # 如遇到性质为符号连接的目录，直接列出该连接所指向的原始目录。</code></pre><h4 id="cp-复制"><a href="#cp-复制" class="headerlink" title="cp    复制"></a>cp 复制</h4><pre><code class="line-numbers language-bash">cp [options] &lt;原始&gt; &lt;目的&gt;</code></pre><pre><code class="line-numbers language-bash">-a         # 将文件的特性一起复制
 -p         # 连同文件的属性一起复制，而非使用默认方式，与-a相似，常用于备份
 -i         # 若目标文件已经存在时，在覆盖时会先询问操作的进行
 -r         # 递归持续复制，用于目录的复制行为
--u         # 目标文件与源文件有差异时才会复制</code></pre>
-<h4 id="rm-删除"><a href="#rm-删除" class="headerlink" title="rm    删除"></a>rm    删除</h4><pre><code class="line-numbers language-bash">-r    # 递归删除，用于删除目录
--f    # 无需确认</code></pre>
-<h4 id="rmdir-删除空目录"><a href="#rmdir-删除空目录" class="headerlink" title="rmdir    删除空目录"></a>rmdir    删除空目录</h4><h4 id="mv-移动"><a href="#mv-移动" class="headerlink" title="mv    移动"></a>mv    移动</h4><pre><code class="line-numbers language-bash">-f     # force强制的意思，如果目标文件已经存在，不会询问而直接覆盖</code></pre>
-<h4 id="pwd-显示当前目录"><a href="#pwd-显示当前目录" class="headerlink" title="pwd    显示当前目录"></a>pwd    显示当前目录</h4><h4 id="tar-解压缩"><a href="#tar-解压缩" class="headerlink" title="tar    解压缩"></a>tar    解压缩</h4><ul>
-<li>预览包 - <code>tar jtv &lt;filename&gt;</code></li>
-<li>自动适应模式解压 - <code>tar xvf &lt;filename&gt;</code></li>
-<li>指定目的目录 - <code>tar xvf &lt;filename&gt; -C &lt;path&gt;</code></li>
-</ul>
-<pre><code class="line-numbers language-bash">-x    # 解包或解压缩功能
+-u         # 目标文件与源文件有差异时才会复制</code></pre><h4 id="rm-删除"><a href="#rm-删除" class="headerlink" title="rm    删除"></a>rm 删除</h4><pre><code class="line-numbers language-bash">-r    # 递归删除，用于删除目录
+-f    # 无需确认</code></pre><h4 id="rmdir-删除空目录"><a href="#rmdir-删除空目录" class="headerlink" title="rmdir    删除空目录"></a>rmdir 删除空目录</h4><h4 id="mv-移动"><a href="#mv-移动" class="headerlink" title="mv    移动"></a>mv 移动</h4><pre><code class="line-numbers language-bash">-f     # force强制的意思，如果目标文件已经存在，不会询问而直接覆盖</code></pre><h4 id="pwd-显示当前目录"><a href="#pwd-显示当前目录" class="headerlink" title="pwd    显示当前目录"></a>pwd 显示当前目录</h4><h4 id="tar-解压缩"><a href="#tar-解压缩" class="headerlink" title="tar    解压缩"></a>tar 解压缩</h4><ul><li>预览包 - <code>tar jtv &lt;filename&gt;</code></li><li>自动适应模式解压 - <code>tar xvf &lt;filename&gt;</code></li><li>指定目的目录 - <code>tar xvf &lt;filename&gt; -C &lt;path&gt;</code></li></ul><pre><code class="line-numbers language-bash">-x    # 解包或解压缩功能
 -v    # 显示解包过程
 -f    # 其后指定要处理的文件
 -t    # 预览包
--C    # 其后指定目的目录</code></pre>
-<h4 id="mkdir-创建目录"><a href="#mkdir-创建目录" class="headerlink" title="mkdir    创建目录"></a>mkdir    创建目录</h4><pre><code class="line-numbers language-bash">sudo mkdir -m 700 -p /opt/env/node</code></pre>
-<pre><code class="line-numbers language-bash">-m, --mode=600        # 设定权限，如600
+-C    # 其后指定目的目录</code></pre><h4 id="mkdir-创建目录"><a href="#mkdir-创建目录" class="headerlink" title="mkdir    创建目录"></a>mkdir 创建目录</h4><pre><code class="line-numbers language-bash">sudo mkdir -m 700 -p /opt/env/node</code></pre><pre><code class="line-numbers language-bash">-m, --mode=600        # 设定权限，如600
 -p, --parents        # 递归创建
--v, --verbose        # 输出信息</code></pre>
-<h3 id="进程相关"><a href="#进程相关" class="headerlink" title="进程相关"></a>进程相关</h3><h4 id="ps-进程信息"><a href="#ps-进程信息" class="headerlink" title="ps    进程信息"></a>ps    进程信息</h4><pre><code class="line-numbers language-bash">-A ：所有的进程均显示出来
+-v, --verbose        # 输出信息</code></pre><h3 id="进程相关"><a href="#进程相关" class="headerlink" title="进程相关"></a>进程相关</h3><h4 id="ps-进程信息"><a href="#ps-进程信息" class="headerlink" title="ps    进程信息"></a>ps 进程信息</h4><pre><code class="line-numbers language-bash">-A ：所有的进程均显示出来
 -a ：不与terminal有关的所有进程
 -u ：有效用户的相关进程
 -x ：一般与a参数一起使用，可列出较完整的信息
--l ：较长，较详细地将PID的信息列出</code></pre>
-<pre><code class="line-numbers language-bash"># 进程状态
+-l ：较长，较详细地将PID的信息列出</code></pre><pre><code class="line-numbers language-bash"># 进程状态
 USER: 行程拥有者
 PID: pid
 %CPU: 占用的 CPU 使用率
@@ -352,62 +77,18 @@ N: 低优先序的行程
 L: 有记忆体分页分配并锁在记忆体内 (实时系统或捱A I/O)
 START: 行程开始时间
 TIME: 执行的时间
-COMMAND:所执行的指令</code></pre>
-<h4 id="kill-进程控制（pid）"><a href="#kill-进程控制（pid）" class="headerlink" title="kill    进程控制（pid）"></a>kill    进程控制（pid）</h4><pre><code class="line-numbers language-bash">kill -[signal] PID
-kill -9 1234</code></pre>
-<table>
-<thead>
-<tr>
-<th>信号</th>
-<th>信号值</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>SIGHUP</td>
-<td>1</td>
-<td>启动被终止的进程</td>
-</tr>
-<tr>
-<td>SIGINT</td>
-<td>2</td>
-<td>ctrl+c，中断一个程序的进行</td>
-</tr>
-<tr>
-<td>SIGKILL</td>
-<td>9</td>
-<td>强制中断一个进程的进行</td>
-</tr>
-<tr>
-<td>SIGTERM</td>
-<td>15</td>
-<td>以正常的结束进程方式来终止进程</td>
-</tr>
-<tr>
-<td>SIGSTOP</td>
-<td>19</td>
-<td>ctrl+z，暂停一个进程的进行</td>
-</tr>
-</tbody></table>
-<h4 id="killall-进程控制（name）"><a href="#killall-进程控制（name）" class="headerlink" title="killall    进程控制（name）"></a>killall    进程控制（name）</h4><pre><code class="line-numbers language-bash">-i 交互模式，杀死进程前先询问用户
+COMMAND:所执行的指令</code></pre><h4 id="kill-进程控制（pid）"><a href="#kill-进程控制（pid）" class="headerlink" title="kill    进程控制（pid）"></a>kill 进程控制（pid）</h4><pre><code class="line-numbers language-bash">kill -[signal] PID
+kill -9 1234</code></pre><table><thead><tr><th>信号</th><th>信号值</th><th>含义</th></tr></thead><tbody><tr><td>SIGHUP</td><td>1</td><td>启动被终止的进程</td></tr><tr><td>SIGINT</td><td>2</td><td>ctrl+c，中断一个程序的进行</td></tr><tr><td>SIGKILL</td><td>9</td><td>强制中断一个进程的进行</td></tr><tr><td>SIGTERM</td><td>15</td><td>以正常的结束进程方式来终止进程</td></tr><tr><td>SIGSTOP</td><td>19</td><td>ctrl+z，暂停一个进程的进行</td></tr></tbody></table><h4 id="killall-进程控制（name）"><a href="#killall-进程控制（name）" class="headerlink" title="killall    进程控制（name）"></a>killall 进程控制（name）</h4><pre><code class="line-numbers language-bash">-i 交互模式，杀死进程前先询问用户
 -g 杀死进程组而不是进程
--l 列出所有的已知信号名称</code></pre>
-<h4 id="pkill"><a href="#pkill" class="headerlink" title="pkill"></a>pkill</h4><h4 id="contrab-定时任务（min级）"><a href="#contrab-定时任务（min级）" class="headerlink" title="contrab    定时任务（min级）"></a>contrab    定时任务（min级）</h4><pre><code class="line-numbers language-bash">usage:  crontab [-u user] file
+-l 列出所有的已知信号名称</code></pre><h4 id="pkill"><a href="#pkill" class="headerlink" title="pkill"></a>pkill</h4><h4 id="contrab-定时任务（min级）"><a href="#contrab-定时任务（min级）" class="headerlink" title="contrab    定时任务（min级）"></a>contrab 定时任务（min级）</h4><pre><code class="line-numbers language-bash">usage:  crontab [-u user] file
         crontab [-u user] [ -e | -l | -r ]
                 (default operation is replace, per 1003.2)
         -e      (edit user&#39;s crontab)
         -l      (list user&#39;s crontab)
         -r      (delete user&#39;s crontab)
         -i      (prompt before deleting user&#39;s crontab)
-        -s      (selinux context)</code></pre>
-<ul>
-<li>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。 <pre><code>在/etc/crontab文件，这个就是系统任务调度的配置文件。</code></pre>
-</li>
-<li>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。<pre><code>用户可以使用 crontab 工具来定制自己的计划任务。
-在crontab 文件都被保存在/var/spool/cron目录中。其文件名与用户名一致</code></pre>
-</li>
-</ul>
-<pre><code class="line-numbers language-bash">1.系统定时任务：例如清理系统日志，清理系统缓存   --&gt;不过多的关注
+        -s      (selinux context)</code></pre><ul><li>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。<pre><code>在/etc/crontab文件，这个就是系统任务调度的配置文件。</code></pre></li><li>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。<pre><code>用户可以使用 crontab 工具来定制自己的计划任务。
+在crontab 文件都被保存在/var/spool/cron目录中。其文件名与用户名一致</code></pre></li></ul><pre><code class="line-numbers language-bash">1.系统定时任务：例如清理系统日志，清理系统缓存   --&gt;不过多的关注
     查询系统定时处理任务的路径：
         路径1：
             cd /etc/logrotate.d/        --&gt;可以写定时任务
@@ -424,8 +105,7 @@ kill -9 1234</code></pre>
                  cron.monthly
                  crontab
                  cron.weekly
-2.用户的定时任务      --&gt;关注重点</code></pre>
-<pre><code class="line-numbers language-shell"># /etc/crontab: system-wide crontab
+2.用户的定时任务      --&gt;关注重点</code></pre><pre><code class="line-numbers language-shell"># /etc/crontab: system-wide crontab
 # Unlike any other crontab you don&#39;t have to run the `crontab&#39;
 # command to install the new version when you edit this file
 # and files in /etc/cron.d. These files also have username fields,
@@ -446,8 +126,7 @@ HOME=
 17 *    * * *   root    cd / &amp;&amp; run-parts --report /etc/cron.hourly
 25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.daily )
 47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.weekly )
-52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.monthly )</code></pre>
-<pre><code class="line-numbers language-bash">前四行是用来配置crond任务运行的环境变量
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.monthly )</code></pre><pre><code class="line-numbers language-bash">前四行是用来配置crond任务运行的环境变量
 第一行SHELL变量指定了系统要使用哪个shell，这里是bash
 第二行PATH变量指定了系统执行命令的路径
 第三行MAILTO变量指定了crond的任务执行信息将通过电子邮件发送给root用户，如果MAILTO变量的值为空，则表示不发送任务执行信息给用户
@@ -463,11 +142,9 @@ HOME=
 定时任务要加注解
 可以定向到日志文件或者空文件
 定时任务一定是绝对路径，且目录必须存在才能出结果
-crontab 服务一定要开启运行</code></pre>
-<pre><code>0 * * * * root run-parts /etc/cron.hourly        # 每小时执行/etc/cron.hourly目录内的脚本
+crontab 服务一定要开启运行</code></pre><pre><code>0 * * * * root run-parts /etc/cron.hourly        # 每小时执行/etc/cron.hourly目录内的脚本
 echo &quot;*/2 * * * * /usr/bin/ntpstat time.windows.com &gt;/dev/null 2&gt;&amp;1&quot; &gt;&gt; /var/spool/cron/root        # 每隔2分钟同步一次互联网时间
-echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&amp;1&quot; &gt;&gt; /var/spool/cron/root        # 每天3-5,17-20每隔30分钟执行一次脚本</code></pre>
-<pre><code class="line-numbers language-bash"># 注意事项
+echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&amp;1&quot; &gt;&gt; /var/spool/cron/root        # 每天3-5,17-20每隔30分钟执行一次脚本</code></pre><pre><code class="line-numbers language-bash"># 注意事项
 1.环境变量问题，例如crontab不能识别Java的环境变量
     crontab执行shell时，只能识别为数不多的环境变量，普通的环境变量是无法识别的，所以在编写shell时，最好使用export重新声明变量，确保脚本执行。 
 2.命令的执行最好用脚本
@@ -478,8 +155,7 @@ echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&a
 7.定时任务里面的程序脚本尽量用全路径
 8.避免不必要的程序以及命令输出
 9.定时任务之前添加注释
-10.打包到文件目录的上一级</code></pre>
-<h4 id="free-内存信息"><a href="#free-内存信息" class="headerlink" title="free    内存信息"></a>free    内存信息</h4><pre><code class="line-numbers language-bash">free [参数]
+10.打包到文件目录的上一级</code></pre><h4 id="free-内存信息"><a href="#free-内存信息" class="headerlink" title="free    内存信息"></a>free 内存信息</h4><pre><code class="line-numbers language-bash">free [参数]
 -b 　以Byte为单位显示内存使用情况。 
 -k 　以KB为单位显示内存使用情况。 
 -m 　以MB为单位显示内存使用情况。
@@ -487,10 +163,7 @@ echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&a
 -o 　不显示缓冲区调节列。 
 -s&lt;间隔秒数&gt; 　持续观察内存使用状况。 
 -t 　显示内存总和列。 
--V 　显示版本信息。</code></pre>
-<pre><code class="line-numbers language-bash"></code></pre>
-<p>top    系统性能分析</p>
-<pre><code class="line-numbers language-bash">top [参数]
+-V 　显示版本信息。</code></pre><pre><code class="line-numbers language-bash"></code></pre><p>top 系统性能分析</p><pre><code class="line-numbers language-bash">top [参数]
 -b 批处理
 -c 显示完整的治命令
 -I 忽略失效过程
@@ -499,8 +172,7 @@ echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&a
 -i&lt;时间&gt; 设置间隔时间
 -u&lt;用户名&gt; 指定用户名
 -p&lt;进程号&gt; 指定进程
--n&lt;次数&gt; 循环显示的次数</code></pre>
-<h3 id="账户与权限"><a href="#账户与权限" class="headerlink" title="账户与权限"></a>账户与权限</h3><h4 id="sudo-以其他用户身份执行命令"><a href="#sudo-以其他用户身份执行命令" class="headerlink" title="sudo    以其他用户身份执行命令"></a>sudo    以其他用户身份执行命令</h4><pre><code class="line-numbers language-bash"># 默认root
+-n&lt;次数&gt; 循环显示的次数</code></pre><h3 id="账户与权限"><a href="#账户与权限" class="headerlink" title="账户与权限"></a>账户与权限</h3><h4 id="sudo-以其他用户身份执行命令"><a href="#sudo-以其他用户身份执行命令" class="headerlink" title="sudo    以其他用户身份执行命令"></a>sudo 以其他用户身份执行命令</h4><pre><code class="line-numbers language-bash"># 默认root
 -b：在后台执行指令；
 -h：显示帮助；
 -H：将HOME环境变量设为新身份的HOME环境变量；
@@ -510,12 +182,8 @@ echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&a
 -s：执行指定的shell；
 -u&lt;用户&gt;：以指定的用户作为新的身份。若不加上此参数，则预设以root作为新的身份；
 -v：延长密码有效期限5分钟；
--V ：显示版本信息。</code></pre>
-<h4 id="passwd-设置用户密码"><a href="#passwd-设置用户密码" class="headerlink" title="passwd    设置用户密码"></a>passwd    设置用户密码</h4><pre><code class="line-numbers language-bash"># passwd [options] &lt;UserName&gt;
--S    # 账户状态</code></pre>
-<h4 id="groups-显示用户组"><a href="#groups-显示用户组" class="headerlink" title="groups    显示用户组"></a>groups    显示用户组</h4><pre><code class="line-numbers language-bash">groups &lt;UserName&gt;</code></pre>
-<h4 id="useradd-添加用户"><a href="#useradd-添加用户" class="headerlink" title="useradd    添加用户"></a>useradd    添加用户</h4><pre><code class="line-numbers language-bash">useradd [-mMnr][-c &lt;备注&gt;][-d &lt;登入目录&gt;][-e &lt;有效期限&gt;][-f &lt;缓冲天数&gt;][-g &lt;群组&gt;][-G &lt;群组&gt;][-s ][-u ][用户帐号] </code></pre>
-<pre><code class="line-numbers language-bash">-c #&lt;备注&gt; 　加上备注文字。备注文字会保存在passwd的备注栏位中。　
+-V ：显示版本信息。</code></pre><h4 id="passwd-设置用户密码"><a href="#passwd-设置用户密码" class="headerlink" title="passwd    设置用户密码"></a>passwd 设置用户密码</h4><pre><code class="line-numbers language-bash"># passwd [options] &lt;UserName&gt;
+-S    # 账户状态</code></pre><h4 id="groups-显示用户组"><a href="#groups-显示用户组" class="headerlink" title="groups    显示用户组"></a>groups 显示用户组</h4><pre><code class="line-numbers language-bash">groups &lt;UserName&gt;</code></pre><h4 id="useradd-添加用户"><a href="#useradd-添加用户" class="headerlink" title="useradd    添加用户"></a>useradd 添加用户</h4><pre><code class="line-numbers language-bash">useradd [-mMnr][-c &lt;备注&gt;][-d &lt;登入目录&gt;][-e &lt;有效期限&gt;][-f &lt;缓冲天数&gt;][-g &lt;群组&gt;][-G &lt;群组&gt;][-s ][-u ][用户帐号] </code></pre><pre><code class="line-numbers language-bash">-c #&lt;备注&gt; 　加上备注文字。备注文字会保存在passwd的备注栏位中。　
 -d #&lt;登入目录&gt; 　指定用户登入时的启始目录。
 -D #　变更预设值．
 -e # &lt;有效期限&gt; 　指定帐号的有效期限。
@@ -527,19 +195,12 @@ echo &quot;*/30 [3-5],[17-20] * * * /bin/sh /home/omc/h.sh &gt;/dev/null 2&gt;&a
 -n # 取消建立以用户名称为名的群组．
 -r # 建立系统帐号。
 -s # 指定用户登入后所使用的shell。
--u # 指定用户ID。</code></pre>
-<h4 id="usermod-修改用户信息"><a href="#usermod-修改用户信息" class="headerlink" title="usermod    修改用户信息"></a>usermod    修改用户信息</h4><pre><code># 同useradd</code></pre>
-<h4 id="userdel-删除用户"><a href="#userdel-删除用户" class="headerlink" title="userdel    删除用户"></a>userdel    删除用户</h4><pre><code class="line-numbers language-bash">-r    # 删除家目录和用户邮件池
--f    # 强制删除，包括用户的一切相关内容，这个参数是危险的参数，不建议大家使用。详细说明看MAN</code></pre>
-<h4 id="groupadd-生成新用户组"><a href="#groupadd-生成新用户组" class="headerlink" title="groupadd    生成新用户组"></a>groupadd    生成新用户组</h4><pre><code class="line-numbers language-bash">－g gid：指定组ID号。
+-u # 指定用户ID。</code></pre><h4 id="usermod-修改用户信息"><a href="#usermod-修改用户信息" class="headerlink" title="usermod    修改用户信息"></a>usermod 修改用户信息</h4><pre><code># 同useradd</code></pre><h4 id="userdel-删除用户"><a href="#userdel-删除用户" class="headerlink" title="userdel    删除用户"></a>userdel 删除用户</h4><pre><code class="line-numbers language-bash">-r    # 删除家目录和用户邮件池
+-f    # 强制删除，包括用户的一切相关内容，这个参数是危险的参数，不建议大家使用。详细说明看MAN</code></pre><h4 id="groupadd-生成新用户组"><a href="#groupadd-生成新用户组" class="headerlink" title="groupadd    生成新用户组"></a>groupadd 生成新用户组</h4><pre><code class="line-numbers language-bash">－g gid：指定组ID号。
 －o：允许组ID号，不必惟一。
 －r：加入组ID号，低于499系统账号。
-－f：加入已经有的组时，发展程序退出。</code></pre>
-<h4 id="groupdel-删除用户组"><a href="#groupdel-删除用户组" class="headerlink" title="groupdel    删除用户组"></a>groupdel    删除用户组</h4><h4 id="chmod-权限更改"><a href="#chmod-权限更改" class="headerlink" title="chmod    权限更改"></a>chmod    权限更改</h4><pre><code class="line-numbers language-bash">-R：进行递归的持续更改，即连同子目录下的所有文件都会更改</code></pre>
-<pre><code class="line-numbers language-bash">chmod 0755 file # 把file的文件权限改变为-rxwr-xr-x
-chmod g+w file # 向file的文件权限中加入用户组可写权限</code></pre>
-<h4 id="chown-拥有者更改"><a href="#chown-拥有者更改" class="headerlink" title="chown    拥有者更改"></a>chown    拥有者更改</h4><pre><code class="line-numbers language-bash">chown &lt;username&gt; &lt;file_or_path&gt;</code></pre>
-<h4 id="chgrp-所属组更改"><a href="#chgrp-所属组更改" class="headerlink" title="chgrp    所属组更改"></a>chgrp    所属组更改</h4><pre><code class="line-numbers language-bash"># usermod [options] LOGIN
+－f：加入已经有的组时，发展程序退出。</code></pre><h4 id="groupdel-删除用户组"><a href="#groupdel-删除用户组" class="headerlink" title="groupdel    删除用户组"></a>groupdel 删除用户组</h4><h4 id="chmod-权限更改"><a href="#chmod-权限更改" class="headerlink" title="chmod    权限更改"></a>chmod 权限更改</h4><pre><code class="line-numbers language-bash">-R：进行递归的持续更改，即连同子目录下的所有文件都会更改</code></pre><pre><code class="line-numbers language-bash">chmod 0755 file # 把file的文件权限改变为-rxwr-xr-x
+chmod g+w file # 向file的文件权限中加入用户组可写权限</code></pre><h4 id="chown-拥有者更改"><a href="#chown-拥有者更改" class="headerlink" title="chown    拥有者更改"></a>chown 拥有者更改</h4><pre><code class="line-numbers language-bash">chown &lt;username&gt; &lt;file_or_path&gt;</code></pre><h4 id="chgrp-所属组更改"><a href="#chgrp-所属组更改" class="headerlink" title="chgrp    所属组更改"></a>chgrp 所属组更改</h4><pre><code class="line-numbers language-bash"># usermod [options] LOGIN
 usermod -h
  -c #后面接账号的说明，即/etc/passwd第五栏的说明栏，可以加入一些账号的说明
  -d #后面接账号的家目录，即修改/etc/passwd的第六栏
@@ -552,13 +213,9 @@ usermod -h
  -s #后面接Shell的文件，例如/bin/bash或/bin/csh等等
  -u #后面接 UID 数字，修改用户的UID /etc/passwd第三栏
  -L #暂时将用户的密码冻结，让他无法登入。其实就是在/etc/shadow的密码栏前面加上了“!”
- -U #将/etc/shadow 密码栏的“!”去掉</code></pre>
-<h3 id="文本操作"><a href="#文本操作" class="headerlink" title="文本操作"></a>文本操作</h3><h4 id="vi-vim-使用编辑器打开文件"><a href="#vi-vim-使用编辑器打开文件" class="headerlink" title="vi/vim    使用编辑器打开文件"></a>vi/vim    使用编辑器打开文件</h4><pre><code class="line-numbers language-bash"></code></pre>
-<h4 id="cat-全文查看"><a href="#cat-全文查看" class="headerlink" title="cat    全文查看"></a>cat    全文查看</h4><pre><code class="line-numbers language-bash"># cat [选项] [文件]...
+ -U #将/etc/shadow 密码栏的“!”去掉</code></pre><h3 id="文本操作"><a href="#文本操作" class="headerlink" title="文本操作"></a>文本操作</h3><h4 id="vi-vim-使用编辑器打开文件"><a href="#vi-vim-使用编辑器打开文件" class="headerlink" title="vi/vim    使用编辑器打开文件"></a>vi/vim 使用编辑器打开文件</h4><pre><code class="line-numbers language-bash"></code></pre><h4 id="cat-全文查看"><a href="#cat-全文查看" class="headerlink" title="cat    全文查看"></a>cat 全文查看</h4><pre><code class="line-numbers language-bash"># cat [选项] [文件]...
 -n, --number             # 带行号输出，1+
--s, --squeeze-blank      # n行空白替换为1行</code></pre>
-<h4 id="more-分页查看"><a href="#more-分页查看" class="headerlink" title="more    分页查看"></a>more    分页查看</h4><pre><code class="line-numbers language-bash">more [-dlfpcsu ] [-num ] [+/ pattern] [+ linenum] [file ... ] </code></pre>
-<pre><code class="line-numbers language-bash">Enter 
+-s, --squeeze-blank      # n行空白替换为1行</code></pre><h4 id="more-分页查看"><a href="#more-分页查看" class="headerlink" title="more    分页查看"></a>more 分页查看</h4><pre><code class="line-numbers language-bash">more [-dlfpcsu ] [-num ] [+/ pattern] [+ linenum] [file ... ] </code></pre><pre><code class="line-numbers language-bash">Enter 
  向下滚动一屏
 空格键 向下滚动一屏
 Ctrl+B 返回上一屏
@@ -566,78 +223,26 @@ Ctrl+B 返回上一屏
 ：f 输出文件名和当前行的行号
 V 调用vi编辑器
 !命令 调用Shell，并执行命令 
-q 退出more</code></pre>
-<table>
-<thead>
-<tr>
-<th>命令</th>
-<th>说明</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Enter</td>
-<td>向下n行，需要定义。默认为1行</td>
-<td></td>
-</tr>
-<tr>
-<td>Ctrl+F / 空格</td>
-<td>向下滚动一屏</td>
-<td></td>
-</tr>
-<tr>
-<td>ctrl+B</td>
-<td>返回上一屏</td>
-<td></td>
-</tr>
-<tr>
-<td>=</td>
-<td>输出当前行号</td>
-<td></td>
-</tr>
-<tr>
-<td>！</td>
-<td>调出shell并执行命令</td>
-<td></td>
-</tr>
-<tr>
-<td>v</td>
-<td>调用vi编辑器</td>
-<td></td>
-</tr>
-<tr>
-<td>q</td>
-<td>退出</td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="less-更强大的more"><a href="#less-更强大的more" class="headerlink" title="less    更强大的more"></a>less    更强大的more</h4><h4 id="tail-输出文件最后部分"><a href="#tail-输出文件最后部分" class="headerlink" title="tail    输出文件最后部分"></a>tail    输出文件最后部分</h4><pre><code class="line-numbers language-bash">-f         动态循环读取
+q 退出more</code></pre><table><thead><tr><th>命令</th><th>说明</th><th></th></tr></thead><tbody><tr><td>Enter</td><td>向下n行，需要定义。默认为1行</td><td></td></tr><tr><td>Ctrl+F / 空格</td><td>向下滚动一屏</td><td></td></tr><tr><td>ctrl+B</td><td>返回上一屏</td><td></td></tr><tr><td>=</td><td>输出当前行号</td><td></td></tr><tr><td>！</td><td>调出shell并执行命令</td><td></td></tr><tr><td>v</td><td>调用vi编辑器</td><td></td></tr><tr><td>q</td><td>退出</td><td></td></tr></tbody></table><h4 id="less-更强大的more"><a href="#less-更强大的more" class="headerlink" title="less    更强大的more"></a>less 更强大的more</h4><h4 id="tail-输出文件最后部分"><a href="#tail-输出文件最后部分" class="headerlink" title="tail    输出文件最后部分"></a>tail 输出文件最后部分</h4><pre><code class="line-numbers language-bash">-f         动态循环读取
 -q         不显示处理信息
 -v         显示详细的处理信息
 -c        &lt;数目&gt; 显示的字节数
 -n        &lt;行数&gt; 显示行数
 --pid=PID                     与-f合用,表示在进程ID,PID死掉之后结束. 
 -q, --quiet, --silent         从不输出给出文件名的首部 
--s, --sleep-interval=S         与-f合用,表示在每次反复的间隔休眠S秒 </code></pre>
-<h4 id="head-输出文件前10行"><a href="#head-输出文件前10行" class="headerlink" title="head    输出文件前10行"></a>head    输出文件前10行</h4><pre><code class="line-numbers language-bash">head [参数]... [文件]...  </code></pre>
-<pre><code class="line-numbers language-baash">-q         隐藏文件名
+-s, --sleep-interval=S         与-f合用,表示在每次反复的间隔休眠S秒 </code></pre><h4 id="head-输出文件前10行"><a href="#head-输出文件前10行" class="headerlink" title="head    输出文件前10行"></a>head 输出文件前10行</h4><pre><code class="line-numbers language-bash">head [参数]... [文件]...  </code></pre><pre><code class="line-numbers language-baash">-q         隐藏文件名
 -v         显示文件名
 -c&lt;字节&gt;     显示字节数
--n&lt;行数&gt;     显示的行数</code></pre>
-<h4 id="diff-显示差异"><a href="#diff-显示差异" class="headerlink" title="diff    显示差异"></a>diff    显示差异</h4><pre><code class="line-numbers language-bash">diff[参数][文件1或目录1][文件2或目录2]</code></pre>
-<h4 id="awk-文本分析"><a href="#awk-文本分析" class="headerlink" title="awk    文本分析"></a>awk    文本分析</h4><pre><code class="line-numbers language-shell"># log.txt
+-n&lt;行数&gt;     显示的行数</code></pre><h4 id="diff-显示差异"><a href="#diff-显示差异" class="headerlink" title="diff    显示差异"></a>diff 显示差异</h4><pre><code class="line-numbers language-bash">diff[参数][文件1或目录1][文件2或目录2]</code></pre><h4 id="awk-文本分析"><a href="#awk-文本分析" class="headerlink" title="awk    文本分析"></a>awk 文本分析</h4><pre><code class="line-numbers language-shell"># log.txt
 2 this is a test
 3 Are you like awk
 This&#39;s a test
-10 There are orange,apple,mongo</code></pre>
-<pre><code class="line-numbers language-bash"># 每行按空格或TAB分割，输出文本中的1、4项
+10 There are orange,apple,mongo</code></pre><pre><code class="line-numbers language-bash"># 每行按空格或TAB分割，输出文本中的1、4项
 awk &#39;&#123;print $1,$4&#125;&#39; log.txt        
 # 2 a
 # 3 like
 # This&#39;s
-# 10 orange,apple,mongo</code></pre>
-<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><h4 id="ping-网络测试"><a href="#ping-网络测试" class="headerlink" title="ping    网络测试"></a>ping    网络测试</h4><pre><code class="line-numbers language-bash">ping [参数] [主机名或IP地址]</code></pre>
-<pre><code class="line-numbers language-bash">-d         使用Socket的SO_DEBUG功能。
+# 10 orange,apple,mongo</code></pre><h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><h4 id="ping-网络测试"><a href="#ping-网络测试" class="headerlink" title="ping    网络测试"></a>ping 网络测试</h4><pre><code class="line-numbers language-bash">ping [参数] [主机名或IP地址]</code></pre><pre><code class="line-numbers language-bash">-d         使用Socket的SO_DEBUG功能。
 -f      极限检测。大量且快速地送网络封包给一台机器，看它的回应。
 -n         只输出数值。
 -q         不显示任何传送封包的信息，只显示最后的结果。
@@ -650,26 +255,17 @@ awk &#39;&#123;print $1,$4&#125;&#39; log.txt
 -l         前置载入：设置在送出要求信息之前，先行发出的数据包。
 -p         范本样式：设置填满数据包的范本样式。
 -s         字节数：指定发送的数据字节数，预设值是56，加上8字节的ICMP头，一共是64ICMP数据字节。
--t         存活数值：设置存活数值TTL的大小。</code></pre>
-<h4 id="ssh-远程登陆主机"><a href="#ssh-远程登陆主机" class="headerlink" title="ssh    远程登陆主机"></a>ssh    远程登陆主机</h4><pre><code class="line-numbers language-bash">ssh [-l login_name] [-p port] [user@]hostname</code></pre>
-<h4 id="scp-远程拷贝（secure-copy）"><a href="#scp-远程拷贝（secure-copy）" class="headerlink" title="scp    远程拷贝（secure copy）"></a>scp    远程拷贝（secure copy）</h4><pre><code class="line-numbers language-bash">scp [参数] [原路径] [目标路径]</code></pre>
-<pre><code class="line-numbers language-bash">-r 递归复制整个目录。 
+-t         存活数值：设置存活数值TTL的大小。</code></pre><h4 id="ssh-远程登陆主机"><a href="#ssh-远程登陆主机" class="headerlink" title="ssh    远程登陆主机"></a>ssh 远程登陆主机</h4><pre><code class="line-numbers language-bash">ssh [-l login_name] [-p port] [user@]hostname</code></pre><h4 id="scp-远程拷贝（secure-copy）"><a href="#scp-远程拷贝（secure-copy）" class="headerlink" title="scp    远程拷贝（secure copy）"></a>scp 远程拷贝（secure copy）</h4><pre><code class="line-numbers language-bash">scp [参数] [原路径] [目标路径]</code></pre><pre><code class="line-numbers language-bash">-r 递归复制整个目录。 
 -v 详细方式显示输出，用于调试连接，验证和配置问题。 
 -i identity_file 指定密钥文件，此参数直接传递给ssh。 
 -l limit 限定用户所能使用的带宽，以Kbit/s为单位。 
--P port 注意是大写的P, port是指定数据传输用到的端口号 </code></pre>
-<h4 id="telnet-端口测试"><a href="#telnet-端口测试" class="headerlink" title="telnet    端口测试"></a>telnet    端口测试</h4><p>多用于远程登陆，现常用于测试端口是否开启</p>
-<pre><code class="line-numbers language-bash">telnet IP/域名 端口</code></pre>
-<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909204431.png"></p>
-<h4 id="netstat-TCP和UDP监听"><a href="#netstat-TCP和UDP监听" class="headerlink" title="netstat    TCP和UDP监听"></a>netstat    TCP和UDP监听</h4><pre><code class="line-numbers language-bash">netstat -a        # 详细的网络状况
+-P port 注意是大写的P, port是指定数据传输用到的端口号 </code></pre><h4 id="telnet-端口测试"><a href="#telnet-端口测试" class="headerlink" title="telnet    端口测试"></a>telnet 端口测试</h4><p>多用于远程登陆，现常用于测试端口是否开启</p><pre><code class="line-numbers language-bash">telnet IP/域名 端口</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200909204431.png"></p><h4 id="netstat-TCP和UDP监听"><a href="#netstat-TCP和UDP监听" class="headerlink" title="netstat    TCP和UDP监听"></a>netstat TCP和UDP监听</h4><pre><code class="line-numbers language-bash">netstat -a        # 详细的网络状况
 netstat -nu        # 当前用户UDP连接状况
 netstat -apu    # UDP端口号的使用情况
 netstat -i        # 显示网卡列表
 netstat -g        # 组播组的关系
 netstat -s        # 网络统计信息
-netstat -l        # 监听的套接口</code></pre>
-<h4 id="wget-下载工具"><a href="#wget-下载工具" class="headerlink" title="wget    下载工具"></a>wget    下载工具</h4><pre><code class="line-numbers language-bash">wget [参数] [URL]</code></pre>
-<pre><code class="line-numbers language-bash"># 启动参数
+netstat -l        # 监听的套接口</code></pre><h4 id="wget-下载工具"><a href="#wget-下载工具" class="headerlink" title="wget    下载工具"></a>wget 下载工具</h4><pre><code class="line-numbers language-bash">wget [参数] [URL]</code></pre><pre><code class="line-numbers language-bash"># 启动参数
 -V, –version 显示wget的版本后退出
 -h, –help 打印语法帮助
 -b, –background 启动后转入后台执行
@@ -760,23 +356,17 @@ netstat -l        # 监听的套接口</code></pre>
 -I, –include-directories=LIST 允许目录的列表
 -X, –exclude-directories=LIST 不被包含目录的列表
 -np, –no-parent 不要追溯到父目录
-wget -S –spider url 不下载只显示过程</code></pre>
-<h4 id="ifconfig-查看-配置网卡"><a href="#ifconfig-查看-配置网卡" class="headerlink" title="ifconfig    查看/配置网卡"></a>ifconfig    查看/配置网卡</h4><h4 id="route-路由配置"><a href="#route-路由配置" class="headerlink" title="route    路由配置"></a>route    路由配置</h4><h3 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h3><h4 id="whereis-查找程序名"><a href="#whereis-查找程序名" class="headerlink" title="whereis    查找程序名"></a>whereis    查找程序名</h4><pre><code class="line-numbers language-bash">whereis命令只能用于程序名的搜索，而且只搜索
+wget -S –spider url 不下载只显示过程</code></pre><h4 id="ifconfig-查看-配置网卡"><a href="#ifconfig-查看-配置网卡" class="headerlink" title="ifconfig    查看/配置网卡"></a>ifconfig 查看/配置网卡</h4><h4 id="route-路由配置"><a href="#route-路由配置" class="headerlink" title="route    路由配置"></a>route 路由配置</h4><h3 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h3><h4 id="whereis-查找程序名"><a href="#whereis-查找程序名" class="headerlink" title="whereis    查找程序名"></a>whereis 查找程序名</h4><pre><code class="line-numbers language-bash">whereis命令只能用于程序名的搜索，而且只搜索
 - 二进制文件（参数-b）
 - man说明文件（参数-m）
 - 源代码文件（参数-s）。如果省略参数，则返回所有信息。
 和find相比，whereis查找的速度非常快，这是因为linux系统会将系统内的所有文件都记录在一个数据库文件中。
-但是该数据库文件并不是实时更新，默认情况下时一星期更新一次</code></pre>
-<h4 id="which-查找可执行文件"><a href="#which-查找可执行文件" class="headerlink" title="which    查找可执行文件"></a>which    查找可执行文件</h4><pre><code class="line-numbers language-bash"># 会在PATH变量指定的路径中，搜索某个系统命令的位置，并且返回第一个搜索结果
+但是该数据库文件并不是实时更新，默认情况下时一星期更新一次</code></pre><h4 id="which-查找可执行文件"><a href="#which-查找可执行文件" class="headerlink" title="which    查找可执行文件"></a>which 查找可执行文件</h4><pre><code class="line-numbers language-bash"># 会在PATH变量指定的路径中，搜索某个系统命令的位置，并且返回第一个搜索结果
 -n 　指定文件名长度，指定的长度必须大于或等于所有文件中最长的文件名。
 -p 　与-n参数相同，但此处的包括了文件的路径。
 -w 　指定输出时栏位的宽度。
--V 　显示版本信息</code></pre>
-<h4 id="grep-分析输出"><a href="#grep-分析输出" class="headerlink" title="grep    分析输出"></a>grep    分析输出</h4><p>该命令常用于分析一行的信息，若当中有我们所需要的信息，就将该行显示出来，该命令通常与管道命令一起使用，用于对一些命令的输出进行筛选加工等等，比如可以加在ps, tail, cat后面</p>
-<pre><code class="line-numbers language-bash">grep [-acinv] [--color=auto] &#39;查找字符串&#39; filename</code></pre>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="clear-清屏"><a href="#clear-清屏" class="headerlink" title="clear    清屏"></a>clear    清屏</h4><h4 id="date-日期显示"><a href="#date-日期显示" class="headerlink" title="date    日期显示"></a>date    日期显示</h4><pre><code class="line-numbers language-bash">$ date &#39;+%T&#39;
-# 21:03:51</code></pre>
-<h4 id="ln-创建链接"><a href="#ln-创建链接" class="headerlink" title="ln    创建链接"></a>ln    创建链接</h4><pre><code class="line-numbers language-bash">软链接：
+-V 　显示版本信息</code></pre><h4 id="grep-分析输出"><a href="#grep-分析输出" class="headerlink" title="grep    分析输出"></a>grep 分析输出</h4><p>该命令常用于分析一行的信息，若当中有我们所需要的信息，就将该行显示出来，该命令通常与管道命令一起使用，用于对一些命令的输出进行筛选加工等等，比如可以加在ps, tail, cat后面</p><pre><code class="line-numbers language-bash">grep [-acinv] [--color=auto] &#39;查找字符串&#39; filename</code></pre><h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="clear-清屏"><a href="#clear-清屏" class="headerlink" title="clear    清屏"></a>clear 清屏</h4><h4 id="date-日期显示"><a href="#date-日期显示" class="headerlink" title="date    日期显示"></a>date 日期显示</h4><pre><code class="line-numbers language-bash">$ date &#39;+%T&#39;
+# 21:03:51</code></pre><h4 id="ln-创建链接"><a href="#ln-创建链接" class="headerlink" title="ln    创建链接"></a>ln 创建链接</h4><pre><code class="line-numbers language-bash">软链接：
 1.软链接，以路径的形式存在。类似于Windows操作系统中的快捷方式
 2.软链接可以 跨文件系统 ，硬链接不可以
 3.软链接可以对一个不存在的文件名进行链接
@@ -785,9 +375,7 @@ wget -S –spider url 不下载只显示过程</code></pre>
 硬链接:
 1.硬链接，以文件副本的形式存在。但不占用实际空间。
 2.不允许给目录创建硬链接
-3.硬链接只有在同一个文件系统中才能创建</code></pre>
-<pre><code class="line-numbers language-bash">ln [参数][源文件或目录][目标文件或目录]</code></pre>
-<pre><code class="line-numbers language-bash"># 必要参数:
+3.硬链接只有在同一个文件系统中才能创建</code></pre><pre><code class="line-numbers language-bash">ln [参数][源文件或目录][目标文件或目录]</code></pre><pre><code class="line-numbers language-bash"># 必要参数:
 -b 删除，覆盖以前建立的链接
 -d 允许超级用户制作目录的硬链接
 -f 强制执行
@@ -798,48 +386,7 @@ wget -S –spider url 不下载只显示过程</code></pre>
 
 # 选择参数:
 -S “-S&lt;字尾备份字符串&gt; ”或 “--suffix=&lt;字尾备份字符串&gt;”
--V “-V&lt;备份方式&gt;”或“--version-control=&lt;备份方式&gt;”</code></pre>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          
-          <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" rel="prev" title="Scrapy项目部署工具scrapyd使用详解">
-      <i class="fa fa-chevron-left"></i> Scrapy项目部署工具scrapyd使用详解
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/Python/pip/" rel="next" title="Python包管理器PIP配置使用">
-      Python包管理器PIP配置使用 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
+-V “-V&lt;备份方式&gt;”或“--version-control=&lt;备份方式&gt;”</code></pre></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" rel="prev" title="Scrapy项目部署工具scrapyd使用详解"><i class="fa fa-chevron-left"></i> Scrapy项目部署工具scrapyd使用详解</a></div><div class="post-nav-item"><a href="/2020/Python/pip/" rel="next" title="Python包管理器PIP配置使用">Python包管理器PIP配置使用 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><script>window.addEventListener('tabs:register', () => {
     let { activeClass } = CONFIG.comments;
     if (CONFIG.comments.storage) {
       activeClass = localStorage.getItem('comments_active') || activeClass;
@@ -857,186 +404,7 @@ wget -S –spider url 不下载只显示过程</code></pre>
       let commentClass = event.target.classList[1];
       localStorage.setItem('comments_active', commentClass);
     });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%96%87%E4%BB%B6"><span class="nav-text">目录与文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#find-%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6"><span class="nav-text">find    查找文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ls-%E6%98%BE%E7%A4%BA%E7%9B%AE%E5%BD%95%E5%86%85%E5%AE%B9"><span class="nav-text">ls    显示目录内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cd-%E7%9B%AE%E5%BD%95%E5%88%87%E6%8D%A2"><span class="nav-text">cd    目录切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tree-%E6%A0%91%E7%8A%B6%E5%9B%BE%E5%88%97%E5%87%BA%E7%9B%AE%E5%BD%95%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-text">tree    树状图列出目录的内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cp-%E5%A4%8D%E5%88%B6"><span class="nav-text">cp    复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rm-%E5%88%A0%E9%99%A4"><span class="nav-text">rm    删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rmdir-%E5%88%A0%E9%99%A4%E7%A9%BA%E7%9B%AE%E5%BD%95"><span class="nav-text">rmdir    删除空目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mv-%E7%A7%BB%E5%8A%A8"><span class="nav-text">mv    移动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pwd-%E6%98%BE%E7%A4%BA%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95"><span class="nav-text">pwd    显示当前目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tar-%E8%A7%A3%E5%8E%8B%E7%BC%A9"><span class="nav-text">tar    解压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mkdir-%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95"><span class="nav-text">mkdir    创建目录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3"><span class="nav-text">进程相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ps-%E8%BF%9B%E7%A8%8B%E4%BF%A1%E6%81%AF"><span class="nav-text">ps    进程信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kill-%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%EF%BC%88pid%EF%BC%89"><span class="nav-text">kill    进程控制（pid）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#killall-%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%EF%BC%88name%EF%BC%89"><span class="nav-text">killall    进程控制（name）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pkill"><span class="nav-text">pkill</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#contrab-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%EF%BC%88min%E7%BA%A7%EF%BC%89"><span class="nav-text">contrab    定时任务（min级）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#free-%E5%86%85%E5%AD%98%E4%BF%A1%E6%81%AF"><span class="nav-text">free    内存信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%A6%E6%88%B7%E4%B8%8E%E6%9D%83%E9%99%90"><span class="nav-text">账户与权限</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sudo-%E4%BB%A5%E5%85%B6%E4%BB%96%E7%94%A8%E6%88%B7%E8%BA%AB%E4%BB%BD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="nav-text">sudo    以其他用户身份执行命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#passwd-%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="nav-text">passwd    设置用户密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groups-%E6%98%BE%E7%A4%BA%E7%94%A8%E6%88%B7%E7%BB%84"><span class="nav-text">groups    显示用户组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#useradd-%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7"><span class="nav-text">useradd    添加用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#usermod-%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="nav-text">usermod    修改用户信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#userdel-%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="nav-text">userdel    删除用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groupadd-%E7%94%9F%E6%88%90%E6%96%B0%E7%94%A8%E6%88%B7%E7%BB%84"><span class="nav-text">groupadd    生成新用户组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groupdel-%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7%E7%BB%84"><span class="nav-text">groupdel    删除用户组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chmod-%E6%9D%83%E9%99%90%E6%9B%B4%E6%94%B9"><span class="nav-text">chmod    权限更改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chown-%E6%8B%A5%E6%9C%89%E8%80%85%E6%9B%B4%E6%94%B9"><span class="nav-text">chown    拥有者更改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chgrp-%E6%89%80%E5%B1%9E%E7%BB%84%E6%9B%B4%E6%94%B9"><span class="nav-text">chgrp    所属组更改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-text">文本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#vi-vim-%E4%BD%BF%E7%94%A8%E7%BC%96%E8%BE%91%E5%99%A8%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6"><span class="nav-text">vi&#x2F;vim    使用编辑器打开文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cat-%E5%85%A8%E6%96%87%E6%9F%A5%E7%9C%8B"><span class="nav-text">cat    全文查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#more-%E5%88%86%E9%A1%B5%E6%9F%A5%E7%9C%8B"><span class="nav-text">more    分页查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#less-%E6%9B%B4%E5%BC%BA%E5%A4%A7%E7%9A%84more"><span class="nav-text">less    更强大的more</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tail-%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6%E6%9C%80%E5%90%8E%E9%83%A8%E5%88%86"><span class="nav-text">tail    输出文件最后部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#head-%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6%E5%89%8D10%E8%A1%8C"><span class="nav-text">head    输出文件前10行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#diff-%E6%98%BE%E7%A4%BA%E5%B7%AE%E5%BC%82"><span class="nav-text">diff    显示差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#awk-%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90"><span class="nav-text">awk    文本分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-text">网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ping-%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95"><span class="nav-text">ping    网络测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ssh-%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E4%B8%BB%E6%9C%BA"><span class="nav-text">ssh    远程登陆主机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scp-%E8%BF%9C%E7%A8%8B%E6%8B%B7%E8%B4%9D%EF%BC%88secure-copy%EF%BC%89"><span class="nav-text">scp    远程拷贝（secure copy）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#telnet-%E7%AB%AF%E5%8F%A3%E6%B5%8B%E8%AF%95"><span class="nav-text">telnet    端口测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#netstat-TCP%E5%92%8CUDP%E7%9B%91%E5%90%AC"><span class="nav-text">netstat    TCP和UDP监听</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#wget-%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7"><span class="nav-text">wget    下载工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ifconfig-%E6%9F%A5%E7%9C%8B-%E9%85%8D%E7%BD%AE%E7%BD%91%E5%8D%A1"><span class="nav-text">ifconfig    查看&#x2F;配置网卡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#route-%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE"><span class="nav-text">route    路由配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE"><span class="nav-text">查找</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#whereis-%E6%9F%A5%E6%89%BE%E7%A8%8B%E5%BA%8F%E5%90%8D"><span class="nav-text">whereis    查找程序名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#which-%E6%9F%A5%E6%89%BE%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="nav-text">which    查找可执行文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#grep-%E5%88%86%E6%9E%90%E8%BE%93%E5%87%BA"><span class="nav-text">grep    分析输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#clear-%E6%B8%85%E5%B1%8F"><span class="nav-text">clear    清屏</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#date-%E6%97%A5%E6%9C%9F%E6%98%BE%E7%A4%BA"><span class="nav-text">date    日期显示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ln-%E5%88%9B%E5%BB%BA%E9%93%BE%E6%8E%A5"><span class="nav-text">ln    创建链接</span></a></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="yuandongxu"
-      src="/asset/av.jpg">
-  <p class="site-author-name" itemprop="name">yuandongxu</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives">
-          <span class="site-state-item-count">33</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">12</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span>
-      </span>
-      <span class="links-of-author-item">
-        <a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-  </div>
-
-
-
-      </div>
-        <div class="back-to-top motion-element">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2017 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yuandongxu</span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item-icon">
-      <i class="fa fa-chart-area"></i>
-    </span>
-      <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">98k</span>
-</div>
-<script src="/js/prism/prism.js" async></script>
-
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/pisces.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-  <script>
-    (function(){
-      var canonicalURL, curProtocol;
-      //Get the <link> tag
-      var x=document.getElementsByTagName("link");
-		//Find the last canonical URL
-		if(x.length > 0){
-			for (i=0;i<x.length;i++){
-				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
-					canonicalURL=x[i].href;
-				}
-			}
-		}
-    //Get protocol
-	    if (!canonicalURL){
-	    	curProtocol = window.location.protocol.split(':')[0];
-	    }
-	    else{
-	    	curProtocol = canonicalURL.split(':')[0];
-	    }
-      //Get current URL if the canonical URL does not exist
-	    if (!canonicalURL) canonicalURL = window.location.href;
-	    //Assign script content. Replace current URL with the canonical URL
-      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
-  </script>
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-<script>
-if (document.querySelectorAll('pre.mermaid').length) {
+  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%96%87%E4%BB%B6"><span class="nav-text">目录与文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#find-%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6"><span class="nav-text">find 查找文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ls-%E6%98%BE%E7%A4%BA%E7%9B%AE%E5%BD%95%E5%86%85%E5%AE%B9"><span class="nav-text">ls 显示目录内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cd-%E7%9B%AE%E5%BD%95%E5%88%87%E6%8D%A2"><span class="nav-text">cd 目录切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tree-%E6%A0%91%E7%8A%B6%E5%9B%BE%E5%88%97%E5%87%BA%E7%9B%AE%E5%BD%95%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-text">tree 树状图列出目录的内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cp-%E5%A4%8D%E5%88%B6"><span class="nav-text">cp 复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rm-%E5%88%A0%E9%99%A4"><span class="nav-text">rm 删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rmdir-%E5%88%A0%E9%99%A4%E7%A9%BA%E7%9B%AE%E5%BD%95"><span class="nav-text">rmdir 删除空目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mv-%E7%A7%BB%E5%8A%A8"><span class="nav-text">mv 移动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pwd-%E6%98%BE%E7%A4%BA%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95"><span class="nav-text">pwd 显示当前目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tar-%E8%A7%A3%E5%8E%8B%E7%BC%A9"><span class="nav-text">tar 解压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mkdir-%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95"><span class="nav-text">mkdir 创建目录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3"><span class="nav-text">进程相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ps-%E8%BF%9B%E7%A8%8B%E4%BF%A1%E6%81%AF"><span class="nav-text">ps 进程信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kill-%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%EF%BC%88pid%EF%BC%89"><span class="nav-text">kill 进程控制（pid）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#killall-%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%EF%BC%88name%EF%BC%89"><span class="nav-text">killall 进程控制（name）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pkill"><span class="nav-text">pkill</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#contrab-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%EF%BC%88min%E7%BA%A7%EF%BC%89"><span class="nav-text">contrab 定时任务（min级）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#free-%E5%86%85%E5%AD%98%E4%BF%A1%E6%81%AF"><span class="nav-text">free 内存信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%A6%E6%88%B7%E4%B8%8E%E6%9D%83%E9%99%90"><span class="nav-text">账户与权限</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sudo-%E4%BB%A5%E5%85%B6%E4%BB%96%E7%94%A8%E6%88%B7%E8%BA%AB%E4%BB%BD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="nav-text">sudo 以其他用户身份执行命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#passwd-%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="nav-text">passwd 设置用户密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groups-%E6%98%BE%E7%A4%BA%E7%94%A8%E6%88%B7%E7%BB%84"><span class="nav-text">groups 显示用户组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#useradd-%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7"><span class="nav-text">useradd 添加用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#usermod-%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="nav-text">usermod 修改用户信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#userdel-%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="nav-text">userdel 删除用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groupadd-%E7%94%9F%E6%88%90%E6%96%B0%E7%94%A8%E6%88%B7%E7%BB%84"><span class="nav-text">groupadd 生成新用户组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groupdel-%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7%E7%BB%84"><span class="nav-text">groupdel 删除用户组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chmod-%E6%9D%83%E9%99%90%E6%9B%B4%E6%94%B9"><span class="nav-text">chmod 权限更改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chown-%E6%8B%A5%E6%9C%89%E8%80%85%E6%9B%B4%E6%94%B9"><span class="nav-text">chown 拥有者更改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chgrp-%E6%89%80%E5%B1%9E%E7%BB%84%E6%9B%B4%E6%94%B9"><span class="nav-text">chgrp 所属组更改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-text">文本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#vi-vim-%E4%BD%BF%E7%94%A8%E7%BC%96%E8%BE%91%E5%99%A8%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6"><span class="nav-text">vi&#x2F;vim 使用编辑器打开文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cat-%E5%85%A8%E6%96%87%E6%9F%A5%E7%9C%8B"><span class="nav-text">cat 全文查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#more-%E5%88%86%E9%A1%B5%E6%9F%A5%E7%9C%8B"><span class="nav-text">more 分页查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#less-%E6%9B%B4%E5%BC%BA%E5%A4%A7%E7%9A%84more"><span class="nav-text">less 更强大的more</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tail-%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6%E6%9C%80%E5%90%8E%E9%83%A8%E5%88%86"><span class="nav-text">tail 输出文件最后部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#head-%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6%E5%89%8D10%E8%A1%8C"><span class="nav-text">head 输出文件前10行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#diff-%E6%98%BE%E7%A4%BA%E5%B7%AE%E5%BC%82"><span class="nav-text">diff 显示差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#awk-%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90"><span class="nav-text">awk 文本分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-text">网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ping-%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95"><span class="nav-text">ping 网络测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ssh-%E8%BF%9C%E7%A8%8B%E7%99%BB%E9%99%86%E4%B8%BB%E6%9C%BA"><span class="nav-text">ssh 远程登陆主机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scp-%E8%BF%9C%E7%A8%8B%E6%8B%B7%E8%B4%9D%EF%BC%88secure-copy%EF%BC%89"><span class="nav-text">scp 远程拷贝（secure copy）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#telnet-%E7%AB%AF%E5%8F%A3%E6%B5%8B%E8%AF%95"><span class="nav-text">telnet 端口测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#netstat-TCP%E5%92%8CUDP%E7%9B%91%E5%90%AC"><span class="nav-text">netstat TCP和UDP监听</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#wget-%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7"><span class="nav-text">wget 下载工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ifconfig-%E6%9F%A5%E7%9C%8B-%E9%85%8D%E7%BD%AE%E7%BD%91%E5%8D%A1"><span class="nav-text">ifconfig 查看&#x2F;配置网卡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#route-%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE"><span class="nav-text">route 路由配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE"><span class="nav-text">查找</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#whereis-%E6%9F%A5%E6%89%BE%E7%A8%8B%E5%BA%8F%E5%90%8D"><span class="nav-text">whereis 查找程序名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#which-%E6%9F%A5%E6%89%BE%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="nav-text">which 查找可执行文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#grep-%E5%88%86%E6%9E%90%E8%BE%93%E5%87%BA"><span class="nav-text">grep 分析输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#clear-%E6%B8%85%E5%B1%8F"><span class="nav-text">clear 清屏</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#date-%E6%97%A5%E6%9C%9F%E6%98%BE%E7%A4%BA"><span class="nav-text">date 日期显示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ln-%E5%88%9B%E5%BB%BA%E9%93%BE%E6%8E%A5"><span class="nav-text">ln 创建链接</span></a></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="yuandongxu" src="/asset/av.jpg"><p class="site-author-name" itemprop="name">yuandongxu</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives"><span class="site-state-item-count">33</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span> </span><span class="links-of-author-item"><a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">yuandongxu</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">98k</span></div><script src="/js/prism/prism.js" async></script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var e,t,o,n,r,a=document.getElementsByTagName("link");if(0<a.length)for(i=0;i<a.length;i++)"canonical"==a[i].rel.toLowerCase()&&a[i].href&&(e=a[i].href);t=e?e.split(":")[0]:window.location.protocol.split(":")[0],e=e||window.location.href,window,n=e,r=document.referrer,/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi.test(n)||(o="https"===String(t).toLowerCase()?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif",r?(o+="?r="+encodeURIComponent(document.referrer),n&&(o+="&l="+n)):n&&(o+="?l="+n),(new Image).src=o)}()</script><script src="/js/local-search.js"></script><script>if (document.querySelectorAll('pre.mermaid').length) {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
     mermaid.initialize({
       theme    : 'forest',
@@ -1046,13 +414,4 @@ if (document.querySelectorAll('pre.mermaid').length) {
       sequence : { actorMargin: 50 }
     });
   }, window.mermaid);
-}
-</script>
-
-
-  
-
-  
-
-</body>
-</html>
+}</script></body></html>
