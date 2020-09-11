@@ -2272,25 +2272,6 @@ scrapy</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>Scrapy配置与设置</title>
-    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%E8%AE%BE%E7%BD%AE%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
-<a id="more"></a>
-
-<hr>
-<h2 id="scrapy标准配置文件"><a href="#scrapy标准配置文件" class="headerlink" title="scrapy标准配置文件"></a>scrapy标准配置文件</h2><p>Scrapy将查找ini样式的<code>scrapy.cfg</code> 标准配置文件，优先级项目配置最高、系统级最低</p>
-<ul>
-<li>系统级：<code>/etc/scrapy.cfg</code> 或 <code>c:\scrapy\scrapy.cfg</code></li>
-<li>用户级：<code>~/.config/scrapy.cfg</code> (<code>$XDG_CONFIG_HOME</code>) and <code>~/.scrapy.cfg</code> (<code>$HOME</code>)</li>
-<li>项目级：项目根目录的<code>scrapy.cfg</code></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>爬虫</tag>
-        <tag>Scrapy</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Scrapy命令行解析</title>
     <url>/2020/%E7%88%AC%E8%99%AB/scrapy%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<p>scrapy命令行包括：</p>
@@ -2424,6 +2405,25 @@ $ scrapy check
 </li>
 <li><p>bench：测试爬取性能</p>
 </li>
+</ul>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy配置与设置</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%E8%AE%BE%E7%BD%AE%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
+<a id="more"></a>
+
+<hr>
+<h2 id="scrapy标准配置文件"><a href="#scrapy标准配置文件" class="headerlink" title="scrapy标准配置文件"></a>scrapy标准配置文件</h2><p>Scrapy将查找ini样式的<code>scrapy.cfg</code> 标准配置文件，优先级项目配置最高、系统级最低</p>
+<ul>
+<li>系统级：<code>/etc/scrapy.cfg</code> 或 <code>c:\scrapy\scrapy.cfg</code></li>
+<li>用户级：<code>~/.config/scrapy.cfg</code> (<code>$XDG_CONFIG_HOME</code>) and <code>~/.scrapy.cfg</code> (<code>$HOME</code>)</li>
+<li>项目级：项目根目录的<code>scrapy.cfg</code></li>
 </ul>
 ]]></content>
       <tags>
