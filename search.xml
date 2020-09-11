@@ -877,8 +877,8 @@ print(result.deleted_count)
 # 另外还可以对索引进行操作，如create_index()、create_indexes()、drop_index()等。</code></pre>
 ]]></content>
       <tags>
-        <tag>Python</tag>
         <tag>数据库</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2432,6 +2432,36 @@ $ scrapy check
       </tags>
   </entry>
   <entry>
+    <title>Linux使用Docker搭建FileBrowser主机文件浏览器</title>
+    <url>/2020/Docker/Docker%E9%83%A8%E7%BD%B2FileBrowser/</url>
+    <content><![CDATA[<p>预览Linux服务器上的音视频文件是一个很不容易的事情，在服务器上部署FileBrowser服务是一个解决问题的好方法</p>
+<a id="more"></a>
+
+<hr>
+<p>docker获取FileBrowser镜像</p>
+<pre><code class="line-numbers language-bash">docker pull filebrowser/filebrowser</code></pre>
+<p>创建FileBrowser挂载所需要的目录</p>
+<pre><code class="line-numbers language-bash">mkdir -p  /data/filebrowser
+cd /data/filebrowser</code></pre>
+<p>创建新的FileBrowser实例</p>
+<pre><code class="line-numbers language-bash">docker run -d \
+-v /:/srv  \
+-v /data/filebrowser/filebrowserconfig.json:/etc/config.json  \
+-v /data/filebrowser/database.db:/etc/database.db \
+-p 80:80 --name filebrowser filebrowser/filebrowser</code></pre>
+<blockquote>
+<p>filebrowser默认的登陆用户为：admin，密码为：admin</p>
+<p>通过浏览器访问服务器的<code>公网IP:端口</code>即可登陆File Browser服务，因为映射到了本地80所以不必指定端口</p>
+<p>/srv为filebrowser admin用户登陆后的根目录，将外部的/挂载到/srv结果为登陆后默认显示服务器的<code>/</code></p>
+</blockquote>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200828153104.png"></p>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linxu各种发行版本更换软件源的方法</title>
     <url>/2020/Linux/Linux%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC%E6%9B%B4%E6%8D%A2%E8%BD%AF%E4%BB%B6%E6%BA%90%E7%9A%84%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>使用官方源会发生：安装速度慢、安装失败、包数量少等各种疑难杂症    </p>
@@ -2470,36 +2500,6 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-B
 ]]></content>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux使用Docker搭建FileBrowser主机文件浏览器</title>
-    <url>/2020/Docker/Docker%E9%83%A8%E7%BD%B2FileBrowser/</url>
-    <content><![CDATA[<p>预览Linux服务器上的音视频文件是一个很不容易的事情，在服务器上部署FileBrowser服务是一个解决问题的好方法</p>
-<a id="more"></a>
-
-<hr>
-<p>docker获取FileBrowser镜像</p>
-<pre><code class="line-numbers language-bash">docker pull filebrowser/filebrowser</code></pre>
-<p>创建FileBrowser挂载所需要的目录</p>
-<pre><code class="line-numbers language-bash">mkdir -p  /data/filebrowser
-cd /data/filebrowser</code></pre>
-<p>创建新的FileBrowser实例</p>
-<pre><code class="line-numbers language-bash">docker run -d \
--v /:/srv  \
--v /data/filebrowser/filebrowserconfig.json:/etc/config.json  \
--v /data/filebrowser/database.db:/etc/database.db \
--p 80:80 --name filebrowser filebrowser/filebrowser</code></pre>
-<blockquote>
-<p>filebrowser默认的登陆用户为：admin，密码为：admin</p>
-<p>通过浏览器访问服务器的<code>公网IP:端口</code>即可登陆File Browser服务，因为映射到了本地80所以不必指定端口</p>
-<p>/srv为filebrowser admin用户登陆后的根目录，将外部的/挂载到/srv结果为登陆后默认显示服务器的<code>/</code></p>
-</blockquote>
-<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200828153104.png"></p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
