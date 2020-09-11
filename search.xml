@@ -2503,7 +2503,7 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-B
       </tags>
   </entry>
   <entry>
-    <title>Scrapy Shell框架调试模式</title>
+    <title>Scrapy Shell交互式调试</title>
     <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20shell/</url>
     <content><![CDATA[<p>scrapy shell是一个交互式shell，可以在其中调试爬虫代码而不必运行spider，它常用于测试xpath或css表达式尝试抓取的网页中提取的数据。它允许在编写spider时交互地测试表达式，而不必运行spider来测试每个更改，它是开发和调试蜘蛛的宝贵工具。</p>
 <pre><code class="line-numbers language-bash">scrapy shell [options] [HtmlPage]</code></pre>
@@ -2516,25 +2516,25 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-B
 <pre><code class="line-numbers language-bash">vim scrpay.cfg</code></pre>
 <pre><code>[settings]
 shell = bpython</code></pre>
-<h3 id="scrapy-shell的使用"><a href="#scrapy-shell的使用" class="headerlink" title="scrapy shell的使用"></a>scrapy shell的使用</h3><h4 id="启动调试"><a href="#启动调试" class="headerlink" title="启动调试"></a>启动调试</h4><p>调试一个在线网页</p>
+<h3 id="scrapy-shell的使用"><a href="#scrapy-shell的使用" class="headerlink" title="scrapy shell的使用"></a>scrapy shell的使用</h3><h4 id="启动shell"><a href="#启动shell" class="headerlink" title="启动shell"></a>启动shell</h4><p>调试一个在线网页</p>
 <pre><code class="line-numbers language-bash"># scrapy shell &lt;url&gt;
 scrapy shell www.baidu.com</code></pre>
 <p>当然还可以调试一个本地网页，注意使用当前文件夹的文件要指定为<code>./</code></p>
 <pre><code class="line-numbers language-bash">scrapy shell /root/file.html
 # 或者
 scrapy shell file:///absolute/path/to/file.html</code></pre>
-<h4 id="options"><a href="#options" class="headerlink" title="options"></a>options</h4><pre><code class="line-numbers language-bash"># 不显示日志
+<h4 id="启动时的可选参数"><a href="#启动时的可选参数" class="headerlink" title="启动时的可选参数"></a>启动时的可选参数</h4><pre><code class="line-numbers language-bash"># 不显示日志
 scrapy shell www.baidu.com --nolog</code></pre>
 <pre><code class="line-numbers language-bash"># 指定headers UA
 scrapy shell www.baidu.com</code></pre>
-<h4 id="调试方法"><a href="#调试方法" class="headerlink" title="调试方法"></a>调试方法</h4><pre><code class="line-numbers language-shell"># 重新调试一个新的URL，并相应地更新所有相关对象
+<h4 id="shell中的可用方法"><a href="#shell中的可用方法" class="headerlink" title="shell中的可用方法"></a>shell中的可用方法</h4><pre><code class="line-numbers language-shell"># 重新调试一个新的URL，并相应地更新所有相关对象
 fetch(&#39;www.baidu.com&#39;)
 fetch(&#39;www.baidu.com&#39;, redirect=True)</code></pre>
 <pre><code class="line-numbers language-shell"># 刷新请求
 fetch(request)</code></pre>
 <pre><code class="line-numbers language-shell"># 浏览器查看响应
 view(response)</code></pre>
-<h4 id="调试对象"><a href="#调试对象" class="headerlink" title="调试对象"></a>调试对象</h4><p>crawler - 当前爬虫对象<br>spider - 可处理当前URL的spider，或者一个新的spider对象<br>request - URL的请求对象，使用<a href="https://docs.scrapy.org/en/latest/topics/request-response.html#scrapy.http.Request.replace"><code>replace()</code></a>变更<br>response - 当前URL的响应对象<br>settings - 当前scrapy setting对象</p>
+<h4 id="shell中的可用对象"><a href="#shell中的可用对象" class="headerlink" title="shell中的可用对象"></a>shell中的可用对象</h4><p>crawler - 当前爬虫对象<br>spider - 可处理当前URL的spider，或者一个新的spider对象<br>request - URL的请求对象，使用<a href="https://docs.scrapy.org/en/latest/topics/request-response.html#scrapy.http.Request.replace"><code>replace()</code></a>变更<br>response - 当前URL的响应对象<br>settings - 当前scrapy setting对象</p>
 <h3 id="使用案例"><a href="#使用案例" class="headerlink" title="使用案例"></a>使用案例</h3><p>启动</p>
 <pre><code class="line-numbers language-bash">scrapy shell &quot;https://scrapy.org&quot; --nolog</code></pre>
 <p>获取文本</p>
