@@ -1,6 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>WSL（Windows Subsystem for Linux）使用笔记</title>
+    <url>/2020/%E9%9A%8F%E7%AC%94/WSL/</url>
+    <content><![CDATA[<p>Windows Subsystem for Linux（简称WSL）是一个在Windows 10上能够运行原生Linux二进制可执行文件（ELF格式）的兼容层。它是由Microsoft与Canonical公司合作开发，最初目标是使纯正的Ubuntu 14.04 “Trusty Tahr”映像能下载和解压到用户的本地计算机，并且映像内的工具和实用工具能在此子系统上原生运行。</p>
+<ul>
+<li>WSL的安装</li>
+<li>WSL2版本转换</li>
+<li>重启WSL的方法</li>
+<li>Windows中查看WSL文件的方法</li>
+<li><a href="#Windows%E4%B8%8EWSL%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%B7%B7%E6%B7%86%E7%9A%84%E9%97%AE%E9%A2%98">Windows 与 WSL 环境变量混淆的问题</a></li>
+</ul>
+<a id="more"></a>
+
+<hr>
+<h4 id="WSL的安装"><a href="#WSL的安装" class="headerlink" title="WSL的安装"></a>WSL的安装</h4><p>WSL一定向前兼容，所以将Windows更新至最新</p>
+<p><strong>开启Windows的虚拟机平台和WSL功能：</strong>以<strong>管理员权限</strong>启动 PowerShell，，完成后重启计算机完成配置。</p>
+<pre><code class="line-numbers language-powershell">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform               # 启用虚拟机平台
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux    # 启用 Linux 子系统功能</code></pre>
+<p><strong>配置wsl默认版本为wsl2</strong>：在以后安装 Linux 的时候默认启用 WSL2，需要下载安装一个补丁：wsl_update_x64.msi</p>
+<pre><code class="line-numbers language-powershell">wsl --set-default-version 2</code></pre>
+<p><strong>下载系统镜像</strong>：到windows store下载一个Linux发行版本系统，如Ubuntu、Ubuntu18等，注意当下载完成时实际上并没有完成实际的安装</p>
+<p><strong>镜像的安装</strong>：返回桌面按win键搜索下载的Linux名称运行一次完成安装</p>
+<h4 id="WSL的停止与重启"><a href="#WSL的停止与重启" class="headerlink" title="WSL的停止与重启"></a>WSL的停止与重启</h4><p>因为系统控制的某些原因，WSL内执行<code>reboot</code>并不能控制WSL的重启，所以在不重启Windows的情况下需要重启WSL需要使用以下命令</p>
+<p><strong>管理员权限启动CMD/Powershell</strong></p>
+<pre><code class="line-numbers language-powershell">net stop LxssManager         # 停止
+net start LxssManager        # 启动</code></pre>
+<h4 id="使用文件管理器查看WSL文件的方法"><a href="#使用文件管理器查看WSL文件的方法" class="headerlink" title="使用文件管理器查看WSL文件的方法"></a>使用文件管理器查看WSL文件的方法</h4><p>打开文件管理器，点击地址栏，输入<code>\\wsl$</code>回车会显示所有已安装的wsl的文件系统</p>
+<p>比如我只安装了一个wsl发行版本，名称为Ubuntu</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200902153211.png"></p>
+<h4 id="Windows与WSL环境变量混淆的问题"><a href="#Windows与WSL环境变量混淆的问题" class="headerlink" title="Windows与WSL环境变量混淆的问题"></a>Windows与WSL环境变量混淆的问题</h4><p>wsl具有互交互特性：</p>
+<p>windows与wsl都配置好node环境后，wsl内使用<code>node</code>会调用到Windows的node，脑袋疼···</p>
+<p>查了好多博客，解决方法</p>
+<pre><code class="line-numbers language-bash">sudo vim /etc/wsl.conf</code></pre>
+<pre><code class="line-numbers language-shell">[interop]
+enabled=false
+appendWindowsPath=false</code></pre>
+<pre><code class="line-numbers language-bash"># 重启wsl
+net stop LxssManager        
+net start LxssManager    </code></pre>
+<h4 id="WSL常用命令"><a href="#WSL常用命令" class="headerlink" title="WSL常用命令"></a>WSL常用命令</h4><p>用法：<code>wsl.exe [参数] [选项...] [命令行]</code></p>
+<pre><code class="line-numbers language-powershell">$ wsl --help
+版权所有 (c) Microsoft Corporation。保留所有权利。
+
+
+
+用于运行 Linux 二进制文件的参数:
+
+    如果未提供命令行，wsl.exe 将启动默认的 shell。
+
+    --exec, -e &lt;命令行&gt;
+        执行指定的命令而不使用默认的 Linux shell。
+
+    --
+        按原样传递剩余的命令行。
+
+选项:
+    --distribution, -d &lt;分发版&gt;
+        运行指定的分发。
+
+    --user, -u &lt;用户名&gt;
+        以指定用户身份运行。
+
+用于管理适用于 Linux 的 Windows 子系统的参数:
+
+    --export &lt;分发版&gt; &lt;文件名&gt;
+        将分发导出到 tar 文件。
+        对于标准输出，文件名可以是 -。
+
+    --import &lt;分发版&gt; &lt;安装位置&gt; &lt;文件名&gt; [选项]
+        将指定的 tar 文件作为新分发进行导入。
+        对于标准输入，文件名可以是 -。
+
+    --list, -l [选项]
+        列出分发。
+        选项:
+            --all        # 列出所有分发，包括当前正在安装或卸载的分发。
+            --running        # 只列出当前正在运行的分发。
+            --quiet, -q        # 只显示分发名称。
+            --verbose, -v        # 显示有关所有分发的详细信息。
+    --set-default, -s &lt;分发版&gt;        # 将分发设置为默认值。
+    --set-default-version &lt;版本&gt;        # 更改新分发的默认安装版本。
+    --set-version &lt;分发版&gt; &lt;版本&gt;        # 更改指定分发的版本。
+    --shutdown        # 立即终止所有正在运行的分发和 WSL 2 轻型工具虚拟机。
+    --terminate, -t &lt;分发版&gt;        # 终止指定的分发。
+    --unregister &lt;分发版&gt;        # 注销分发。
+    --help        # 显示用法信息。</code></pre>
+]]></content>
+      <tags>
+        <tag>WSL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python命名空间及作用域总结</title>
     <url>/2020/Python/Python%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%8F%8A%E4%BD%9C%E7%94%A8%E5%9F%9F/</url>
     <content><![CDATA[<h4 id="命名空间（namespace）-名称存储"><a href="#命名空间（namespace）-名称存储" class="headerlink" title="命名空间（namespace）- 名称存储"></a>命名空间（namespace）- 名称存储</h4><blockquote>
@@ -96,295 +187,97 @@ outer()
       </tags>
   </entry>
   <entry>
-    <title>WSL（Windows Subsystem for Linux）使用笔记</title>
-    <url>/2020/%E9%9A%8F%E7%AC%94/WSL/</url>
-    <content><![CDATA[<p>Windows Subsystem for Linux（简称WSL）是一个在Windows 10上能够运行原生Linux二进制可执行文件（ELF格式）的兼容层。它是由Microsoft与Canonical公司合作开发，最初目标是使纯正的Ubuntu 14.04 “Trusty Tahr”映像能下载和解压到用户的本地计算机，并且映像内的工具和实用工具能在此子系统上原生运行。</p>
+    <title>Scrapy框架笔记· 配置详解</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20settings/</url>
+    <content><![CDATA[<p>Scrapy 提供了settings对象，用户可以通过配置该对象定制核心（core）、插件（extension）、pipeline 及 spider 组件的行为，如请求头、下载并发等。</p>
+<p>Scrapy 提供了很多种配置的方法，不同的方法有不同的优先级和作用范围，高优先级会覆盖掉低优先级的配置：</p>
 <ul>
-<li>WSL的安装</li>
-<li>WSL2版本转换</li>
-<li>重启WSL的方法</li>
-<li>Windows中查看WSL文件的方法</li>
-<li><a href="#Windows%E4%B8%8EWSL%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%B7%B7%E6%B7%86%E7%9A%84%E9%97%AE%E9%A2%98">Windows 与 WSL 环境变量混淆的问题</a></li>
+<li>命令行选项（最高优先级）</li>
+<li>每个spider的设定</li>
+<li>项目设定模块</li>
+<li>命令默认设定模块</li>
+<li>全局默认设定（最低优先级）</li>
 </ul>
+<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.1<i class="fa fa-external-link-alt"></i></span></p>
 <a id="more"></a>
 
 <hr>
-<h4 id="WSL的安装"><a href="#WSL的安装" class="headerlink" title="WSL的安装"></a>WSL的安装</h4><p>WSL一定向前兼容，所以将Windows更新至最新</p>
-<p><strong>开启Windows的虚拟机平台和WSL功能：</strong>以<strong>管理员权限</strong>启动 PowerShell，，完成后重启计算机完成配置。</p>
-<pre><code class="line-numbers language-powershell">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform               # 启用虚拟机平台
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux    # 启用 Linux 子系统功能</code></pre>
-<p><strong>配置wsl默认版本为wsl2</strong>：在以后安装 Linux 的时候默认启用 WSL2，需要下载安装一个补丁：wsl_update_x64.msi</p>
-<pre><code class="line-numbers language-powershell">wsl --set-default-version 2</code></pre>
-<p><strong>下载系统镜像</strong>：到windows store下载一个Linux发行版本系统，如Ubuntu、Ubuntu18等，注意当下载完成时实际上并没有完成实际的安装</p>
-<p><strong>镜像的安装</strong>：返回桌面按win键搜索下载的Linux名称运行一次完成安装</p>
-<h4 id="WSL的停止与重启"><a href="#WSL的停止与重启" class="headerlink" title="WSL的停止与重启"></a>WSL的停止与重启</h4><p>因为系统控制的某些原因，WSL内执行<code>reboot</code>并不能控制WSL的重启，所以在不重启Windows的情况下需要重启WSL需要使用以下命令</p>
-<p><strong>管理员权限启动CMD/Powershell</strong></p>
-<pre><code class="line-numbers language-powershell">net stop LxssManager         # 停止
-net start LxssManager        # 启动</code></pre>
-<h4 id="使用文件管理器查看WSL文件的方法"><a href="#使用文件管理器查看WSL文件的方法" class="headerlink" title="使用文件管理器查看WSL文件的方法"></a>使用文件管理器查看WSL文件的方法</h4><p>打开文件管理器，点击地址栏，输入<code>\\wsl$</code>回车会显示所有已安装的wsl的文件系统</p>
-<p>比如我只安装了一个wsl发行版本，名称为Ubuntu</p>
-<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200902153211.png"></p>
-<h4 id="Windows与WSL环境变量混淆的问题"><a href="#Windows与WSL环境变量混淆的问题" class="headerlink" title="Windows与WSL环境变量混淆的问题"></a>Windows与WSL环境变量混淆的问题</h4><p>wsl具有互交互特性：</p>
-<p>windows与wsl都配置好node环境后，wsl内使用<code>node</code>会调用到Windows的node，脑袋疼···</p>
-<p>查了好多博客，解决方法</p>
-<pre><code class="line-numbers language-bash">sudo vim /etc/wsl.conf</code></pre>
-<pre><code class="line-numbers language-shell">[interop]
-enabled=false
-appendWindowsPath=false</code></pre>
-<pre><code class="line-numbers language-bash"># 重启wsl
-net stop LxssManager        
-net start LxssManager    </code></pre>
-<h4 id="WSL常用命令"><a href="#WSL常用命令" class="headerlink" title="WSL常用命令"></a>WSL常用命令</h4><p>用法：<code>wsl.exe [参数] [选项...] [命令行]</code></p>
-<pre><code class="line-numbers language-powershell">$ wsl --help
-版权所有 (c) Microsoft Corporation。保留所有权利。
-
-
-
-用于运行 Linux 二进制文件的参数:
-
-    如果未提供命令行，wsl.exe 将启动默认的 shell。
-
-    --exec, -e &lt;命令行&gt;
-        执行指定的命令而不使用默认的 Linux shell。
-
-    --
-        按原样传递剩余的命令行。
-
-选项:
-    --distribution, -d &lt;分发版&gt;
-        运行指定的分发。
-
-    --user, -u &lt;用户名&gt;
-        以指定用户身份运行。
-
-用于管理适用于 Linux 的 Windows 子系统的参数:
-
-    --export &lt;分发版&gt; &lt;文件名&gt;
-        将分发导出到 tar 文件。
-        对于标准输出，文件名可以是 -。
-
-    --import &lt;分发版&gt; &lt;安装位置&gt; &lt;文件名&gt; [选项]
-        将指定的 tar 文件作为新分发进行导入。
-        对于标准输入，文件名可以是 -。
-
-    --list, -l [选项]
-        列出分发。
-        选项:
-            --all        # 列出所有分发，包括当前正在安装或卸载的分发。
-            --running        # 只列出当前正在运行的分发。
-            --quiet, -q        # 只显示分发名称。
-            --verbose, -v        # 显示有关所有分发的详细信息。
-    --set-default, -s &lt;分发版&gt;        # 将分发设置为默认值。
-    --set-default-version &lt;版本&gt;        # 更改新分发的默认安装版本。
-    --set-version &lt;分发版&gt; &lt;版本&gt;        # 更改指定分发的版本。
-    --shutdown        # 立即终止所有正在运行的分发和 WSL 2 轻型工具虚拟机。
-    --terminate, -t &lt;分发版&gt;        # 终止指定的分发。
-    --unregister &lt;分发版&gt;        # 注销分发。
-    --help        # 显示用法信息。</code></pre>
-]]></content>
-      <tags>
-        <tag>WSL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【Scrapy框架笔记】 文件、图片Pipeline使用解析</title>
-    <url>/2020/%E7%88%AC%E8%99%AB/Scrapy%20%E6%96%87%E4%BB%B6%E3%80%81%E5%9B%BE%E7%89%87pipeline/</url>
-    <content><![CDATA[<p>当我们的scrapy项目需要爬取媒体内容时，可以使用以下两条scrapy模块自带的pipeline管道进行下载处理，都包含了两个默认特殊字段：</p>
-<ul>
-<li>对于文件：<code>scrapy.pipelines.files.FilesPipeline</code><ul>
-<li><code>item[&#39;file_urls&#39;]</code> - 下载链接列表</li>
-<li><code>item[&#39;files&#39;]</code> - 管道处理结果列表（每个url的信息字典）</li>
+<h3 id="常用配置项"><a href="#常用配置项" class="headerlink" title="常用配置项"></a>常用配置项</h3><ul>
+<li>CONCURRENT_ITEMS：项目管道最大并发数</li>
+<li>CONCURRENT_REQUESTS： scrapy下载器最大并发数</li>
+<li>DOWNLOAD_DELAY：访问同一个网站的间隔时间，单位秒。一般默认为0.5*<code>DOWNLOAD_DELAY</code>到1.5 *<code>DOWNLOAD_DELAY</code>之间的随机值。也可以设置为固定值，由<code>RANDOMIZE_DOWNLOAD_DELAY</code>指定是否固定，默认True随机。这里的同一个网站可以是域名也可以是IP，由<code>CONCURRENT_REQUESTS_PER_IP</code>的值决定。</li>
+<li>CONCURRENT_REQUESTS_PER_DOMAIN：对单个域名的最大并发</li>
+<li>CONCURRENT_REQUESTS_PER_IP：对单个IP的最大并发，如果值不为0，则<code>CONCURRENT_REQUESTS_PER_DOMAIN</code>参数被忽略，而且<code>DOWNLOAD_DELAY</code>这个参数的同一网站指的是IP</li>
+<li>DEFAULT_ITEM_CLASS：执行scrapy shell 命令的默认item类，默认<code>scrapy.item.Item</code></li>
+<li>DEPTH_LIMIT：爬取的最大深度</li>
+<li>DEPTH_PRIORITY：正值为广度优先(BFO)，负值为深度优先(DFO)，计算公式：<code>request.priority = request.priority - ( depth * DEPTH_PRIORITY )</code></li>
+<li>COOKIES_ENABLED： 是否启用cookie中间件，也就是自动cookie管理</li>
+<li>COOKIES_DEBUG：将请求cookie和响应包含Set-Cookie的写入日志</li>
+<li>DOWNLOADER_MIDDLEWARE：下载器中间件和优先级的字典</li>
+<li>DEFAULT_REQUEST_HEADERS：用于Scrapy HTTP请求的默认标头</li>
+<li>DUPEFILTER_CLASS：去重的类，可以改成使用布隆过滤器，而不使用默认的</li>
+<li>LOG_ENABLED：是否启用日志</li>
+<li>LOG_FILE：日志文件路径，默认为None</li>
+<li>LOG_FORMAT：日志格式化表达式</li>
+<li>LOG_DATEFORMAT：<code>LOG_FORMAT</code>中的时间格式化表达式</li>
+<li>LOG_LEVEL：最低日志级别，默认DEBUG，可用：CRITICAL, ERROR, WARNING, INFO, DEBUG</li>
+<li>LOG_STDOUT：是否将所有标准输出（和错误）将被重定向到日志，例如print也会被记录在日志</li>
+<li>LOG_SHORT_NAMES：如果为True，则日志将仅包含根路径;如果设置为False，则显示负责日志输出的组件</li>
+<li>LOGSTATS_INTERVAL：每次统计记录打印输出之间的间隔</li>
+<li>MEMDEBUG_ENABLED：是否启用内存调试</li>
+<li>REDIRECT_MAX_TIMES：定义可以重定向请求的最长时间</li>
+<li>REDIRECT_PRIORITY_ADJUST：调整重定向请求的优先级，为正值时优先级高</li>
+<li>RETRY_PRIORITY_ADJUST：调整重试请求的优先级</li>
+<li>ROBOTSTXT_OBEY：是否遵循robot协议</li>
+<li>SCRAPER_SLOT_MAX_ACTIVE_SIZE：正在处理响应数据的软限制（以字节为单位），如果所有正在处理的响应的大小总和高于此值，Scrapy不会处理新的请求。</li>
+<li>SPIDER_MIDDLEWARES：蜘蛛中间件</li>
+<li>USER_AGENT：默认使用的User-Agent</li>
 </ul>
-</li>
-<li>对于图片：<code>scrapy.pipelines.images.ImagesPipeline</code><ul>
-<li><code>item[&#39;image_urls&#39;]</code> - 下载链接列表</li>
-<li><code>item[&#39;images&#39;]</code> - 管道处理结果列表（每个url的信息字典）</li>
-</ul>
-</li>
-</ul>
-<p>这些管道都实现了：</p>
-<ul>
-<li>避免重新下载最近下载的媒体</li>
-<li>指定存储媒体的位置（本地、ftp位置、AmazonS3存储桶、Google云存储桶）</li>
-</ul>
-<p>imagespipeline作为filespipeline的子类，还实现了：</p>
-<ul>
-<li>将所有下载的图像转换为通用格式（JPG）和模式（RGB）</li>
-<li>缩略图生成</li>
-<li>图像尺寸过滤</li>
-</ul>
-<p>通过重写pipeline，还可以实现：</p>
-<ul>
-<li>自定义文件名称</li>
-<li>自定义保存路径</li>
-<li>爬取结果的处理</li>
-</ul>
-<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9tZWRpYS1waXBlbGluZS5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
-<a id="more"></a>
-
-<hr>
-<h2 id="1-媒体管道的使用"><a href="#1-媒体管道的使用" class="headerlink" title="1. 媒体管道的使用"></a>1. 媒体管道的使用</h2><p>（1）先在settings.py中启用管道并配置相关的存储位置。</p>
-<pre><code class="line-numbers language-python">ITEM_PIPELINES = &#123;
-    &#39;scrapy.pipelines.images.ImagesPipeline&#39;: 1
+<h3 id="各优先级的配置方法"><a href="#各优先级的配置方法" class="headerlink" title="各优先级的配置方法"></a>各优先级的配置方法</h3><h4 id="命令行参数"><a href="#命令行参数" class="headerlink" title="命令行参数"></a>命令行参数</h4><pre><code class="line-numbers language-bash">scrapy crawl myspider -s LOG_FILE=scrapy.log
+scrapy crawl myspider --set USER_AGENT=Mozilla/Firefox</code></pre>
+<h4 id="Spider"><a href="#Spider" class="headerlink" title="Spider"></a>Spider</h4><pre><code class="line-numbers language-python">import scrapy
+from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import CrawlSpider, Rule
+class DemoSpider(scrapy.Spider):
+    name = &#39;demo&#39;
+    # 定义相关设置
+    custom_settings = &#123;
+       &#39;CONCURRENT_ITEMS&#39;: 88,                 # 设定同时处理的结果个数
+       &#39;CONCURRENT_REQUESTS&#39;: 66              # 设置同时处理的请求个数
     &#125;
-IMAGES_STORE = &#39;/data/scrapy/images&#39;</code></pre>
-<p>（2）配置item字段</p>
-<pre><code class="line-numbers language-python">import scrapy
-
-class MyItem(scrapy.Item):
-    # ... other item fields ...
-    image_urls = scrapy.Field()        # 源文件链接
-    images = scrapy.Field()        # 管道处理后的结果（爬取结果）</code></pre>
-<p>（3）编码spider，将图像链接列表保存到<code>item[&#39;image_urls&#39;]</code>中</p>
-<p>（4）爬取</p>
-<h3 id="下载结果示例"><a href="#下载结果示例" class="headerlink" title="下载结果示例"></a>下载结果示例</h3><p>管道默认使用URL的SHA1 Hash值作为文件的名称。</p>
-<p>比如说需要下载的图片URL为：<span class="exturl" data-url="aHR0cDovL3d3dy5leGFtcGxlLmNvbS9pbWFnZS5qcGc=">http://www.example.com/image.jpg<i class="fa fa-external-link-alt"></i></span></p>
-<p>它的SHA1 hash为：<code>3afec3b4765f8f0a07b78f98c07b83f013567a0a</code></p>
-<p>最终下载得到的文件为：<code>/data/scrapy/images/full/3afec3b4765f8f0a07b78f98c07b83f013567a0a.jpg</code></p>
-<hr>
-<h2 id="2-媒体管道的配置项"><a href="#2-媒体管道的配置项" class="headerlink" title="2. 媒体管道的配置项"></a>2. 媒体管道的配置项</h2><p>在项目settings.py中进行配置</p>
-<h3 id="爬取结果保存位置"><a href="#爬取结果保存位置" class="headerlink" title="爬取结果保存位置"></a>爬取结果保存位置</h3><pre><code class="line-numbers language-bash">IMAGES_STORE = &#39;/path/to/valid/dir&#39;        # 图像保存位置
-FILES_STORE = &#39;/path/to/valid/dir&#39;        # 文件保存位置</code></pre>
-<p>FILES_STORE和IMAGES_STORE可以指向一个FTP服务器，Scrapy会自动将文件上传到服务器，FILES_STORE和IMAGES_STORE应该以下列形式之一写入:</p>
-<pre><code class="line-numbers language-bash">ftp://username:password@address:port/path
-ftp://address:port/path</code></pre>
-<p>如果未提供用户名和密码，则分别取自</p>
-<pre><code class="line-numbers language-bash">FTP_USER = &#39;admin&#39;
-FTP_PASSWORD = &#39;admin&#39;</code></pre>
-<h3 id="自定义item字段名称"><a href="#自定义item字段名称" class="headerlink" title="自定义item字段名称"></a>自定义item字段名称</h3><p>配置该字段可以替换掉初始的<code>file_urls</code>与<code>file</code></p>
-<pre><code class="line-numbers language-bash"># 对于文件管道
-FILES_URLS_FIELD = &#39;field_name_for_your_files_urls&#39;
-FILES_RESULT_FIELD = &#39;field_name_for_your_processed_files&#39;
-# 对于图像管道
-IMAGES_URLS_FIELD = &#39;field_name_for_your_images_urls&#39;
-IMAGES_RESULT_FIELD = &#39;field_name_for_your_processed_images&#39;</code></pre>
-<h3 id="文件过期"><a href="#文件过期" class="headerlink" title="文件过期"></a>文件过期</h3><p>为了避免重复下载最近下载过的文件、图片，默认90day</p>
-<pre><code class="line-numbers language-bash"># 120 days of delay for files expiration
-FILES_EXPIRES = 120
-# 30 days of delay for images expiration
-IMAGES_EXPIRES = 30</code></pre>
-<p>对于重写的子类pipeline，配置项添加自定义的类名作为前缀</p>
-<pre><code class="line-numbers language-bash">MYPIPELINECLASSNAME_FILES_EXPIRES = 180</code></pre>
-<h3 id="图片管道的缩略图"><a href="#图片管道的缩略图" class="headerlink" title="图片管道的缩略图"></a>图片管道的缩略图</h3><p>图像管道可以自动创建下载图像的缩略图，要使用此功能，必须设置 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#std:setting-IMAGES_THUMBS"><code>IMAGES_THUMBS</code></a> 到一个字典，其中键是缩略图名称，值是它们的尺寸。</p>
-<pre><code class="line-numbers language-bash">IMAGES_THUMBS = &#123;
-    &#39;small&#39;: (50, 50),
-    &#39;big&#39;: (270, 270),
-&#125;</code></pre>
-<p>使用此功能时，图像管道将保存缩略图到下列位置：</p>
-<pre><code class="line-numbers language-bash">&lt;IMAGES_STORE&gt;/thumbs/&lt;size_name&gt;/&lt;image_id&gt;.jpg
-# &lt;size_name&gt; 是在 IMAGES_THUMBS 字典键 (small ， big 等）
-# &lt;image_id&gt; 是 SHA1 hash 图像URL的
-# 实例
-&lt;IMAGES_STORE&gt;/full/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg        # 原始
-&lt;IMAGES_STORE&gt;/thumbs/small/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
-&lt;IMAGES_STORE&gt;/thumbs/big/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg</code></pre>
-<h3 id="图像尺寸过滤"><a href="#图像尺寸过滤" class="headerlink" title="图像尺寸过滤"></a>图像尺寸过滤</h3><p>使用图像管道时，可以过滤过小的图像，但不影响缩略图的生成。</p>
-<pre><code class="line-numbers language-bash">IMAGES_MIN_HEIGHT = 110
-IMAGES_MIN_WIDTH = 110</code></pre>
-<h3 id="下载失败处理"><a href="#下载失败处理" class="headerlink" title="下载失败处理"></a>下载失败处理</h3><p>管道默认忽略掉失败的下载请求，如果需要重新处理失败的请求，配置：</p>
-<pre><code class="line-numbers language-bash">MEDIA_ALLOW_REDIRECTS = True</code></pre>
-<h2 id="3-重写媒体管道类"><a href="#3-重写媒体管道类" class="headerlink" title="3. 重写媒体管道类"></a>3. 重写媒体管道类</h2><p>自定义类继承原管道并重写媒体管道中的方法可以对爬取中的细节进行处理</p>
-<h3 id="class-scrapy-pipelines-files-FilesPipeline"><a href="#class-scrapy-pipelines-files-FilesPipeline" class="headerlink" title="class scrapy.pipelines.files.FilesPipeline"></a><em>class</em> <code>scrapy.pipelines.files.FilesPipeline</code></h3><h4 id="get-media-requests"><a href="#get-media-requests" class="headerlink" title="get_media_requests"></a><code>get_media_requests</code></h4><p><code>get_media_requests</code>(<em>item</em>, <em>info</em>)</p>
-<p>因为item中保存下载链接的是一个列表字段，该方法用于从中分离单个链接并创建下载请求</p>
-<pre><code class="line-numbers language-python">def get_media_requests(self, item, info):
-    for file_url in item[&#39;file_urls&#39;]:
-        yield scrapy.Request(file_url)</code></pre>
-<p>下载完成后，结果将发送到 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.item_completed"><code>item_completed()</code></a> 方法，生成一个两元素的set<code>(success, file_info_or_error)</code></p>
-<pre><code class="line-numbers language-bash">[(True,
-  &#123;&#39;checksum&#39;: &#39;2b00042f7481c7b056c4b410d28f33cf&#39;,
-   &#39;path&#39;: &#39;full/0a79c461a4062ac383dc4fade7bc09f1384a3910.jpg&#39;,
-   &#39;url&#39;: &#39;http://www.example.com/files/product1.pdf&#39;,
-   &#39;status&#39;: &#39;downloaded&#39;&#125;),
- (False,
-  Failure(...))]</code></pre>
+    def parse_item(self, response):           
+        pass</code></pre>
+<h4 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h4><p>由项目根的<code>scrapy.cfg</code>指定</p>
+<pre><code class="line-numbers language-python"># settings.py
+ROBOTSTXT_OBEY = False                      # 是否遵循robots协议</code></pre>
+<h4 id="命令默认"><a href="#命令默认" class="headerlink" title="命令默认"></a>命令默认</h4><p>就是 scrapy.cfg 文件，其采用 ini 格式，和普通的配置文件用法相同。其会在下面的位置查找该文件。</p>
 <ul>
-<li><p><code>success</code> - True下载成功，False下载失败</p>
-</li>
-<li><p><code>file_info_or_error</code> is a dict containing the following keys (if success is <code>True</code>) or a <a href="https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html"><code>Failure</code></a> if there was a problem.</p>
-<ul>
-<li><p><code>url</code> - 文件的源URL链接. This is the url of the request returned from the <a href="https://docs.scrapy.org/en/latest/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.get_media_requests"><code>get_media_requests()</code></a> method.</p>
-</li>
-<li><p><code>path</code> - 保存路径（FILES_STORE + path）</p>
-</li>
-<li><p><code>checksum</code> - 数据的MD5</p>
-</li>
-<li><p><code>status</code> - 状态指示，scrapy&gt;2.2版本提供</p>
-<p>It can be one of the following:</p>
-<ul>
-<li><code>downloaded</code> - file was downloaded.</li>
-<li><code>uptodate</code> - file was not downloaded, as it was downloaded recently, according to the file expiration policy.</li>
-<li><code>cached</code> - file was already scheduled for download, by another item sharing the same file.</li>
+<li>系统级别：/etc/scrapy.cfg或c:\scrapy\scrapy.cfg。</li>
+<li>用户级别：<del>/.config/scrapy.cfg($XDG_CONFIG_HOME)及</del>/.scrapy.cfg($HOME)。</li>
+<li>项目级别：在 Scrapy 项目根路径下的 scrapy.cfg。</li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>默认情况下 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.get_media_requests"><code>get_media_requests()</code></a> 方法返回 <code>None</code> ，这意味着该项目没有可下载的文件。</p>
-<h4 id="file-path"><a href="#file-path" class="headerlink" title="file_path"></a><code>file_path</code></h4><p><code>file_path</code>(<em>self</em>, <em>request</em>, <em>response=None</em>, <em>info=None</em>)</p>
-<p>（1）可以重写此方法以自定义每个文件的下载路径，默认情况下 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.file_path"><code>file_path()</code></a> 方法返回 <code>full/&lt;request URL hash&gt;.&lt;extension&gt;</code> .</p>
-<p>（2）重写以下载图片到files文件夹并保持原始的文件名称：即<code>https://example.com/a/b/c/foo.png --&gt; files/foo.png</code></p>
-<pre><code class="line-numbers language-python">import os
-from urllib.parse import urlparse
+<h4 id="默认配置"><a href="#默认配置" class="headerlink" title="默认配置"></a>默认配置</h4><p>全局默认设定存储在 scrapy.settings.default_settings 模块。</p>
+<h3 id="读取配置对象的方法"><a href="#读取配置对象的方法" class="headerlink" title="读取配置对象的方法"></a>读取配置对象的方法</h3><p>spider</p>
+<pre><code class="line-numbers language-python">class MySpider(scrapy.Spider):
+    name = &#39;myspider&#39;
+    start_urls = [&#39;http://example.com&#39;]
 
-from scrapy.pipelines.files import FilesPipeline
+    def parse(self, response):
+        print(self.settings)    # 配置对象
+        print(self.settings.attributes)        # 属性字典
+        print(self.settings.attributes.get(&#39;CONCURRENT_REQUESTS&#39;))        # 获取指定属性值</code></pre>
+<p>在scrapy shell中可以直接使用变量settings进行访问</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913201933.png"></p>
+<p>在extensions、middlewares 、item pipelines中通过<a href="https://docs.scrapy.org/en/latest/topics/api.html#scrapy.crawler.Crawler.settings"><code>scrapy.crawler.Crawler.settings</code></a>的实现方法from_crawler传递配置对象</p>
+<pre><code class="line-numbers language-python">class MyExtension:
+    def __init__(self, log_is_enabled=False):
+        if log_is_enabled:
+            print(&quot;log is enabled!&quot;)
 
-class MyFilesPipeline(FilesPipeline):
-
-    def file_path(self, request, response, info):
-        return &#39;files/&#39; + os.path.basename(urlparse(request.url).path)</code></pre>
-<h4 id="item-completed"><a href="#item-completed" class="headerlink" title="item_completed"></a><code>item_completed</code></h4><p><code>item_completed</code>(<em>results</em>, <em>item</em>, <em>info</em>)</p>
-<p>当媒体管道处理完成了一项spider传递的item时（全部请求完毕，success or failed）会调用该方法，该方法用于为处理item的相关内容并返回item交给下一级管道</p>
-<p>实例：将下载文件的路径传入item的<code>file_paths</code>字段中</p>
-<pre><code class="line-numbers language-python">from scrapy.exceptions import DropItem
-
-def item_completed(self, results, item, info):
-    file_paths = [x[&#39;path&#39;] for ok, x in results if ok]
-    if not file_paths:
-        raise DropItem(&quot;Item contains no files&quot;)
-    item[&#39;file_paths&#39;] = file_paths
-    return item</code></pre>
-<h3 id="class-scrapy-pipelines-images-ImagesPipeline"><a href="#class-scrapy-pipelines-images-ImagesPipeline" class="headerlink" title="class scrapy.pipelines.images.``ImagesPipeline"></a><em>class</em> <code>scrapy.pipelines.images.``ImagesPipeline</code></h3><p>同上</p>
-<h2 id="4-自定义的文件pipeline实例"><a href="#4-自定义的文件pipeline实例" class="headerlink" title="4. 自定义的文件pipeline实例"></a>4. 自定义的文件pipeline实例</h2><p>实现功能</p>
-<ul>
-<li>文件使用原名称重命名</li>
-<li>按title文件夹归类</li>
-<li>下载结果保存</li>
-</ul>
-<pre><code class="line-numbers language-python">import os, scrapy
-from scrapy.pipelines.files import FilesPipeline
-from urllib.parse import urlparse
-
-
-class MyFilesPipeline(FilesPipeline):
-
-    def get_media_requests(self, item, info):
-        &quot;&quot;&quot;重命名&quot;&quot;&quot;
-        for file_url in item[&#39;file_urls&#39;]:
-            yield scrapy.Request(file_url, meta=&#123;&#39;item&#39;: item.copy()&#125;)
-
-    def file_path(self, request, response=None, info=None):
-        &quot;&quot;&quot;归类&quot;&quot;&quot;
-        name = request.meta[&#39;item&#39;][&#39;name&#39;]
-        title = request.meta[&#39;item&#39;][&#39;title&#39;]
-        return &quot;%s/%s/%s&quot; % (name, title, os.path.basename(urlparse(request.url).path))
-
-    def item_completed(self, results, item, info):
-        &quot;&quot;&quot;下载结果处理&quot;&quot;&quot;
-        data = &#123;&#125;
-        for status, result in results:
-            data[item[&#39;title&#39;]].append(result) if status else None
-        file = &#39;./%s.json&#39; % item[&#39;name&#39;]  # 以spidername命名
-        with open(file, &#39;w+&#39;) as f:
-            f.writelines(data)
-        return item</code></pre>
-<p>item.py</p>
-<pre><code class="line-numbers language-python">from scrapy import Field, Item
-
-class FilespiderItem(Item):
-    file_urls = Field()
-    files = Field()
-    name = Field()
-    title = Field()</code></pre>
+    @classmethod
+    def from_crawler(cls, crawler):
+        settings = crawler.settings
+        return cls(settings.getbool(&#39;LOG_ENABLED&#39;))</code></pre>
 ]]></content>
       <tags>
         <tag>爬虫</tag>
@@ -394,7 +287,9 @@ class FilespiderItem(Item):
   <entry>
     <title>CSS、Xpath选择器语法及实例参考</title>
     <url>/2020/%E7%88%AC%E8%99%AB/css%E3%80%81xpath%E9%80%89%E6%8B%A9%E5%99%A8%E8%AF%AD%E6%B3%95/</url>
-    <content><![CDATA[<p>xpath是什么？XML路径语言。用来在HTML/XML文档中查找信息的语言，使用<strong>路径表达式</strong>来获取节点/节点集，和文件系统路径类似。</p>
+    <content><![CDATA[<p>xpath，XML路径语言。用来在HTML/XML文档中查找信息的语言，使用<strong>路径表达式</strong>来获取节点/节点集，和文件系统路径类似。</p>
+<p>css，层叠样式表，用于定位网页中的位置</p>
+<p>css常用于批量定位，较为粗糙；xpath定位精度更高</p>
 <a id="more"></a>
 
 <hr>
@@ -832,6 +727,288 @@ Out[9]: &#39;Example website&#39;</code></pre>
 ]]></content>
       <tags>
         <tag>随笔</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy框架笔记·shell交互式调试器</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20shell/</url>
+    <content><![CDATA[<p>scrapy shell是一个基于命令行的交互式shell，我们可以使用它进行爬虫代码语句的测试，比如获取到了网页的response后可以使用css/xpath进行数据的提取测试。还可以将scrapy shell集成到spider中提供类似断点测试的功能。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200911195829.png"></p>
+<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9zaGVsbC5odG1s">scrapy document v2.1<i class="fa fa-external-link-alt"></i></span></p>
+<a id="more"></a>
+
+<h3 id="配置scrapy-shell"><a href="#配置scrapy-shell" class="headerlink" title="配置scrapy shell"></a>配置scrapy shell</h3><p>默认使用标准python shell，当安装ipython后会变更为ipython，可以提供更多智能完成和色彩提示</p>
+<pre><code class="line-numbers language-bash">pip install ipython</code></pre>
+<p>当然还可以通过环境变量<code>SCRAPY_PYTHON_SHELL</code>指定其他shell，如bpython，项目中单独配置方法为</p>
+<pre><code class="line-numbers language-bash">vim scrpay.cfg</code></pre>
+<pre><code>[settings]
+shell = bpython</code></pre>
+<h3 id="scrapy-shell的使用"><a href="#scrapy-shell的使用" class="headerlink" title="scrapy shell的使用"></a>scrapy shell的使用</h3><p>调试一个在线网页</p>
+<pre><code class="line-numbers language-bash"># scrapy shell &lt;url&gt;
+scrapy shell www.baidu.com</code></pre>
+<p>当然还可以调试一个本地网页，注意使用当前文件夹的文件要指定为<code>./</code></p>
+<pre><code class="line-numbers language-bash">scrapy shell /root/file.html
+# 或者
+scrapy shell file:///absolute/path/to/file.html</code></pre>
+<h4 id="shell启动的可选参数"><a href="#shell启动的可选参数" class="headerlink" title="shell启动的可选参数"></a>shell启动的可选参数</h4><pre><code class="line-numbers language-bash"># 不显示日志
+scrapy shell www.baidu.com --nolog</code></pre>
+<pre><code class="line-numbers language-bash"># 指定headers UA
+scrapy shell -s USER_AGENT=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0&quot; https://www.zhihu.com/question/285908404</code></pre>
+<h4 id="shell中的可用方法"><a href="#shell中的可用方法" class="headerlink" title="shell中的可用方法"></a>shell中的可用方法</h4><pre><code class="line-numbers language-shell"># 重新调试一个新的URL，并相应地更新所有相关对象
+fetch(&#39;www.baidu.com&#39;)
+fetch(&#39;www.baidu.com&#39;, redirect=True)</code></pre>
+<pre><code class="line-numbers language-shell"># 刷新请求
+fetch(request)</code></pre>
+<pre><code class="line-numbers language-shell"># 浏览器查看响应
+view(response)</code></pre>
+<h4 id="shell中的可用对象"><a href="#shell中的可用对象" class="headerlink" title="shell中的可用对象"></a>shell中的可用对象</h4><p>crawler - 当前爬虫对象<br>spider - 可处理当前URL的spider，或者一个新的spider对象<br>request - URL的请求对象，使用<a href="https://docs.scrapy.org/en/latest/topics/request-response.html#scrapy.http.Request.replace"><code>replace()</code></a>变更<br>response - 当前URL的响应对象<br>settings - 当前scrapy setting对象</p>
+<h3 id="使用案例"><a href="#使用案例" class="headerlink" title="使用案例"></a>使用案例</h3><p>启动</p>
+<pre><code class="line-numbers language-bash">scrapy shell &quot;https://scrapy.org&quot; --nolog</code></pre>
+<p>获取文本</p>
+<pre><code class="line-numbers language-bash">&gt;&gt;&gt; response.xpath(&#39;//title/text()&#39;).get()
+&#39;Scrapy | A Fast and Powerful Scraping and Web Crawling Framework&#39;</code></pre>
+<p>请求一个新的URL</p>
+<pre><code class="line-numbers language-bash">&gt;&gt;&gt; fetch(&quot;https://old.reddit.com/&quot;)</code></pre>
+<p>变更请求对象</p>
+<pre><code class="line-numbers language-bash">&gt;&gt;&gt; request = request.replace(method=&quot;POST&quot;)</code></pre>
+<p>查看请求头</p>
+<pre><code class="line-numbers language-bash">from pprint import pprint
+pprint(request.headers)</code></pre>
+<pre><code>&#123;b&#39;Accept&#39;: [b&#39;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=&#39;
+             b&#39;0.8&#39;],
+ b&#39;Accept-Encoding&#39;: [b&#39;gzip, deflate&#39;],
+ b&#39;Accept-Language&#39;: [b&#39;en&#39;],
+ b&#39;User-Agent&#39;: [b&#39;Scrapy/2.3.0 (+https://scrapy.org)&#39;]&#125;</code></pre>
+<h3 id="spider中的使用"><a href="#spider中的使用" class="headerlink" title="spider中的使用"></a>spider中的使用</h3><p>在spider的编写中集成shell可以调试某个点的response，调用的方法为</p>
+<pre><code class="line-numbers language-python">from scrapy.shell import inspect_response
+inspect_response(response, self)</code></pre>
+<p>案例</p>
+<pre><code class="line-numbers language-python">import scrapy
+
+class MySpider(scrapy.Spider):
+    name = &quot;myspider&quot;
+    start_urls = [
+        &quot;http://example.com&quot;,
+        &quot;http://example.org&quot;,
+        &quot;http://example.net&quot;,
+    ]
+
+    def parse(self, response):
+        # We want to inspect one specific response.
+        if &quot;.org&quot; in response.url:
+            from scrapy.shell import inspect_response
+            inspect_response(response, self)</code></pre>
+<p>代码运行到if语句会进入到scrapyshell中，使用ctrl-d（Linux）或ctrl-z（Windows）退出</p>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy框架笔记·spider基类与Spider模板类</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20spider/</url>
+    <content><![CDATA[<p>我们在进行spider类的编写时，需要继承 <code>scrapy.Spider</code>类并对其中的方法进行重写，Spider类定义了对目标（URLorURLS）的处理逻辑，流程为：</p>
+<ul>
+<li><p>首先，生成最初爬取请求，有两种设定方法</p>
+<ul>
+<li><code>start_urls</code>类属性：这是一个url的列表，scrapy会根据调度器的指定循环生成URL的请求，默认回调 <code>parse</code>方法解析response</li>
+<li><code>start_requsts</code>方法：源码中这个方法用于处理start_urls，可以重写这个方法改写请求的内容（更改headers、添加clouflare cookies等）</li>
+</ul>
+</li>
+<li><p>然后，使用解析函数对response进行处理，</p>
+<ul>
+<li>获取爬取目标：横向的 <code>下一页</code>或者纵向的 <code>详情页</code></li>
+<li>有效数据提取：存入<code>item</code>或交给<code>Request.meta</code></li>
+</ul>
+</li>
+<li><p>最后，使用<code>yield item</code>将数据交给pipeline组件或者Feed进行导出</p>
+</li>
+</ul>
+<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.1<i class="fa fa-external-link-alt"></i></span></p>
+<a id="more"></a>
+
+<h2 id="scrapy-Spider类分析"><a href="#scrapy-Spider类分析" class="headerlink" title="scrapy.Spider类分析"></a>scrapy.Spider类分析</h2><p>我们编写的spider都继承于scrapy.Spider类</p>
+<pre><code class="line-numbers language-python">import scrapy
+from filespider.items import FileSpiderItem
+
+
+class MySpider(scrapy.Spider):
+    name = &#39;&#39;
+    allow_domains = []
+    start_urls = []
+    custom_settings = &#123;&#125;
+
+    def start_requests(self):
+        # do something
+        yield scrapy.Request(url=&#39;&#39;, callback=self.parse)
+
+    def parse(self, response, **kwargs):
+        item = FileSpiderItem()
+        yield item</code></pre>
+<h3 id="类属性"><a href="#类属性" class="headerlink" title="类属性"></a>类属性</h3><h4 id="name"><a href="#name" class="headerlink" title="name"></a>name</h4><p>spider标识，一个项目中每个spider的name属性必须是唯一的</p>
+<pre><code class="line-numbers language-bash">scrapy list        # 获取项目中的spider列表
+scrapy crawl &lt;name&gt;        # 运行name名称的spider</code></pre>
+<h4 id="allowed-domains"><a href="#allowed-domains" class="headerlink" title="allowed_domains"></a>allowed_domains</h4><p>允许爬行域，如果配置为<code>allowed_domains=[&#39;movie.douban.com&#39;]</code>，那么：</p>
+<ul>
+<li>对<code>https://movie.douban.com/xxx</code>的请求会执行</li>
+<li>对<code>https://music.douban.com/xxx</code>的请求会被抛弃</li>
+</ul>
+<h4 id="start-urls"><a href="#start-urls" class="headerlink" title="start_urls"></a>start_urls</h4><p>爬取的起点URL列表</p>
+<h4 id="custom-settings"><a href="#custom-settings" class="headerlink" title="custom_settings"></a>custom_settings</h4><p>爬取配置，优先级高于settings.py，会在实例化前更新配置</p>
+<h4 id="crawler"><a href="#crawler" class="headerlink" title="crawler"></a>crawler</h4><h4 id="settings-配置实例"><a href="#settings-配置实例" class="headerlink" title="settings    配置实例"></a>settings    配置实例</h4><h3 id="类方法"><a href="#类方法" class="headerlink" title="类方法"></a>类方法</h3><h4 id="from-crawler-crawler-args-kwargs"><a href="#from-crawler-crawler-args-kwargs" class="headerlink" title="from_crawler(crawler, args*, *kwargs*)"></a><code>from_crawler</code>(<em>crawler</em>, <strong>args*, *</strong>kwargs*)</h4><p>相当于spider类的<code>__init__</code>方法，一般不需要重写</p>
+<h4 id="start-requests"><a href="#start-requests" class="headerlink" title="start_requests()"></a><code>start_requests</code>()</h4><p>这是一个生成器方法，最后必须返回iterable对象（<code>yield xxx</code>）</p>
+<p>默认实现中对start_urls列表中的每个URL生成 <code>Request(url, dont_filter=True)</code> </p>
+<p><strong>重写实例：</strong>POST登陆</p>
+<pre><code class="line-numbers language-python">class MySpider(scrapy.Spider):
+    name = &#39;myspider&#39;
+
+    def start_requests(self):
+        return [scrapy.FormRequest(&quot;http://www.example.com/login&quot;,
+                                   formdata=&#123;&#39;user&#39;: &#39;john&#39;, &#39;pass&#39;: &#39;secret&#39;&#125;,
+                                   callback=self.logged_in)]
+
+    def logged_in(self, response):
+        # here you would extract links to follow and return Requests for
+        # each of them, with another callback
+        pass</code></pre>
+<h4 id="parse-response"><a href="#parse-response" class="headerlink" title="parse(response)"></a><code>parse</code>(<em>response</em>)</h4><p>负责处理回调该函数的函数生成的请求的响应（···，其实就是使用callback的对象的响应）</p>
+<p>重写后主要用于数据解析和URL获取</p>
+<pre><code class="line-numbers language-python">def parse(self, response):
+    for h3 in response.xpath(&#39;//h3&#39;).getall():
+        yield &#123;&quot;title&quot;: h3&#125;
+    for href in response.xpath(&#39;//a/@href&#39;).getall():
+        yield scrapy.Request(response.urljoin(href), self.parse)</code></pre>
+<p>必须返回如下三者之一：</p>
+<ul>
+<li><code>scrapy.Request</code>对象</li>
+<li>dict字典对象</li>
+<li>Item实例</li>
+</ul>
+<h4 id="log-message-level-component"><a href="#log-message-level-component" class="headerlink" title="log(message[, level, component])"></a><code>log</code>(<em>message</em>[, <em>level</em>, <em>component</em>])</h4><p>spider的logger，保持向后兼容性</p>
+<pre><code class="line-numbers language-python">def parse_item(self, response):
+        self.logger.info(&#39;Hi, this is an item page! %s&#39;, response.url)</code></pre>
+<h4 id="closed-reason"><a href="#closed-reason" class="headerlink" title="closed(reason)"></a><code>closed</code>(<em>reason</em>)</h4><p>spider关闭时调用。此方法为 <code>spider_closed</code>信号。</p>
+<h2 id="Spider类对crawl命令参数（-a）的解析"><a href="#Spider类对crawl命令参数（-a）的解析" class="headerlink" title="Spider类对crawl命令参数（-a）的解析"></a>Spider类对crawl命令参数（-a）的解析</h2><p>在<code>scrapy crawl</code>时可以使用<code>-a xxx=xxx</code>指定参数，以动态改变spider功能</p>
+<h3 id="原理与注意"><a href="#原理与注意" class="headerlink" title="原理与注意"></a>原理与注意</h3><p>手册中对该功能的举例，可以看到这个例子巧妙的在spider的启动阶段改变了源URL列表</p>
+<pre><code class="line-numbers language-bash">scrapy crawl myspider -a category=electronics</code></pre>
+<pre><code class="line-numbers language-python">import scrapy
+
+class MySpider(scrapy.Spider):
+    name = &#39;myspider&#39;
+
+    def __init__(self, category=None, *args, **kwargs):
+        super(MySpider, self).__init__(*args, **kwargs)
+        self.start_urls = [&#39;http://www.example.com/categories/%s&#39; % category]</code></pre>
+<p>注意参数传入的只是<strong>字符串</strong>，要设置为属性必须使用<code>ast.literal_eval</code> 或 <code>json.loads</code>进行转换</p>
+<h3 id="可直接使用接口"><a href="#可直接使用接口" class="headerlink" title="可直接使用接口"></a>可直接使用接口</h3><pre><code class="line-numbers language-bash">scrapy crawl myspider -a user_agent=mybot        # UserAgentMiddleware
+scrapy crawl myspider -a http_user=myuser -a http_pass=mypassword        # HttpAuthMiddleware</code></pre>
+<h2 id="scrapy预设Spider子类"><a href="#scrapy预设Spider子类" class="headerlink" title="scrapy预设Spider子类"></a>scrapy预设Spider子类</h2><p>scrapy根据爬取过程中经常用到的功能预设了一些Spider类的子类，可用template：</p>
+<ul>
+<li>默认：<code>scrapy.Spider</code></li>
+<li>CrawlSpider：class  <code>scrapy.spiders.CrawlSpider</code></li>
+<li>XMLFeedSpider：class  <code>scrapy.spiders.XMLFeedSpider</code></li>
+<li>CSVFeedSpider：class  <code>scrapy.spiders.CSVFeedSpider</code></li>
+<li>SitemapSpider：class  <code>scrapy.spiders.SitemapSpider</code></li>
+</ul>
+<pre><code class="line-numbers language-bash">scrapy genspider [-t template] &lt;name&gt; &lt;domain&gt;
+scrapy genspider [--template=template] &lt;name&gt; &lt;domain&gt;</code></pre>
+<h3 id="class-scrapy-spiders-CrawlSpider"><a href="#class-scrapy-spiders-CrawlSpider" class="headerlink" title="class scrapy.spiders.CrawlSpider"></a><em>class</em> <code>scrapy.spiders.CrawlSpider</code></h3><p>主要使用LinkExtractor方法模板化匹配并提取网页上的链接并生成请求，比如说爬取<strong>起点小说网</strong>，相对于父类，增加了：</p>
+<ul>
+<li>rules属性：爬取规则实例列表，这些实例由 <code>scrapy.spiders.Rule</code>爬行规则类生成</li>
+<li>parse_start_url(response)方法：用于解析初始响应，返回值类似parse函数</li>
+</ul>
+<h4 id="scrapy-spiders-Rule-爬行规则类"><a href="#scrapy-spiders-Rule-爬行规则类" class="headerlink" title="scrapy.spiders.Rule 爬行规则类"></a>scrapy.spiders.Rule 爬行规则类</h4><pre><code class="line-numbers language-python">class scrapy.spiders.Rule(
+    link_extractor, 
+    callback=None, 
+    cb_kwargs=None, 
+    follow=None, 
+    process_links=None, 
+    process_request=None
+)</code></pre>
+<ul>
+<li><p>link_extractor</p>
+<p>是一个 <code>LinkExtractor</code> 对象，定义如何从每个已爬网页提取链接，每个生成的链接将用于生成 <code>Request</code> 对象，链接的文本保存在 <code>response.meta[&#39;link_text&#39;]</code></p>
+</li>
+<li><p>callback：指定该条匹配实例的解析函数</p>
+</li>
+</ul>
+<h4 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h4><p>手册栗子很形象</p>
+<pre><code class="line-numbers language-python">import scrapy
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
+
+class MySpider(CrawlSpider):
+    name = &#39;example.com&#39;
+    allowed_domains = [&#39;example.com&#39;]
+    start_urls = [&#39;http://www.example.com&#39;]
+
+    rules = (
+        # Extract links matching &#39;category.php&#39; (but not matching &#39;subsection.php&#39;)
+        # and follow links from them (since no callback means follow=True by default).
+        Rule(LinkExtractor(allow=(&#39;category\.php&#39;, ), deny=(&#39;subsection\.php&#39;, ))),
+
+        # Extract links matching &#39;item.php&#39; and parse them with the spider&#39;s method parse_item
+        Rule(LinkExtractor(allow=(&#39;item\.php&#39;, )), callback=&#39;parse_item&#39;),
+    )
+
+    def parse_item(self, response):
+        self.logger.info(&#39;Hi, this is an item page! %s&#39;, response.url)
+        item = scrapy.Item()
+        item[&#39;id&#39;] = response.xpath(&#39;//td[@id=&quot;item_id&quot;]/text()&#39;).re(r&#39;ID: (\d+)&#39;)
+        item[&#39;name&#39;] = response.xpath(&#39;//td[@id=&quot;item_name&quot;]/text()&#39;).get()
+        item[&#39;description&#39;] = response.xpath(&#39;//td[@id=&quot;item_description&quot;]/text()&#39;).get()
+        item[&#39;link_text&#39;] = response.meta[&#39;link_text&#39;]
+        return item</code></pre>
+<h3 id="class-scrapy-spiders-XMLFeedSpider"><a href="#class-scrapy-spiders-XMLFeedSpider" class="headerlink" title="class  scrapy.spiders.XMLFeedSpider"></a>class  <code>scrapy.spiders.XMLFeedSpider</code></h3><p>为解析XML而设计，没使用过···，看栗子</p>
+<h4 id="栗子-1"><a href="#栗子-1" class="headerlink" title="栗子"></a>栗子</h4><pre><code class="line-numbers language-python">from scrapy.spiders import XMLFeedSpider
+from myproject.items import TestItem
+
+class MySpider(XMLFeedSpider):
+    name = &#39;example.com&#39;
+    allowed_domains = [&#39;example.com&#39;]
+    start_urls = [&#39;http://www.example.com/feed.xml&#39;]
+    iterator = &#39;iternodes&#39;  # This is actually unnecessary, since it&#39;s the default value
+    itertag = &#39;item&#39;
+
+    def parse_node(self, response, node):
+        self.logger.info(&#39;Hi, this is a &lt;%s&gt; node!: %s&#39;, self.itertag, &#39;&#39;.join(node.getall()))
+
+        item = TestItem()
+        item[&#39;id&#39;] = node.xpath(&#39;@id&#39;).get()
+        item[&#39;name&#39;] = node.xpath(&#39;name&#39;).get()
+        item[&#39;description&#39;] = node.xpath(&#39;description&#39;).get()
+        return item</code></pre>
+<h3 id="class-scrapy-spiders-CSVFeedSpider"><a href="#class-scrapy-spiders-CSVFeedSpider" class="headerlink" title="class  scrapy.spiders.CSVFeedSpider"></a>class  <code>scrapy.spiders.CSVFeedSpider</code></h3><p>处理CSV文件，与XMLFeedSpider相比该类用于行处理，每次迭代中调用<code>parse_row()</code>方法</p>
+<h4 id="新增属性与方法"><a href="#新增属性与方法" class="headerlink" title="新增属性与方法"></a>新增属性与方法</h4><ul>
+<li>delimiter：csv文件中每个字段<strong>分隔符</strong>字符串，默认为逗号 <code>&#39;,&#39;</code></li>
+<li>quotechar：csv文件中每个字段包裹字符串，默认为双引号<code>&#39;&quot;&#39;</code></li>
+<li>headers：字段列名</li>
+<li>parse_row(response, row)：</li>
+</ul>
+<h4 id="栗子-2"><a href="#栗子-2" class="headerlink" title="栗子"></a>栗子</h4><pre><code class="line-numbers language-python">from scrapy.spiders import CSVFeedSpider
+from myproject.items import TestItem
+
+class MySpider(CSVFeedSpider):
+    name = &#39;example.com&#39;
+    allowed_domains = [&#39;example.com&#39;]
+    start_urls = [&#39;http://www.example.com/feed.csv&#39;]
+    delimiter = &#39;;&#39;
+    quotechar = &quot;&#39;&quot;
+    headers = [&#39;id&#39;, &#39;name&#39;, &#39;description&#39;]
+
+    def parse_row(self, response, row):
+        self.logger.info(&#39;Hi, this is a row!: %r&#39;, row)
+
+        item = TestItem()
+        item[&#39;id&#39;] = row[&#39;id&#39;]
+        item[&#39;name&#39;] = row[&#39;name&#39;]
+        item[&#39;description&#39;] = row[&#39;description&#39;]
+        return item</code></pre>
+<h3 id="class-scrapy-spiders-SitemapSpider"><a href="#class-scrapy-spiders-SitemapSpider" class="headerlink" title="class  scrapy.spiders.SitemapSpider"></a>class  <code>scrapy.spiders.SitemapSpider</code></h3>]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
       </tags>
   </entry>
   <entry>
@@ -1403,7 +1580,7 @@ wget -S –spider url 不下载只显示过程</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>【Scrapy框架笔记】 Selectors数据匹配与提取类</title>
+    <title>Scrapy框架笔记·Selectors数据匹配与提取类</title>
     <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20Selectors/</url>
     <content><![CDATA[<p>爬虫的一个重要的任务是从爬取到的网页（HTML源码）中分析、提取数据，常用库如：</p>
 <ul>
@@ -1544,213 +1721,7 @@ response.css(&#39;a[href*=image] img::attr(src)&#39;).getall()
       </tags>
   </entry>
   <entry>
-    <title>Git 及 Github的使用</title>
-    <url>/2020/%E9%9A%8F%E7%AC%94/Git%20%E5%8F%8A%20Github%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<ul>
-<li>Git：一个开源的分布式版本控制系统</li>
-<li>Github：一个代码仓库网站</li>
-</ul>
-<a id="more"></a>
-
-<h3 id="git本地设置"><a href="#git本地设置" class="headerlink" title="git本地设置"></a>git本地设置</h3><pre><code class="line-numbers language-bash">git config --global user.name &quot;yuandongxu97&quot;
-git config --global user.email &quot;431980110@qq.com&quot;</code></pre>
-<h3 id="push时不替换换行符"><a href="#push时不替换换行符" class="headerlink" title="push时不替换换行符"></a>push时不替换换行符</h3><pre><code></code></pre>
-<h3 id="本地创建推送流程"><a href="#本地创建推送流程" class="headerlink" title="本地创建推送流程"></a>本地创建推送流程</h3><pre><code class="line-numbers language-bash">mkdir study
-cd study
-git init
-touch README.md
-git add .
-git commit
-git remote add origin https://github.com/yuandongxu97/study
-git push -u origin master</code></pre>
-<h3 id="Git常用命令"><a href="#Git常用命令" class="headerlink" title="Git常用命令"></a>Git常用命令</h3><h4 id="config-配置相关"><a href="#config-配置相关" class="headerlink" title="config    配置相关"></a>config    配置相关</h4><pre><code class="line-numbers language-bash">git config --list
-git config --global --list</code></pre>
-<h4 id="init-创建-初始化一个仓库"><a href="#init-创建-初始化一个仓库" class="headerlink" title="init    创建/初始化一个仓库"></a>init    创建/初始化一个仓库</h4><h4 id="clone-克隆仓库到本地目录"><a href="#clone-克隆仓库到本地目录" class="headerlink" title="clone    克隆仓库到本地目录"></a>clone    克隆仓库到本地目录</h4><h4 id="add-将文件添加到暂存区"><a href="#add-将文件添加到暂存区" class="headerlink" title="add    将文件添加到暂存区"></a>add    将文件添加到暂存区</h4><pre><code class="line-numbers language-bash">git add file    # 添加file
-git add .        # 添加当前目录所有已修改</code></pre>
-<h4 id="commit-将暂存区提交到存储库"><a href="#commit-将暂存区提交到存储库" class="headerlink" title="commit    将暂存区提交到存储库"></a>commit    将暂存区提交到存储库</h4><pre><code class="line-numbers language-bash">git commit -a            # git add + git commit    
-git commit -m “备注”      # 为提交节点添加备注</code></pre>
-<h4 id="diff-当前文件与暂存区域差异"><a href="#diff-当前文件与暂存区域差异" class="headerlink" title="diff    当前文件与暂存区域差异"></a>diff    当前文件与暂存区域差异</h4><pre><code class="line-numbers language-bash">git diff –staged        # 暂存区和存储库差异
-git diff [first branch] [second branch]        # 分支差异</code></pre>
-<h4 id="reset-撤销操作"><a href="#reset-撤销操作" class="headerlink" title="reset    撤销操作"></a>reset    撤销操作</h4><pre><code class="line-numbers language-bash">git reset [file]        # </code></pre>
-<h4 id="status-仓库状态"><a href="#status-仓库状态" class="headerlink" title="status    仓库状态"></a>status    仓库状态</h4><h4 id="log-提交日志"><a href="#log-提交日志" class="headerlink" title="log    提交日志"></a>log    提交日志</h4><pre><code class="line-numbers language-bash">git log
-git log [file]</code></pre>
-<h4 id="show-显示对象"><a href="#show-显示对象" class="headerlink" title="show    显示对象"></a>show    显示对象</h4><h4 id="branch-分支的显示、创建与删除"><a href="#branch-分支的显示、创建与删除" class="headerlink" title="branch    分支的显示、创建与删除"></a>branch    分支的显示、创建与删除</h4><pre><code class="line-numbers language-bash">git branch        # 显示本地分支列表
-git branch &lt;branch_name&gt;        # 创建新分支
-git branch -d &lt;branch_name&gt;        # 删除分支</code></pre>
-<h4 id="checkout-分支切换"><a href="#checkout-分支切换" class="headerlink" title="checkout    分支切换"></a>checkout    分支切换</h4><pre><code class="line-numbers language-bash">git checkout &lt;branch_name&gt;        # 切换至
-git checkout -b &lt;branch_name&gt;    # 创建并切换至</code></pre>
-<h4 id="merge-合并"><a href="#merge-合并" class="headerlink" title="merge    合并"></a>merge    合并</h4><h4 id="remote-链接本地与远程库"><a href="#remote-链接本地与远程库" class="headerlink" title="remote    链接本地与远程库"></a>remote    链接本地与远程库</h4><pre><code class="line-numbers language-bash">git remote add [variable name] [Remote Server Link]</code></pre>
-<h4 id="push-推送本地至远程仓库"><a href="#push-推送本地至远程仓库" class="headerlink" title="push    推送本地至远程仓库"></a>push    推送本地至远程仓库</h4><pre><code class="line-numbers language-bash">git push [variable name] master        # 推送主分支
-git push [variable name] [branch]    # 推送指定分支
-git push –all [variable name]        # 推送所有分支
-    # 删除远程存储库上的分支</code></pre>
-<h4 id="pull-拉取并集合"><a href="#pull-拉取并集合" class="headerlink" title="pull    拉取并集合"></a>pull    拉取并集合</h4><pre><code class="line-numbers language-bash">git pull [Repository Link]</code></pre>
-]]></content>
-      <tags>
-        <tag>爬虫</tag>
-        <tag>Scrapy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【Scrapy框架笔记】 项目配置相关</title>
-    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20%E8%AE%BE%E7%BD%AE%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.1<i class="fa fa-external-link-alt"></i></span></p>
-<a id="more"></a>
-
-<hr>
-<h2 id="scrapy标准配置文件"><a href="#scrapy标准配置文件" class="headerlink" title="scrapy标准配置文件"></a>scrapy标准配置文件</h2><p>Scrapy将查找ini样式的<code>scrapy.cfg</code> 标准配置文件，优先级项目配置最高、系统级最低</p>
-<ul>
-<li>系统级：<code>/etc/scrapy.cfg</code> 或 <code>c:\scrapy\scrapy.cfg</code></li>
-<li>用户级：<code>~/.config/scrapy.cfg</code> (<code>$XDG_CONFIG_HOME</code>) and <code>~/.scrapy.cfg</code> (<code>$HOME</code>)</li>
-<li>项目级：项目根目录的<code>scrapy.cfg</code></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>爬虫</tag>
-        <tag>Scrapy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【Scrapy框架笔记】 部署工具Scrapyd的使用</title>
-    <url>/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>Scrapyd是一个scrapy框架爬虫的端对端部署工具，scrapyd能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务。</p>
-<a id="more"></a>
-
-<hr>
-<h2 id="1-Scrapyd服务"><a href="#1-Scrapyd服务" class="headerlink" title="1. Scrapyd服务"></a>1. Scrapyd服务</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><pre><code class="line-numbers language-bash">pip install scrapyd</code></pre>
-<pre><code class="line-numbers language-bash">pip install scrapyd-client</code></pre>
-<h3 id="1-2-启动Scrapyd服务"><a href="#1-2-启动Scrapyd服务" class="headerlink" title="1.2 启动Scrapyd服务"></a>1.2 启动Scrapyd服务</h3><p>作为测试，本地主机（localhost）安装完成服务端后运行<code>scrapyd</code>开启服务端，浏览器访问<code>localhost:6800</code>即可访问scrapyd服务</p>
-<pre><code class="line-numbers language-bash">scrapyd</code></pre>
-<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200906142415.png"></p>
-<h4 id="服务端的外网访问"><a href="#服务端的外网访问" class="headerlink" title="服务端的外网访问"></a>服务端的外网访问</h4><p>比如我的主机公网IP为<code>47.93.230.127</code>，使用命令<code>scrapyd</code>开启服务，本地主机浏览器访问<code>47.93.230.127:6800</code>是访问不到的，因为scrapyd默认bind为127.0.0.1</p>
-<p>编辑scrapyd的配置文件，我的为：<code>/usr/local/lib/python3.8/dist-packages/scrapyd/default_scrapyd.conf</code>，修改</p>
-<pre><code class="line-numbers language-json">bind_address = 0.0.0.0        # 绑定域名</code></pre>
-<p>开启服务</p>
-<pre><code class="line-numbers language-bash">$ scrapyd
-2020-01-06T14:28:57+0800 [-] Loading /usr/local/lib/python3.8/dist-packages/scrapyd/txapp.py...
-2020-01-06T14:28:57+0800 [-] Scrapyd web console available at http://0.0.0.0:6800/</code></pre>
-<h3 id="1-3-配置Scrapy项目"><a href="#1-3-配置Scrapy项目" class="headerlink" title="1.3 配置Scrapy项目"></a>1.3 配置Scrapy项目</h3><p>配置scrapy项目文件夹下的scrapy.cfg文件</p>
-<table>
-<thead>
-<tr>
-<th>配置项</th>
-<th>说明</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>[deploy:target]</td>
-<td>多目标deploy时使用target指定scrapyd服务</td>
-<td></td>
-</tr>
-<tr>
-<td>url</td>
-<td>scrapy服务地址</td>
-<td></td>
-</tr>
-<tr>
-<td>project</td>
-<td>scrapyd服务中的项目名称</td>
-<td></td>
-</tr>
-</tbody></table>
-<pre><code class="line-numbers language-bash">vim scrapy.cfg</code></pre>
-<pre><code class="line-numbers language-json">[settings]
-default = filespider.settings
-
-[deploy:aliyun]
-url = http://47.93.230.127:6800/
-project = filespider</code></pre>
-<p>扫描项目中的deploy配置信息</p>
-<pre><code class="line-numbers language-bash">scrapyd-deploy -l
-# aliyun               http://47.93.230.127:6800/</code></pre>
-<h3 id="1-4-项目部署"><a href="#1-4-项目部署" class="headerlink" title="1.4 项目部署"></a>1.4 项目部署</h3><p>编译项目</p>
-<pre><code class="line-numbers language-bash"># scrapyd-deploy &lt;target&gt; -p &lt;project&gt; --version &lt;version&gt;
-scrapy</code></pre>
-]]></content>
-      <tags>
-        <tag>爬虫</tag>
-        <tag>Scrapy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【Scrapy框架笔记】 Shell交互式调试器</title>
-    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20shell/</url>
-    <content><![CDATA[<p>scrapy shell是一个基于命令行的交互式shell，我们可以使用它进行爬虫代码语句的测试，比如获取到了网页的response后可以使用css/xpath进行数据的提取测试。还可以将scrapy shell集成到spider中提供类似断点测试的功能。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200911195829.png"></p>
-<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9zaGVsbC5odG1s">scrapy document v2.1<i class="fa fa-external-link-alt"></i></span></p>
-<a id="more"></a>
-
-<h3 id="配置scrapy-shell"><a href="#配置scrapy-shell" class="headerlink" title="配置scrapy shell"></a>配置scrapy shell</h3><p>默认使用标准python shell，当安装ipython后会变更为ipython，可以提供更多智能完成和色彩提示</p>
-<pre><code class="line-numbers language-bash">pip install ipython</code></pre>
-<p>当然还可以通过环境变量<code>SCRAPY_PYTHON_SHELL</code>指定其他shell，如bpython，项目中单独配置方法为</p>
-<pre><code class="line-numbers language-bash">vim scrpay.cfg</code></pre>
-<pre><code>[settings]
-shell = bpython</code></pre>
-<h3 id="scrapy-shell的使用"><a href="#scrapy-shell的使用" class="headerlink" title="scrapy shell的使用"></a>scrapy shell的使用</h3><p>调试一个在线网页</p>
-<pre><code class="line-numbers language-bash"># scrapy shell &lt;url&gt;
-scrapy shell www.baidu.com</code></pre>
-<p>当然还可以调试一个本地网页，注意使用当前文件夹的文件要指定为<code>./</code></p>
-<pre><code class="line-numbers language-bash">scrapy shell /root/file.html
-# 或者
-scrapy shell file:///absolute/path/to/file.html</code></pre>
-<h4 id="shell启动的可选参数"><a href="#shell启动的可选参数" class="headerlink" title="shell启动的可选参数"></a>shell启动的可选参数</h4><pre><code class="line-numbers language-bash"># 不显示日志
-scrapy shell www.baidu.com --nolog</code></pre>
-<pre><code class="line-numbers language-bash"># 指定headers UA
-scrapy shell -s USER_AGENT=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0&quot; https://www.zhihu.com/question/285908404</code></pre>
-<h4 id="shell中的可用方法"><a href="#shell中的可用方法" class="headerlink" title="shell中的可用方法"></a>shell中的可用方法</h4><pre><code class="line-numbers language-shell"># 重新调试一个新的URL，并相应地更新所有相关对象
-fetch(&#39;www.baidu.com&#39;)
-fetch(&#39;www.baidu.com&#39;, redirect=True)</code></pre>
-<pre><code class="line-numbers language-shell"># 刷新请求
-fetch(request)</code></pre>
-<pre><code class="line-numbers language-shell"># 浏览器查看响应
-view(response)</code></pre>
-<h4 id="shell中的可用对象"><a href="#shell中的可用对象" class="headerlink" title="shell中的可用对象"></a>shell中的可用对象</h4><p>crawler - 当前爬虫对象<br>spider - 可处理当前URL的spider，或者一个新的spider对象<br>request - URL的请求对象，使用<a href="https://docs.scrapy.org/en/latest/topics/request-response.html#scrapy.http.Request.replace"><code>replace()</code></a>变更<br>response - 当前URL的响应对象<br>settings - 当前scrapy setting对象</p>
-<h3 id="使用案例"><a href="#使用案例" class="headerlink" title="使用案例"></a>使用案例</h3><p>启动</p>
-<pre><code class="line-numbers language-bash">scrapy shell &quot;https://scrapy.org&quot; --nolog</code></pre>
-<p>获取文本</p>
-<pre><code class="line-numbers language-bash">&gt;&gt;&gt; response.xpath(&#39;//title/text()&#39;).get()
-&#39;Scrapy | A Fast and Powerful Scraping and Web Crawling Framework&#39;</code></pre>
-<p>请求一个新的URL</p>
-<pre><code class="line-numbers language-bash">&gt;&gt;&gt; fetch(&quot;https://old.reddit.com/&quot;)</code></pre>
-<p>变更请求对象</p>
-<pre><code class="line-numbers language-bash">&gt;&gt;&gt; request = request.replace(method=&quot;POST&quot;)</code></pre>
-<p>查看请求头</p>
-<pre><code class="line-numbers language-bash">from pprint import pprint
-pprint(request.headers)</code></pre>
-<pre><code>&#123;b&#39;Accept&#39;: [b&#39;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=&#39;
-             b&#39;0.8&#39;],
- b&#39;Accept-Encoding&#39;: [b&#39;gzip, deflate&#39;],
- b&#39;Accept-Language&#39;: [b&#39;en&#39;],
- b&#39;User-Agent&#39;: [b&#39;Scrapy/2.3.0 (+https://scrapy.org)&#39;]&#125;</code></pre>
-<h3 id="spider中的使用"><a href="#spider中的使用" class="headerlink" title="spider中的使用"></a>spider中的使用</h3><p>在spider的编写中集成shell可以调试某个点的response，调用的方法为</p>
-<pre><code class="line-numbers language-python">from scrapy.shell import inspect_response
-inspect_response(response, self)</code></pre>
-<p>案例</p>
-<pre><code class="line-numbers language-python">import scrapy
-
-class MySpider(scrapy.Spider):
-    name = &quot;myspider&quot;
-    start_urls = [
-        &quot;http://example.com&quot;,
-        &quot;http://example.org&quot;,
-        &quot;http://example.net&quot;,
-    ]
-
-    def parse(self, response):
-        # We want to inspect one specific response.
-        if &quot;.org&quot; in response.url:
-            from scrapy.shell import inspect_response
-            inspect_response(response, self)</code></pre>
-<p>代码运行到if语句会进入到scrapyshell中，使用ctrl-d（Linux）或ctrl-z（Windows）退出</p>
-]]></content>
-      <tags>
-        <tag>爬虫</tag>
-        <tag>Scrapy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【Scrapy框架笔记】 框架命令</title>
+    <title>Scrapy框架笔记·框架命令</title>
     <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<p>scrapy命令行包括：</p>
 <ul>
@@ -1891,206 +1862,467 @@ $ scrapy check
       </tags>
   </entry>
   <entry>
-    <title>【Scrapy框架笔记】 spider基类与Spider模板类</title>
-    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%20spider/</url>
-    <content><![CDATA[<p>我们在进行spider类的编写时，需要继承 <code>scrapy.Spider</code>类并对其中的方法进行重写，Spider类定义了对目标（URLorURLS）的处理逻辑，流程为：</p>
-<ul>
-<li><p>首先，生成最初爬取请求，有两种设定方法</p>
-<ul>
-<li><code>start_urls</code>类属性：这是一个url的列表，scrapy会根据调度器的指定循环生成URL的请求，默认回调 <code>parse</code>方法解析response</li>
-<li><code>start_requsts</code>方法：源码中这个方法用于处理start_urls，可以重写这个方法改写请求的内容（更改headers、添加clouflare cookies等）</li>
+    <title>Scrapy框架笔记·常用自定义组件</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/scrapy%E5%B8%B8%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E6%89%A9%E5%B1%95/</url>
+    <content><![CDATA[<ul>
+<li>自定义组件的启用流程</li>
+<li>随机请求头middleware</li>
+<li>HTTP代理middleware</li>
+<li>Mysql异步写入pipeline</li>
+<li>图片下载pipeline</li>
 </ul>
-</li>
-<li><p>然后，使用解析函数对response进行处理，</p>
-<ul>
-<li>获取爬取目标：横向的 <code>下一页</code>或者纵向的 <code>详情页</code></li>
-<li>有效数据提取：存入<code>item</code>或交给<code>Request.meta</code></li>
-</ul>
-</li>
-<li><p>最后，使用<code>yield item</code>将数据交给pipeline组件或者Feed进行导出</p>
-</li>
-</ul>
-<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9jb21tYW5kcy5odG1s">scrapy document v2.1<i class="fa fa-external-link-alt"></i></span></p>
 <a id="more"></a>
 
-<h2 id="scrapy-Spider类分析"><a href="#scrapy-Spider类分析" class="headerlink" title="scrapy.Spider类分析"></a>scrapy.Spider类分析</h2><p>我们编写的spider都继承于scrapy.Spider类</p>
-<pre><code class="line-numbers language-python">import scrapy
-from filespider.items import FileSpiderItem
-
-
-class MySpider(scrapy.Spider):
-    name = &#39;&#39;
-    allow_domains = []
-    start_urls = []
-    custom_settings = &#123;&#125;
-
-    def start_requests(self):
-        # do something
-        yield scrapy.Request(url=&#39;&#39;, callback=self.parse)
-
-    def parse(self, response, **kwargs):
-        item = FileSpiderItem()
-        yield item</code></pre>
-<h3 id="类属性"><a href="#类属性" class="headerlink" title="类属性"></a>类属性</h3><h4 id="name"><a href="#name" class="headerlink" title="name"></a>name</h4><p>spider标识，一个项目中每个spider的name属性必须是唯一的</p>
-<pre><code class="line-numbers language-bash">scrapy list        # 获取项目中的spider列表
-scrapy crawl &lt;name&gt;        # 运行name名称的spider</code></pre>
-<h4 id="allowed-domains"><a href="#allowed-domains" class="headerlink" title="allowed_domains"></a>allowed_domains</h4><p>允许爬行域，如果配置为<code>allowed_domains=[&#39;movie.douban.com&#39;]</code>，那么：</p>
-<ul>
-<li>对<code>https://movie.douban.com/xxx</code>的请求会执行</li>
-<li>对<code>https://music.douban.com/xxx</code>的请求会被抛弃</li>
-</ul>
-<h4 id="start-urls"><a href="#start-urls" class="headerlink" title="start_urls"></a>start_urls</h4><p>爬取的起点URL列表</p>
-<h4 id="custom-settings"><a href="#custom-settings" class="headerlink" title="custom_settings"></a>custom_settings</h4><p>爬取配置，优先级高于settings.py，会在实例化前更新配置</p>
-<h4 id="crawler"><a href="#crawler" class="headerlink" title="crawler"></a>crawler</h4><h4 id="settings-配置实例"><a href="#settings-配置实例" class="headerlink" title="settings    配置实例"></a>settings    配置实例</h4><h3 id="类方法"><a href="#类方法" class="headerlink" title="类方法"></a>类方法</h3><h4 id="from-crawler-crawler-args-kwargs"><a href="#from-crawler-crawler-args-kwargs" class="headerlink" title="from_crawler(crawler, args*, *kwargs*)"></a><code>from_crawler</code>(<em>crawler</em>, <strong>args*, *</strong>kwargs*)</h4><p>相当于spider类的<code>__init__</code>方法，一般不需要重写</p>
-<h4 id="start-requests"><a href="#start-requests" class="headerlink" title="start_requests()"></a><code>start_requests</code>()</h4><p>这是一个生成器方法，最后必须返回iterable对象（<code>yield xxx</code>）</p>
-<p>默认实现中对start_urls列表中的每个URL生成 <code>Request(url, dont_filter=True)</code> </p>
-<p><strong>重写实例：</strong>POST登陆</p>
-<pre><code class="line-numbers language-python">class MySpider(scrapy.Spider):
-    name = &#39;myspider&#39;
-
-    def start_requests(self):
-        return [scrapy.FormRequest(&quot;http://www.example.com/login&quot;,
-                                   formdata=&#123;&#39;user&#39;: &#39;john&#39;, &#39;pass&#39;: &#39;secret&#39;&#125;,
-                                   callback=self.logged_in)]
-
-    def logged_in(self, response):
-        # here you would extract links to follow and return Requests for
-        # each of them, with another callback
-        pass</code></pre>
-<h4 id="parse-response"><a href="#parse-response" class="headerlink" title="parse(response)"></a><code>parse</code>(<em>response</em>)</h4><p>负责处理回调该函数的函数生成的请求的响应（···，其实就是使用callback的对象的响应）</p>
-<p>重写后主要用于数据解析和URL获取</p>
-<pre><code class="line-numbers language-python">def parse(self, response):
-    for h3 in response.xpath(&#39;//h3&#39;).getall():
-        yield &#123;&quot;title&quot;: h3&#125;
-    for href in response.xpath(&#39;//a/@href&#39;).getall():
-        yield scrapy.Request(response.urljoin(href), self.parse)</code></pre>
-<p>必须返回如下三者之一：</p>
-<ul>
-<li><code>scrapy.Request</code>对象</li>
-<li>dict字典对象</li>
-<li>Item实例</li>
-</ul>
-<h4 id="log-message-level-component"><a href="#log-message-level-component" class="headerlink" title="log(message[, level, component])"></a><code>log</code>(<em>message</em>[, <em>level</em>, <em>component</em>])</h4><p>spider的logger，保持向后兼容性</p>
-<pre><code class="line-numbers language-python">def parse_item(self, response):
-        self.logger.info(&#39;Hi, this is an item page! %s&#39;, response.url)</code></pre>
-<h4 id="closed-reason"><a href="#closed-reason" class="headerlink" title="closed(reason)"></a><code>closed</code>(<em>reason</em>)</h4><p>spider关闭时调用。此方法为 <code>spider_closed</code>信号。</p>
-<h2 id="Spider类对crawl命令参数（-a）的解析"><a href="#Spider类对crawl命令参数（-a）的解析" class="headerlink" title="Spider类对crawl命令参数（-a）的解析"></a>Spider类对crawl命令参数（-a）的解析</h2><p>在<code>scrapy crawl</code>时可以使用<code>-a xxx=xxx</code>指定参数，以动态改变spider功能</p>
-<h3 id="原理与注意"><a href="#原理与注意" class="headerlink" title="原理与注意"></a>原理与注意</h3><p>手册中对该功能的举例，可以看到这个例子巧妙的在spider的启动阶段改变了源URL列表</p>
-<pre><code class="line-numbers language-bash">scrapy crawl myspider -a category=electronics</code></pre>
-<pre><code class="line-numbers language-python">import scrapy
-
-class MySpider(scrapy.Spider):
-    name = &#39;myspider&#39;
-
-    def __init__(self, category=None, *args, **kwargs):
-        super(MySpider, self).__init__(*args, **kwargs)
-        self.start_urls = [&#39;http://www.example.com/categories/%s&#39; % category]</code></pre>
-<p>注意参数传入的只是<strong>字符串</strong>，要设置为属性必须使用<code>ast.literal_eval</code> 或 <code>json.loads</code>进行转换</p>
-<h3 id="可直接使用接口"><a href="#可直接使用接口" class="headerlink" title="可直接使用接口"></a>可直接使用接口</h3><pre><code class="line-numbers language-bash">scrapy crawl myspider -a user_agent=mybot        # UserAgentMiddleware
-scrapy crawl myspider -a http_user=myuser -a http_pass=mypassword        # HttpAuthMiddleware</code></pre>
-<h2 id="scrapy预设Spider子类"><a href="#scrapy预设Spider子类" class="headerlink" title="scrapy预设Spider子类"></a>scrapy预设Spider子类</h2><p>scrapy根据爬取过程中经常用到的功能预设了一些Spider类的子类，可用template：</p>
-<ul>
-<li>默认：<code>scrapy.Spider</code></li>
-<li>CrawlSpider：class  <code>scrapy.spiders.CrawlSpider</code></li>
-<li>XMLFeedSpider：class  <code>scrapy.spiders.XMLFeedSpider</code></li>
-<li>CSVFeedSpider：class  <code>scrapy.spiders.CSVFeedSpider</code></li>
-<li>SitemapSpider：class  <code>scrapy.spiders.SitemapSpider</code></li>
-</ul>
-<pre><code class="line-numbers language-bash">scrapy genspider [-t template] &lt;name&gt; &lt;domain&gt;
-scrapy genspider [--template=template] &lt;name&gt; &lt;domain&gt;</code></pre>
-<h3 id="class-scrapy-spiders-CrawlSpider"><a href="#class-scrapy-spiders-CrawlSpider" class="headerlink" title="class scrapy.spiders.CrawlSpider"></a><em>class</em> <code>scrapy.spiders.CrawlSpider</code></h3><p>主要使用LinkExtractor方法模板化匹配并提取网页上的链接并生成请求，比如说爬取<strong>起点小说网</strong>，相对于父类，增加了：</p>
-<ul>
-<li>rules属性：爬取规则实例列表，这些实例由 <code>scrapy.spiders.Rule</code>爬行规则类生成</li>
-<li>parse_start_url(response)方法：用于解析初始响应，返回值类似parse函数</li>
-</ul>
-<h4 id="scrapy-spiders-Rule-爬行规则类"><a href="#scrapy-spiders-Rule-爬行规则类" class="headerlink" title="scrapy.spiders.Rule 爬行规则类"></a>scrapy.spiders.Rule 爬行规则类</h4><pre><code class="line-numbers language-python">class scrapy.spiders.Rule(
-    link_extractor, 
-    callback=None, 
-    cb_kwargs=None, 
-    follow=None, 
-    process_links=None, 
-    process_request=None
-)</code></pre>
-<ul>
-<li><p>link_extractor</p>
-<p>是一个 <code>LinkExtractor</code> 对象，定义如何从每个已爬网页提取链接，每个生成的链接将用于生成 <code>Request</code> 对象，链接的文本保存在 <code>response.meta[&#39;link_text&#39;]</code></p>
+<hr>
+<h4 id="自定义组件的启用流程"><a href="#自定义组件的启用流程" class="headerlink" title="自定义组件的启用流程"></a>自定义组件的启用流程</h4><ul>
+<li><p>编写组件</p>
 </li>
-<li><p>callback：指定该条匹配实例的解析函数</p>
+<li><p>settings.py启用组件</p>
+<pre><code class="line-numbers language-python"># middleware
+DOWNLOADER_MIDDLEWARES = &#123;
+    &#39;yourProjectName.middlewares.classname&#39;: 312,
+&#125;
+# pipeline
+ITEM_PIPELINES = &#123;
+    &#39;yourProjectName.pipelines.classname&#39;: 312,
+&#125;</code></pre>
 </li>
 </ul>
-<h4 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h4><p>手册栗子很形象</p>
-<pre><code class="line-numbers language-python">import scrapy
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
+<h4 id="设置随机请求头"><a href="#设置随机请求头" class="headerlink" title="设置随机请求头"></a>设置随机请求头</h4><p>安装fake-useragent库</p>
+<pre><code class="line-numbers language-bash">pip install fake-useragent</code></pre>
+<pre><code class="line-numbers language-python"># middleware.py
+from fake_useragent import UserAgent
 
-class MySpider(CrawlSpider):
-    name = &#39;example.com&#39;
-    allowed_domains = [&#39;example.com&#39;]
-    start_urls = [&#39;http://www.example.com&#39;]
+class RandomUserAgentMiddlware(object):
+    def __init__(self,crawler):
+        super(RandomUserAgentMiddlware,self).__init__()
+        self.ua = UserAgent()
 
-    rules = (
-        # Extract links matching &#39;category.php&#39; (but not matching &#39;subsection.php&#39;)
-        # and follow links from them (since no callback means follow=True by default).
-        Rule(LinkExtractor(allow=(&#39;category\.php&#39;, ), deny=(&#39;subsection\.php&#39;, ))),
+    @classmethod
+    def from_crawler(cls,crawler):
+        return cls(crawler)
 
-        # Extract links matching &#39;item.php&#39; and parse them with the spider&#39;s method parse_item
-        Rule(LinkExtractor(allow=(&#39;item\.php&#39;, )), callback=&#39;parse_item&#39;),
-    )
+    def process_request(self,request,spider):
+        request.headers.setdefault(&quot;User-Agent&quot;,self.ua.random)</code></pre>
+<p>启用中间件</p>
+<pre><code class="line-numbers language-python">DOWNLOADER_MIDDLEWARES = &#123;
+    &#39;yourProjectName.middlewares.RandomUserAgentMiddlware&#39;: 312,
+&#125;</code></pre>
+<h4 id="设置HTTP代理"><a href="#设置HTTP代理" class="headerlink" title="设置HTTP代理"></a>设置HTTP代理</h4><p>我使用的是<a href="">阿布云</a>的代理</p>
+<pre><code class="line-numbers language-python"># middleware.py
+import base64
 
-    def parse_item(self, response):
-        self.logger.info(&#39;Hi, this is an item page! %s&#39;, response.url)
-        item = scrapy.Item()
-        item[&#39;id&#39;] = response.xpath(&#39;//td[@id=&quot;item_id&quot;]/text()&#39;).re(r&#39;ID: (\d+)&#39;)
-        item[&#39;name&#39;] = response.xpath(&#39;//td[@id=&quot;item_name&quot;]/text()&#39;).get()
-        item[&#39;description&#39;] = response.xpath(&#39;//td[@id=&quot;item_description&quot;]/text()&#39;).get()
-        item[&#39;link_text&#39;] = response.meta[&#39;link_text&#39;]
-        return item</code></pre>
-<h3 id="class-scrapy-spiders-XMLFeedSpider"><a href="#class-scrapy-spiders-XMLFeedSpider" class="headerlink" title="class  scrapy.spiders.XMLFeedSpider"></a>class  <code>scrapy.spiders.XMLFeedSpider</code></h3><p>为解析XML而设计，没使用过···，看栗子</p>
-<h4 id="栗子-1"><a href="#栗子-1" class="headerlink" title="栗子"></a>栗子</h4><pre><code class="line-numbers language-python">from scrapy.spiders import XMLFeedSpider
-from myproject.items import TestItem
+proxyServer = &quot;http://http-dyn.abuyun.com:9020&quot;
+proxyUser = &quot;your proxyUser&quot;
+proxyPass = &quot;your proxyPass&quot;
 
-class MySpider(XMLFeedSpider):
-    name = &#39;example.com&#39;
-    allowed_domains = [&#39;example.com&#39;]
-    start_urls = [&#39;http://www.example.com/feed.xml&#39;]
-    iterator = &#39;iternodes&#39;  # This is actually unnecessary, since it&#39;s the default value
-    itertag = &#39;item&#39;
+proxyAuth = &quot;Basic &quot; + base64.urlsafe_b64encode(bytes((proxyUser + &quot;:&quot; + proxyPass), &quot;ascii&quot;)).decode(&quot;utf8&quot;)
 
-    def parse_node(self, response, node):
-        self.logger.info(&#39;Hi, this is a &lt;%s&gt; node!: %s&#39;, self.itertag, &#39;&#39;.join(node.getall()))
+class ProxyMiddleware(object):
+    def process_request(self, request, spider):
+        request.meta[&quot;proxy&quot;] = proxyServer
+        request.headers[&quot;Proxy-Authorization&quot;] = proxyAuth</code></pre>
+<h4 id="Mysql异步写入"><a href="#Mysql异步写入" class="headerlink" title="Mysql异步写入"></a>Mysql异步写入</h4><pre><code class="line-numbers language-python"># pipelines.py
+from yourProjectName.settings import MYSQL_DBNAME, MYSQL_HOST,MYSQL_PASSWORD,MYSQL_PORT,MYSQL_USER
 
-        item = TestItem()
-        item[&#39;id&#39;] = node.xpath(&#39;@id&#39;).get()
-        item[&#39;name&#39;] = node.xpath(&#39;name&#39;).get()
-        item[&#39;description&#39;] = node.xpath(&#39;description&#39;).get()
-        return item</code></pre>
-<h3 id="class-scrapy-spiders-CSVFeedSpider"><a href="#class-scrapy-spiders-CSVFeedSpider" class="headerlink" title="class  scrapy.spiders.CSVFeedSpider"></a>class  <code>scrapy.spiders.CSVFeedSpider</code></h3><p>处理CSV文件，与XMLFeedSpider相比该类用于行处理，每次迭代中调用<code>parse_row()</code>方法</p>
-<h4 id="新增属性与方法"><a href="#新增属性与方法" class="headerlink" title="新增属性与方法"></a>新增属性与方法</h4><ul>
-<li>delimiter：csv文件中每个字段<strong>分隔符</strong>字符串，默认为逗号 <code>&#39;,&#39;</code></li>
-<li>quotechar：csv文件中每个字段包裹字符串，默认为双引号<code>&#39;&quot;&#39;</code></li>
-<li>headers：字段列名</li>
-<li>parse_row(response, row)：</li>
+class MysqlTwistedPipeline(object):
+    &quot;&quot;&quot;
+    异步写入mysql
+    &quot;&quot;&quot;
+    def __init__(self, dbpool):
+        self.dbpool = dbpool
+
+    @classmethod
+    def from_settings(cls,setting):
+        dbparms = dict(
+            host=MYSQL_HOST,
+            db=MYSQL_DBNAME,
+            user=MYSQL_USER,
+            passwd=MYSQL_PASSWORD,
+            port=MYSQL_PORT,
+            charset=&#39;utf8&#39;,
+            cursorclass=pymysql.cursors.DictCursor,
+            use_unicode=False,
+        )
+        dbpool = adbapi.ConnectionPool(&quot;pymysql&quot;, **dbparms)
+        return cls(dbpool)
+
+    def process_item(self, item, spider):
+        query = self.dbpool.runInteraction(self.do_insert, item)
+        query.addCallback(self.handle_error)
+
+    def handle_error(self, failure):
+        print(&quot;MysqlTwistedPipeline error is :&quot;,failure)
+
+    def do_insert(self, cursor, item):
+        insert_sql = &quot;&quot;&quot;insert_sql&quot;&quot;&quot;
+        cursor.execute(insert_sql, ())#有些情况需使用pymysql.escape_string()对item字段进行转义</code></pre>
+<h4 id="图片下载"><a href="#图片下载" class="headerlink" title="图片下载"></a>图片下载</h4><pre><code class="line-numbers language-python"># pipelines.py
+from scrapy import Request
+from scrapy.pipelines.images import ImagesPipeline
+class ImagePipeline(ImagesPipeline):
+    headers = &#123;
+        &quot;&quot;&quot;如果网站有headers检测就加上&quot;&quot;&quot;
+    &#125;
+
+    def get_media_requests(self, item, info):
+        # 循环每一张图片地址下载，若传过来的不是集合则无需循环直接yield
+        for image_url in item[&#39;imgurl&#39;]:
+            headers = self.headers
+            headers[&#39;Referer&#39;] = item[&#39;from_url&#39;]
+            # meta里面的数据是从spider获取，然后通过meta传递给下面方法：file_path
+            yield Request(image_url,headers=headers,meta=&#123;&#39;foldername&#39;: item[&#39;foldername&#39;], &#39;imgname&#39;: item[&#39;imgname&#39;]&#125;)
+    # 重命名，若不重写这函数，图片名为哈希
+    def file_path(self, request, response=None, info=None):
+        pic_format = request.url.split(&quot;.&quot;)[-1]
+        imgname = request.meta[&#39;imgname&#39;]
+        # 接收meta传递过来的图集名称
+        foldername = request.meta[&#39;foldername&#39;]
+        # 过滤windows字符串
+        foldername = re.sub(r&#39;[？\\*|“&lt;&gt;:/]&#39;, &#39;&#39;, foldername)
+        filename = fr&#39;&#123;foldername&#125;/&#123;imgname&#125;.&#123;pic_format&#125;&#39;
+        return filename</code></pre>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>反爬虫手段的解决办法</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/%E5%8F%8D%E7%88%AC%E8%99%AB%E6%89%8B%E6%AE%B5%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</url>
+    <content><![CDATA[<ul>
+<li>防盗链</li>
+<li>禁止爬虫</li>
 </ul>
-<h4 id="栗子-2"><a href="#栗子-2" class="headerlink" title="栗子"></a>栗子</h4><pre><code class="line-numbers language-python">from scrapy.spiders import CSVFeedSpider
-from myproject.items import TestItem
+<a id="more"></a>
 
-class MySpider(CSVFeedSpider):
-    name = &#39;example.com&#39;
-    allowed_domains = [&#39;example.com&#39;]
-    start_urls = [&#39;http://www.example.com/feed.csv&#39;]
-    delimiter = &#39;;&#39;
-    quotechar = &quot;&#39;&quot;
-    headers = [&#39;id&#39;, &#39;name&#39;, &#39;description&#39;]
+<hr>
+<h3 id="防盗链"><a href="#防盗链" class="headerlink" title="防盗链"></a>防盗链</h3><p>爬取过程中可能遇到这样的</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913211504.png"></p>
+<p>或者这样的</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913211535.png"></p>
+<p>问题出现的原因就是服务器会检测我们的请求来源，也就是headers的refer键的值。</p>
+<p>解决办法也很简单，从上个请求中获取URL保存到本次请求头的refer字段即可</p>
+<h4 id="禁止爬虫"><a href="#禁止爬虫" class="headerlink" title="禁止爬虫"></a>禁止爬虫</h4><p>修改请求头的User-Agent属性为浏览器头</p>
+<p>或者使用模拟类库</p>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git 及 Github的使用</title>
+    <url>/2020/%E9%9A%8F%E7%AC%94/Git%20%E5%8F%8A%20Github%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<ul>
+<li>Git：一个开源的分布式版本控制系统</li>
+<li>Github：一个代码仓库网站</li>
+</ul>
+<a id="more"></a>
 
-    def parse_row(self, response, row):
-        self.logger.info(&#39;Hi, this is a row!: %r&#39;, row)
+<h3 id="git本地设置"><a href="#git本地设置" class="headerlink" title="git本地设置"></a>git本地设置</h3><pre><code class="line-numbers language-bash">git config --global user.name &quot;yuandongxu97&quot;
+git config --global user.email &quot;431980110@qq.com&quot;</code></pre>
+<h3 id="push时不替换换行符"><a href="#push时不替换换行符" class="headerlink" title="push时不替换换行符"></a>push时不替换换行符</h3><pre><code></code></pre>
+<h3 id="本地创建推送流程"><a href="#本地创建推送流程" class="headerlink" title="本地创建推送流程"></a>本地创建推送流程</h3><pre><code class="line-numbers language-bash">mkdir study
+cd study
+git init
+touch README.md
+git add .
+git commit
+git remote add origin https://github.com/yuandongxu97/study
+git push -u origin master</code></pre>
+<h3 id="Git常用命令"><a href="#Git常用命令" class="headerlink" title="Git常用命令"></a>Git常用命令</h3><h4 id="config-配置相关"><a href="#config-配置相关" class="headerlink" title="config    配置相关"></a>config    配置相关</h4><pre><code class="line-numbers language-bash">git config --list
+git config --global --list</code></pre>
+<h4 id="init-创建-初始化一个仓库"><a href="#init-创建-初始化一个仓库" class="headerlink" title="init    创建/初始化一个仓库"></a>init    创建/初始化一个仓库</h4><h4 id="clone-克隆仓库到本地目录"><a href="#clone-克隆仓库到本地目录" class="headerlink" title="clone    克隆仓库到本地目录"></a>clone    克隆仓库到本地目录</h4><h4 id="add-将文件添加到暂存区"><a href="#add-将文件添加到暂存区" class="headerlink" title="add    将文件添加到暂存区"></a>add    将文件添加到暂存区</h4><pre><code class="line-numbers language-bash">git add file    # 添加file
+git add .        # 添加当前目录所有已修改</code></pre>
+<h4 id="commit-将暂存区提交到存储库"><a href="#commit-将暂存区提交到存储库" class="headerlink" title="commit    将暂存区提交到存储库"></a>commit    将暂存区提交到存储库</h4><pre><code class="line-numbers language-bash">git commit -a            # git add + git commit    
+git commit -m “备注”      # 为提交节点添加备注</code></pre>
+<h4 id="diff-当前文件与暂存区域差异"><a href="#diff-当前文件与暂存区域差异" class="headerlink" title="diff    当前文件与暂存区域差异"></a>diff    当前文件与暂存区域差异</h4><pre><code class="line-numbers language-bash">git diff –staged        # 暂存区和存储库差异
+git diff [first branch] [second branch]        # 分支差异</code></pre>
+<h4 id="reset-撤销操作"><a href="#reset-撤销操作" class="headerlink" title="reset    撤销操作"></a>reset    撤销操作</h4><pre><code class="line-numbers language-bash">git reset [file]        # </code></pre>
+<h4 id="status-仓库状态"><a href="#status-仓库状态" class="headerlink" title="status    仓库状态"></a>status    仓库状态</h4><h4 id="log-提交日志"><a href="#log-提交日志" class="headerlink" title="log    提交日志"></a>log    提交日志</h4><pre><code class="line-numbers language-bash">git log
+git log [file]</code></pre>
+<h4 id="show-显示对象"><a href="#show-显示对象" class="headerlink" title="show    显示对象"></a>show    显示对象</h4><h4 id="branch-分支的显示、创建与删除"><a href="#branch-分支的显示、创建与删除" class="headerlink" title="branch    分支的显示、创建与删除"></a>branch    分支的显示、创建与删除</h4><pre><code class="line-numbers language-bash">git branch        # 显示本地分支列表
+git branch &lt;branch_name&gt;        # 创建新分支
+git branch -d &lt;branch_name&gt;        # 删除分支</code></pre>
+<h4 id="checkout-分支切换"><a href="#checkout-分支切换" class="headerlink" title="checkout    分支切换"></a>checkout    分支切换</h4><pre><code class="line-numbers language-bash">git checkout &lt;branch_name&gt;        # 切换至
+git checkout -b &lt;branch_name&gt;    # 创建并切换至</code></pre>
+<h4 id="merge-合并"><a href="#merge-合并" class="headerlink" title="merge    合并"></a>merge    合并</h4><h4 id="remote-链接本地与远程库"><a href="#remote-链接本地与远程库" class="headerlink" title="remote    链接本地与远程库"></a>remote    链接本地与远程库</h4><pre><code class="line-numbers language-bash">git remote add [variable name] [Remote Server Link]</code></pre>
+<h4 id="push-推送本地至远程仓库"><a href="#push-推送本地至远程仓库" class="headerlink" title="push    推送本地至远程仓库"></a>push    推送本地至远程仓库</h4><pre><code class="line-numbers language-bash">git push [variable name] master        # 推送主分支
+git push [variable name] [branch]    # 推送指定分支
+git push –all [variable name]        # 推送所有分支
+    # 删除远程存储库上的分支</code></pre>
+<h4 id="pull-拉取并集合"><a href="#pull-拉取并集合" class="headerlink" title="pull    拉取并集合"></a>pull    拉取并集合</h4><pre><code class="line-numbers language-bash">git pull [Repository Link]</code></pre>
+]]></content>
+      <tags>
+        <tag>常用</tag>
+        <tag>随笔</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy框架笔记·文件、图片pipeline使用解析</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/Scrapy%20%E6%96%87%E4%BB%B6%E3%80%81%E5%9B%BE%E7%89%87pipeline/</url>
+    <content><![CDATA[<p>当我们的scrapy项目需要爬取媒体内容时，可以使用以下两条scrapy模块自带的pipeline管道进行下载处理，都包含了两个默认特殊字段：</p>
+<ul>
+<li>对于文件：<code>scrapy.pipelines.files.FilesPipeline</code><ul>
+<li><code>item[&#39;file_urls&#39;]</code> - 下载链接列表</li>
+<li><code>item[&#39;files&#39;]</code> - 管道处理结果列表（每个url的信息字典）</li>
+</ul>
+</li>
+<li>对于图片：<code>scrapy.pipelines.images.ImagesPipeline</code><ul>
+<li><code>item[&#39;image_urls&#39;]</code> - 下载链接列表</li>
+<li><code>item[&#39;images&#39;]</code> - 管道处理结果列表（每个url的信息字典）</li>
+</ul>
+</li>
+</ul>
+<p>这些管道都实现了：</p>
+<ul>
+<li>避免重新下载最近下载的媒体</li>
+<li>指定存储媒体的位置（本地、ftp位置、AmazonS3存储桶、Google云存储桶）</li>
+</ul>
+<p>imagespipeline作为filespipeline的子类，还实现了：</p>
+<ul>
+<li>将所有下载的图像转换为通用格式（JPG）和模式（RGB）</li>
+<li>缩略图生成</li>
+<li>图像尺寸过滤</li>
+</ul>
+<p>通过重写pipeline，还可以实现：</p>
+<ul>
+<li>自定义文件名称</li>
+<li>自定义保存路径</li>
+<li>爬取结果的处理</li>
+</ul>
+<p>参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjcmFweS5vcmcvZW4vbGF0ZXN0L3RvcGljcy9tZWRpYS1waXBlbGluZS5odG1s">scrapy document v2.3<i class="fa fa-external-link-alt"></i></span></p>
+<a id="more"></a>
 
-        item = TestItem()
-        item[&#39;id&#39;] = row[&#39;id&#39;]
-        item[&#39;name&#39;] = row[&#39;name&#39;]
-        item[&#39;description&#39;] = row[&#39;description&#39;]
+<hr>
+<h2 id="1-媒体管道的使用"><a href="#1-媒体管道的使用" class="headerlink" title="1. 媒体管道的使用"></a>1. 媒体管道的使用</h2><p>（1）先在settings.py中启用管道并配置相关的存储位置。</p>
+<pre><code class="line-numbers language-python">ITEM_PIPELINES = &#123;
+    &#39;scrapy.pipelines.images.ImagesPipeline&#39;: 1
+    &#125;
+IMAGES_STORE = &#39;/data/scrapy/images&#39;</code></pre>
+<p>（2）配置item字段</p>
+<pre><code class="line-numbers language-python">import scrapy
+
+class MyItem(scrapy.Item):
+    # ... other item fields ...
+    image_urls = scrapy.Field()        # 源文件链接
+    images = scrapy.Field()        # 管道处理后的结果（爬取结果）</code></pre>
+<p>（3）编码spider，将图像链接列表保存到<code>item[&#39;image_urls&#39;]</code>中</p>
+<p>（4）爬取</p>
+<h3 id="下载结果示例"><a href="#下载结果示例" class="headerlink" title="下载结果示例"></a>下载结果示例</h3><p>管道默认使用URL的SHA1 Hash值作为文件的名称。</p>
+<p>比如说需要下载的图片URL为：<span class="exturl" data-url="aHR0cDovL3d3dy5leGFtcGxlLmNvbS9pbWFnZS5qcGc=">http://www.example.com/image.jpg<i class="fa fa-external-link-alt"></i></span></p>
+<p>它的SHA1 hash为：<code>3afec3b4765f8f0a07b78f98c07b83f013567a0a</code></p>
+<p>最终下载得到的文件为：<code>/data/scrapy/images/full/3afec3b4765f8f0a07b78f98c07b83f013567a0a.jpg</code></p>
+<hr>
+<h2 id="2-媒体管道的配置项"><a href="#2-媒体管道的配置项" class="headerlink" title="2. 媒体管道的配置项"></a>2. 媒体管道的配置项</h2><p>在项目settings.py中进行配置</p>
+<h3 id="爬取结果保存位置"><a href="#爬取结果保存位置" class="headerlink" title="爬取结果保存位置"></a>爬取结果保存位置</h3><pre><code class="line-numbers language-bash">IMAGES_STORE = &#39;/path/to/valid/dir&#39;        # 图像保存位置
+FILES_STORE = &#39;/path/to/valid/dir&#39;        # 文件保存位置</code></pre>
+<p>FILES_STORE和IMAGES_STORE可以指向一个FTP服务器，Scrapy会自动将文件上传到服务器，FILES_STORE和IMAGES_STORE应该以下列形式之一写入:</p>
+<pre><code class="line-numbers language-bash">ftp://username:password@address:port/path
+ftp://address:port/path</code></pre>
+<p>如果未提供用户名和密码，则分别取自</p>
+<pre><code class="line-numbers language-bash">FTP_USER = &#39;admin&#39;
+FTP_PASSWORD = &#39;admin&#39;</code></pre>
+<h3 id="自定义item字段名称"><a href="#自定义item字段名称" class="headerlink" title="自定义item字段名称"></a>自定义item字段名称</h3><p>配置该字段可以替换掉初始的<code>file_urls</code>与<code>file</code></p>
+<pre><code class="line-numbers language-bash"># 对于文件管道
+FILES_URLS_FIELD = &#39;field_name_for_your_files_urls&#39;
+FILES_RESULT_FIELD = &#39;field_name_for_your_processed_files&#39;
+# 对于图像管道
+IMAGES_URLS_FIELD = &#39;field_name_for_your_images_urls&#39;
+IMAGES_RESULT_FIELD = &#39;field_name_for_your_processed_images&#39;</code></pre>
+<h3 id="文件过期"><a href="#文件过期" class="headerlink" title="文件过期"></a>文件过期</h3><p>为了避免重复下载最近下载过的文件、图片，默认90day</p>
+<pre><code class="line-numbers language-bash"># 120 days of delay for files expiration
+FILES_EXPIRES = 120
+# 30 days of delay for images expiration
+IMAGES_EXPIRES = 30</code></pre>
+<p>对于重写的子类pipeline，配置项添加自定义的类名作为前缀</p>
+<pre><code class="line-numbers language-bash">MYPIPELINECLASSNAME_FILES_EXPIRES = 180</code></pre>
+<h3 id="图片管道的缩略图"><a href="#图片管道的缩略图" class="headerlink" title="图片管道的缩略图"></a>图片管道的缩略图</h3><p>图像管道可以自动创建下载图像的缩略图，要使用此功能，必须设置 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#std:setting-IMAGES_THUMBS"><code>IMAGES_THUMBS</code></a> 到一个字典，其中键是缩略图名称，值是它们的尺寸。</p>
+<pre><code class="line-numbers language-bash">IMAGES_THUMBS = &#123;
+    &#39;small&#39;: (50, 50),
+    &#39;big&#39;: (270, 270),
+&#125;</code></pre>
+<p>使用此功能时，图像管道将保存缩略图到下列位置：</p>
+<pre><code class="line-numbers language-bash">&lt;IMAGES_STORE&gt;/thumbs/&lt;size_name&gt;/&lt;image_id&gt;.jpg
+# &lt;size_name&gt; 是在 IMAGES_THUMBS 字典键 (small ， big 等）
+# &lt;image_id&gt; 是 SHA1 hash 图像URL的
+# 实例
+&lt;IMAGES_STORE&gt;/full/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg        # 原始
+&lt;IMAGES_STORE&gt;/thumbs/small/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
+&lt;IMAGES_STORE&gt;/thumbs/big/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg</code></pre>
+<h3 id="图像尺寸过滤"><a href="#图像尺寸过滤" class="headerlink" title="图像尺寸过滤"></a>图像尺寸过滤</h3><p>使用图像管道时，可以过滤过小的图像，但不影响缩略图的生成。</p>
+<pre><code class="line-numbers language-bash">IMAGES_MIN_HEIGHT = 110
+IMAGES_MIN_WIDTH = 110</code></pre>
+<h3 id="下载失败处理"><a href="#下载失败处理" class="headerlink" title="下载失败处理"></a>下载失败处理</h3><p>管道默认忽略掉失败的下载请求，如果需要重新处理失败的请求，配置：</p>
+<pre><code class="line-numbers language-bash">MEDIA_ALLOW_REDIRECTS = True</code></pre>
+<h2 id="3-重写媒体管道类"><a href="#3-重写媒体管道类" class="headerlink" title="3. 重写媒体管道类"></a>3. 重写媒体管道类</h2><p>自定义类继承原管道并重写媒体管道中的方法可以对爬取中的细节进行处理</p>
+<h3 id="class-scrapy-pipelines-files-FilesPipeline"><a href="#class-scrapy-pipelines-files-FilesPipeline" class="headerlink" title="class scrapy.pipelines.files.FilesPipeline"></a><em>class</em> <code>scrapy.pipelines.files.FilesPipeline</code></h3><h4 id="get-media-requests"><a href="#get-media-requests" class="headerlink" title="get_media_requests"></a><code>get_media_requests</code></h4><p><code>get_media_requests</code>(<em>item</em>, <em>info</em>)</p>
+<p>因为item中保存下载链接的是一个列表字段，该方法用于从中分离单个链接并创建下载请求</p>
+<pre><code class="line-numbers language-python">def get_media_requests(self, item, info):
+    for file_url in item[&#39;file_urls&#39;]:
+        yield scrapy.Request(file_url)</code></pre>
+<p>下载完成后，结果将发送到 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.item_completed"><code>item_completed()</code></a> 方法，生成一个两元素的set<code>(success, file_info_or_error)</code></p>
+<pre><code class="line-numbers language-bash">[(True,
+  &#123;&#39;checksum&#39;: &#39;2b00042f7481c7b056c4b410d28f33cf&#39;,
+   &#39;path&#39;: &#39;full/0a79c461a4062ac383dc4fade7bc09f1384a3910.jpg&#39;,
+   &#39;url&#39;: &#39;http://www.example.com/files/product1.pdf&#39;,
+   &#39;status&#39;: &#39;downloaded&#39;&#125;),
+ (False,
+  Failure(...))]</code></pre>
+<ul>
+<li><p><code>success</code> - True下载成功，False下载失败</p>
+</li>
+<li><p><code>file_info_or_error</code> is a dict containing the following keys (if success is <code>True</code>) or a <a href="https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html"><code>Failure</code></a> if there was a problem.</p>
+<ul>
+<li><p><code>url</code> - 文件的源URL链接. This is the url of the request returned from the <a href="https://docs.scrapy.org/en/latest/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.get_media_requests"><code>get_media_requests()</code></a> method.</p>
+</li>
+<li><p><code>path</code> - 保存路径（FILES_STORE + path）</p>
+</li>
+<li><p><code>checksum</code> - 数据的MD5</p>
+</li>
+<li><p><code>status</code> - 状态指示，scrapy&gt;2.2版本提供</p>
+<p>It can be one of the following:</p>
+<ul>
+<li><code>downloaded</code> - file was downloaded.</li>
+<li><code>uptodate</code> - file was not downloaded, as it was downloaded recently, according to the file expiration policy.</li>
+<li><code>cached</code> - file was already scheduled for download, by another item sharing the same file.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>默认情况下 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.get_media_requests"><code>get_media_requests()</code></a> 方法返回 <code>None</code> ，这意味着该项目没有可下载的文件。</p>
+<h4 id="file-path"><a href="#file-path" class="headerlink" title="file_path"></a><code>file_path</code></h4><p><code>file_path</code>(<em>self</em>, <em>request</em>, <em>response=None</em>, <em>info=None</em>)</p>
+<p>（1）可以重写此方法以自定义每个文件的下载路径，默认情况下 <a href="https://www.osgeo.cn/scrapy/topics/media-pipeline.html#scrapy.pipelines.files.FilesPipeline.file_path"><code>file_path()</code></a> 方法返回 <code>full/&lt;request URL hash&gt;.&lt;extension&gt;</code> .</p>
+<p>（2）重写以下载图片到files文件夹并保持原始的文件名称：即<code>https://example.com/a/b/c/foo.png --&gt; files/foo.png</code></p>
+<pre><code class="line-numbers language-python">import os
+from urllib.parse import urlparse
+
+from scrapy.pipelines.files import FilesPipeline
+
+class MyFilesPipeline(FilesPipeline):
+
+    def file_path(self, request, response, info):
+        return &#39;files/&#39; + os.path.basename(urlparse(request.url).path)</code></pre>
+<h4 id="item-completed"><a href="#item-completed" class="headerlink" title="item_completed"></a><code>item_completed</code></h4><p><code>item_completed</code>(<em>results</em>, <em>item</em>, <em>info</em>)</p>
+<p>当媒体管道处理完成了一项spider传递的item时（全部请求完毕，success or failed）会调用该方法，该方法用于为处理item的相关内容并返回item交给下一级管道</p>
+<p>实例：将下载文件的路径传入item的<code>file_paths</code>字段中</p>
+<pre><code class="line-numbers language-python">from scrapy.exceptions import DropItem
+
+def item_completed(self, results, item, info):
+    file_paths = [x[&#39;path&#39;] for ok, x in results if ok]
+    if not file_paths:
+        raise DropItem(&quot;Item contains no files&quot;)
+    item[&#39;file_paths&#39;] = file_paths
+    return item</code></pre>
+<h3 id="class-scrapy-pipelines-images-ImagesPipeline"><a href="#class-scrapy-pipelines-images-ImagesPipeline" class="headerlink" title="class scrapy.pipelines.images.``ImagesPipeline"></a><em>class</em> <code>scrapy.pipelines.images.``ImagesPipeline</code></h3><p>同上</p>
+<h2 id="4-自定义的文件pipeline实例"><a href="#4-自定义的文件pipeline实例" class="headerlink" title="4. 自定义的文件pipeline实例"></a>4. 自定义的文件pipeline实例</h2><p>实现功能</p>
+<ul>
+<li>文件使用原名称重命名</li>
+<li>按title文件夹归类</li>
+<li>下载结果保存</li>
+</ul>
+<pre><code class="line-numbers language-python">import os, scrapy
+from scrapy.pipelines.files import FilesPipeline
+from urllib.parse import urlparse
+
+
+class MyFilesPipeline(FilesPipeline):
+
+    def get_media_requests(self, item, info):
+        &quot;&quot;&quot;重命名&quot;&quot;&quot;
+        for file_url in item[&#39;file_urls&#39;]:
+            yield scrapy.Request(file_url, meta=&#123;&#39;item&#39;: item.copy()&#125;)
+
+    def file_path(self, request, response=None, info=None):
+        &quot;&quot;&quot;归类&quot;&quot;&quot;
+        name = request.meta[&#39;item&#39;][&#39;name&#39;]
+        title = request.meta[&#39;item&#39;][&#39;title&#39;]
+        return &quot;%s/%s/%s&quot; % (name, title, os.path.basename(urlparse(request.url).path))
+
+    def item_completed(self, results, item, info):
+        &quot;&quot;&quot;下载结果处理&quot;&quot;&quot;
+        data = &#123;&#125;
+        for status, result in results:
+            data[item[&#39;title&#39;]].append(result) if status else None
+        file = &#39;./%s.json&#39; % item[&#39;name&#39;]  # 以spidername命名
+        with open(file, &#39;w+&#39;) as f:
+            f.writelines(data)
         return item</code></pre>
-<h3 id="class-scrapy-spiders-SitemapSpider"><a href="#class-scrapy-spiders-SitemapSpider" class="headerlink" title="class  scrapy.spiders.SitemapSpider"></a>class  <code>scrapy.spiders.SitemapSpider</code></h3>]]></content>
+<p>item.py</p>
+<pre><code class="line-numbers language-python">from scrapy import Field, Item
+
+class FilespiderItem(Item):
+    file_urls = Field()
+    files = Field()
+    name = Field()
+    title = Field()</code></pre>
+]]></content>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scrapy框架笔记·部署工具scrapyd的使用</title>
+    <url>/2020/%E7%88%AC%E8%99%AB/Scrapyd%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>Scrapyd是一个scrapy框架爬虫的端对端部署工具，scrapyd能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务。</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-Scrapyd服务"><a href="#1-Scrapyd服务" class="headerlink" title="1. Scrapyd服务"></a>1. Scrapyd服务</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><pre><code class="line-numbers language-bash">pip install scrapyd</code></pre>
+<pre><code class="line-numbers language-bash">pip install scrapyd-client</code></pre>
+<h3 id="1-2-启动Scrapyd服务"><a href="#1-2-启动Scrapyd服务" class="headerlink" title="1.2 启动Scrapyd服务"></a>1.2 启动Scrapyd服务</h3><p>作为测试，本地主机（localhost）安装完成服务端后运行<code>scrapyd</code>开启服务端，浏览器访问<code>localhost:6800</code>即可访问scrapyd服务</p>
+<pre><code class="line-numbers language-bash">scrapyd</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200906142415.png"></p>
+<h4 id="服务端的外网访问"><a href="#服务端的外网访问" class="headerlink" title="服务端的外网访问"></a>服务端的外网访问</h4><p>比如我的主机公网IP为<code>47.93.230.127</code>，使用命令<code>scrapyd</code>开启服务，本地主机浏览器访问<code>47.93.230.127:6800</code>是访问不到的，因为scrapyd默认bind为127.0.0.1</p>
+<p>编辑scrapyd的配置文件，我的为：<code>/usr/local/lib/python3.8/dist-packages/scrapyd/default_scrapyd.conf</code>，修改</p>
+<pre><code class="line-numbers language-json">bind_address = 0.0.0.0        # 绑定域名</code></pre>
+<p>开启服务</p>
+<pre><code class="line-numbers language-bash">$ scrapyd
+2020-01-06T14:28:57+0800 [-] Loading /usr/local/lib/python3.8/dist-packages/scrapyd/txapp.py...
+2020-01-06T14:28:57+0800 [-] Scrapyd web console available at http://0.0.0.0:6800/</code></pre>
+<h3 id="1-3-配置Scrapy项目"><a href="#1-3-配置Scrapy项目" class="headerlink" title="1.3 配置Scrapy项目"></a>1.3 配置Scrapy项目</h3><p>配置scrapy项目文件夹下的scrapy.cfg文件</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>说明</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>[deploy:target]</td>
+<td>多目标deploy时使用target指定scrapyd服务</td>
+<td></td>
+</tr>
+<tr>
+<td>url</td>
+<td>scrapy服务地址</td>
+<td></td>
+</tr>
+<tr>
+<td>project</td>
+<td>scrapyd服务中的项目名称</td>
+<td></td>
+</tr>
+</tbody></table>
+<pre><code class="line-numbers language-bash">vim scrapy.cfg</code></pre>
+<pre><code class="line-numbers language-json">[settings]
+default = filespider.settings
+
+[deploy:aliyun]
+url = http://47.93.230.127:6800/
+project = filespider</code></pre>
+<p>扫描项目中的deploy配置信息</p>
+<pre><code class="line-numbers language-bash">scrapyd-deploy -l
+# aliyun               http://47.93.230.127:6800/</code></pre>
+<h3 id="1-4-项目部署"><a href="#1-4-项目部署" class="headerlink" title="1.4 项目部署"></a>1.4 项目部署</h3><p>编译项目</p>
+<pre><code class="line-numbers language-bash"># scrapyd-deploy &lt;target&gt; -p &lt;project&gt; --version &lt;version&gt;
+scrapy</code></pre>
+]]></content>
       <tags>
         <tag>爬虫</tag>
         <tag>Scrapy</tag>
@@ -2265,6 +2497,79 @@ ERROR: Command errored out with exit status 1: python setup.py egg_info Check th
 ]]></content>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis数据库·数据结构与使用命令</title>
+    <url>/2020/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<p>redis是键值对数据库，它的键类型只能为字符串（string），但其值的类型却有5种：字符串string、哈希hash、列表list、集合set、有序集合zset。</p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913223017.png"></p>
+<a id="more"></a>
+
+<h2 id="键操作"><a href="#键操作" class="headerlink" title="键操作"></a>键操作</h2><pre><code>keys *            # 查询键列表，*为pattern
+exists key        # 存在否
+type key        # 查询类型
+del key1 key2 ...    # 删除键
+expire key seconds    # 设置过期时间
+ttl key                # 查看有效时间</code></pre>
+<h2 id="String字符串"><a href="#String字符串" class="headerlink" title="String字符串"></a>String字符串</h2><p>字符串类型是Redis中最为基础的数据存储类型，<strong>它在Redis中是二进制安全的</strong>，这便意味着该类型可以接受任何格式的数据，如JPEG图像数据或Json对象描述信息等。在Redis中字符串类型的Value最多可以容纳的数据长度是512M。</p>
+<pre><code class="line-numbers language-bash">set key value
+mset key1 value1 key2 value2 ...    # 设置多个键值
+
+setex key seconds value        # 设置键值及过期时间，以秒为单位
+append key value            # 追加
+
+get key
+mget key1 key2 ...            # 获取多个
+
+# 值长度
+strlen key</code></pre>
+<h2 id="HashMAP"><a href="#HashMAP" class="headerlink" title="HashMAP"></a>HashMAP</h2><p>可以将hash类型的key视为一个对象，其value就是对象的属性及其值的键值对。</p>
+<pre><code class="line-numbers language-bash">hkeys key                        # 获取键的所有属性列表
+hvals key                        # 获取所有属性值
+hget key field                    # 获取属性值
+hmget key field1 field2 ...        # 获取多个属性值
+hdel key field1 field2 ...        # 删除属性
+hmset key field1 value1 field2 value2 ...        # 设置值</code></pre>
+<h2 id="List列表"><a href="#List列表" class="headerlink" title="List列表"></a>List列表</h2><p>列表的元素类型为string，按照插⼊顺序排序</p>
+<pre><code class="line-numbers language-bash">lpush [···, ···, ···, ]    rpush        # 添加
+lpop  [···, ···, ···, ]    rpop        # 删除
+lpush key v1 v2 v3
+lpop key</code></pre>
+<pre><code class="line-numbers language-bash"># 返回列表⾥指定范围内的元素
+lrange key start stop    
+
+# 在指定元素的前或后插⼊新元素
+linsert key before或after 现有元素 新元素    
+
+# 设置指定索引位置的元素值
+lset key index value
+
+# 将列表中前count次出现的值为value的元素移除
+# count &gt; 0: --&gt;
+# count &lt; 0: &lt;--
+# count = 0: 移除所有
+lrem key count value</code></pre>
+<h2 id="Set集合"><a href="#Set集合" class="headerlink" title="Set集合"></a>Set集合</h2><p>⽆序、元素为string类型、元素具有唯⼀性，不重复、对于集合没有修改操作</p>
+<pre><code class="line-numbers language-bash"># add
+sadd key member1 member2 ...
+
+# 返回all
+smembers key
+
+# 删除指定
+srem key</code></pre>
+<h2 id="Zset有序集合"><a href="#Zset有序集合" class="headerlink" title="Zset有序集合"></a>Zset有序集合</h2><ul>
+<li>sorted set，有序集合</li>
+<li>元素为string类型</li>
+<li>元素具有唯⼀性，不重复</li>
+<li>每个元素都会关联⼀个double类型的score，表示权重，通过权重将元素从⼩到⼤排序</li>
+</ul>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913231902.png" alt="img"></p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913232001.png" alt="img"></p>
+]]></content>
+      <tags>
+        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
@@ -2659,25 +2964,6 @@ username: games                uid: 5</code></pre>
 ]]></content>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python数据类型分析及常用方法</title>
-    <url>/2020/Python/Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<p>收集的一些经典的爬虫案例</p>
-<p>Python的基础类型分为：</p>
-<ul>
-<li>数值：int、float</li>
-<li>字符串：str</li>
-<li></li>
-</ul>
-<p>扩展数据类型有</p>
-<a id="more"></a>
-
-<hr>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -5404,6 +5690,106 @@ assert 表达式 [, 参数]</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>Redis数据库·概念相关</title>
+    <url>/2019/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%A6%82%E5%BF%B5%E7%9B%B8%E5%85%B3/</url>
+    <content><![CDATA[<p>REmote DIctionary Server(Redis) 是一个由Salvatore Sanfilippo写的key-value存储系统，使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p>
+<ul>
+<li>Redis的安装与配置</li>
+<li>常用配置文件</li>
+<li>Redis的工作模式</li>
+<li>···</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="Redis安装与配置"><a href="#Redis安装与配置" class="headerlink" title="Redis安装与配置"></a>Redis安装与配置</h2><h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p>进入Redis.io选择需要的安装包下载安装即可，官网下载地址：<span class="exturl" data-url="aHR0cHM6Ly9yZWRpcy5pby9kb3dubG9hZA==">https://redis.io/download<i class="fa fa-external-link-alt"></i></span></p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913182909.png"></p>
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><pre><code class="line-numbers language-bash">apt install redis    # server+client
+apt install redis-server    # server
+apt install redis-tools        # client</code></pre>
+<p>默认配置文件：<code> /etc/redis/redis.conf</code></p>
+<p>客户端启动：<code>redis-cli</code></p>
+<h3 id="使用源码启动服务"><a href="#使用源码启动服务" class="headerlink" title="使用源码启动服务"></a>使用源码启动服务</h3><p><span class="exturl" data-url="aHR0cDovL2Rvd25sb2FkLnJlZGlzLmlvL3JlbGVhc2VzLw==">http://download.redis.io/releases/<i class="fa fa-external-link-alt"></i></span> ，下载需要版本的源码，使用步骤如下：</p>
+<pre><code class="line-numbers language-bash">wget http://download.redis.io/releases/redis-5.0.0.tar.gz
+tar redis-5.0.0.tar.gz
+cd redis-5.0.0
+make</code></pre>
+<p>启动服务</p>
+<pre><code class="line-numbers language-bash">redis-5.0.0/src/redis-server /etc/redis/redis.conf</code></pre>
+<p><img src="C:\Users\yuan\AppData\Roaming\Typora\typora-user-images\image-20200913184519375.png" alt="image-20200913184519375"></p>
+<p>启动客户端</p>
+<pre><code>redis-5.0.0/src/redis-cli</code></pre>
+<h2 id="常用配置文件"><a href="#常用配置文件" class="headerlink" title="常用配置文件"></a>常用配置文件</h2><pre><code class="line-numbers language-bash">vim /etc/redis/redis.conf</code></pre>
+<pre><code class="line-numbers language-json">bind 0.0.0.0                            # 允许任意IP地址访问
+protected-mode no                        # 不需要密码就能访问
+port 6379                                # 使用的TCP端口
+tcp-backlog 511
+timeout 0                                # 不超时
+tcp-keepalive 300                        # TCP连接保持时间,5min
+supervised no
+pidfile /var/run/redis_6379.pid
+loglevel notice
+logfile &quot;&quot;
+databases 16
+always-show-logo yes
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir ./
+slave-serve-stale-data yes
+slave-read-only yes
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+repl-disable-tcp-nodelay no
+slave-priority 100
+lazyfree-lazy-eviction no
+lazyfree-lazy-expire no
+lazyfree-lazy-server-del no
+slave-lazy-flush no
+appendonly no
+appendfilename &quot;appendonly.aof&quot;
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+aof-use-rdb-preamble no
+lua-time-limit 5000
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events &quot;&quot;
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+aof-rewrite-incremental-fsync yes</code></pre>
+<h2 id="Redis的工作模式"><a href="#Redis的工作模式" class="headerlink" title="Redis的工作模式"></a>Redis的工作模式</h2><p>和 MySQL 类似，Redis 系统地包括服务器端（redis-server）和客户端（redis-cli）两个角色R， 服务器通常使用 TCP 端口 6379，客户端和服务器通过 RESP 协议通信，如图 </p>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913212940.gif"></p>
+<p>其常用的工作模式是客户端发送一个请求，服务器处理该请求，然后将结果返回给客户端，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213259.png"></p>
+<p>另外一种工作模式是管道（pipelining）模式，其不等待前面的回应消息就发送下一条请求以提升吞吐量</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213350.png"></p>
+<p>第三种工作模式是订阅模式，就是客户端先告诉服务器其关心哪些数据，然后在这些数据发生改变时服务器主动发送消息通知客户端。在该模式中，客户端不是主动去请求某个数据，而是服务器主动通知客户端某个数据的最新值</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213412.png"></p>
+]]></content>
+      <tags>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker快速部署多种数据库及配置使用</title>
     <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/</url>
     <content><![CDATA[<ul>
@@ -5437,10 +5823,78 @@ assert 表达式 [, 参数]</code></pre>
 <pre><code class="line-numbers language-bash">docker update --restart=always mongo          </code></pre>
 <h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>拉取镜像</p>
 <pre><code class="line-numbers language-bash">docker pull redis</code></pre>
-<p>创建容器，容器名称为redis16379、开放在宿主机的16379端口上</p>
-<pre><code class="line-numbers language-bash">docker run -d --name redis16379 -p 16379:6379 redis</code></pre>
+<p>准备一份redis配置文件，我放在了<code>/etc/redis/my.conf</code>，配置项如下：</p>
+<pre><code class="line-numbers language-json">bind 0.0.0.0                            # 允许任意IP地址访问
+protected-mode no                        # 不需要密码就能访问
+port 6379                                # 使用的TCP端口
+tcp-backlog 511
+timeout 0                                # 不超时
+tcp-keepalive 300                        # TCP连接保持时间,5min
+supervised no
+pidfile /var/run/redis_6379.pid
+loglevel notice
+logfile &quot;&quot;
+databases 16
+always-show-logo yes
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir ./
+slave-serve-stale-data yes
+slave-read-only yes
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+repl-disable-tcp-nodelay no
+slave-priority 100
+lazyfree-lazy-eviction no
+lazyfree-lazy-expire no
+lazyfree-lazy-server-del no
+slave-lazy-flush no
+appendonly no
+appendfilename &quot;appendonly.aof&quot;
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+aof-use-rdb-preamble no
+lua-time-limit 5000
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events &quot;&quot;
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+aof-rewrite-incremental-fsync yes</code></pre>
+<p>创建容器</p>
+<ul>
+<li>后台模式</li>
+<li>映射本地16379至容器6379，也就是说redis开放在本地16379端口，避免被扫库（我太难了）</li>
+<li>映射本地配置文件至容器</li>
+<li>容器命名为redis16379</li>
+</ul>
+<pre><code class="line-numbers language-bash">docker run -d -p 16379:6379 -v /etc/redis/my.conf:/etc/redis/redis.conf --name redis16379 redis</code></pre>
 <p>设置随Docker启动</p>
 <pre><code class="line-numbers language-bash">docker update --restart=always redis16379     </code></pre>
+<h3 id="本地连接"><a href="#本地连接" class="headerlink" title="本地连接"></a>本地连接</h3><p>安装redis-cli</p>
+<pre><code class="line-numbers language-bash">apt install redis-tools</code></pre>
+<pre><code class="line-numbers language-bash">redis-cli -p 16379</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913214746.png"></p>
 <h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><p>需要安装指定版本的话，查看远端的版本</p>
 <pre><code class="line-numbers language-bash">$ docker search mysql</code></pre>
 <p>下载MySQL镜像（image）</p>
@@ -5949,7 +6403,7 @@ cat /home/yuan/redis_6379_export.tar | sudo docker import - redis:latest</code><
   </entry>
   <entry>
     <title>CSS定位方法</title>
-    <url>/2019/%E9%9A%8F%E7%AC%94/CSS/</url>
+    <url>/2019/%E9%9A%8F%E7%AC%94/CSS%E5%AE%9A%E4%BD%8D/</url>
     <content><![CDATA[<p>百度百科介绍：</p>
 <p>层叠样式表(英文全称：Cascading Style Sheets)是一种用来表现<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9IVE1M">HTML<i class="fa fa-external-link-alt"></i></span>（<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTYlQTAlODclRTUlODclODYlRTklODAlOUElRTclOTQlQTglRTYlQTAlODclRTglQUUlQjAlRTglQUYlQUQlRTglQTglODAvNjgwNTA3Mw==">标准通用标记语言<i class="fa fa-external-link-alt"></i></span>的一个应用）或<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9YTUw=">XML<i class="fa fa-external-link-alt"></i></span>（标准通用标记语言的一个子集）等文件样式的计算机语言。CSS不仅可以静态地修饰网页，还可以配合各种脚本语言动态地对网页各元素进行格式化。CSS 能够对网页中元素位置的排版进行像素级精确控制，支持几乎所有的字体字号样式，拥有对网页对象和模型样式编辑的能力。</p>
 <p>什么是选择器呢？每一条css样式定义由两部分组成，形式如下： [code] 选择器{样式} [/code] 在{}之前的部分就是“选择器”。 “选择器”指明了{}中的“样式”的作用对象，也就是“样式”作用于网页中的哪些元素</p>
@@ -5959,24 +6413,24 @@ cat /home/yuan/redis_6379_export.tar | sudo docker import - redis:latest</code><
 <h4 id="基本选择器"><a href="#基本选择器" class="headerlink" title="基本选择器"></a>基本选择器</h4><table>
 <thead>
 <tr>
-<th align="right">选择器</th>
+<th align="left">选择器</th>
 <th>含义</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="right">*</td>
+<td align="left">*</td>
 <td>通用元素选择器，匹配任何元素</td>
 </tr>
 <tr>
-<td align="right"><strong>E</strong></td>
+<td align="left"><strong>E</strong></td>
 <td>标签选择器，匹配所有使用E标签的元素</td>
 </tr>
 <tr>
-<td align="right"><strong>.info</strong></td>
+<td align="left"><strong>.info</strong></td>
 <td>class选择器，匹配所有class属性中包含info的元素</td>
 </tr>
 <tr>
-<td align="right"><strong>#footer</strong></td>
+<td align="left"><strong>#footer</strong></td>
 <td>id选择器，匹配所有id属性等于footer的元素</td>
 </tr>
 </tbody></table>
@@ -6226,7 +6680,7 @@ cat /home/yuan/redis_6379_export.tar | sudo docker import - redis:latest</code><
       </tags>
   </entry>
   <entry>
-    <title>Docker容器的安装方法</title>
+    <title>Docker安装与配置方法</title>
     <url>/2019/Docker/Docker%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<ul>
 <li>Centos7下的Docker-ce的安装方法</li>
@@ -6236,7 +6690,7 @@ cat /home/yuan/redis_6379_export.tar | sudo docker import - redis:latest</code><
 <a id="more"></a>
 
 <hr>
-<h2 id="一、Centos7下的Docker-ce的安装方法"><a href="#一、Centos7下的Docker-ce的安装方法" class="headerlink" title="一、Centos7下的Docker-ce的安装方法"></a>一、Centos7下的Docker-ce的安装方法</h2><p>系统版本信息：<code>Linux centos7 3.10.0-1127.18.2.el7.x86_64 GNU/Linux</code></p>
+<h2 id="Centos7下的Docker-ce的安装方法"><a href="#Centos7下的Docker-ce的安装方法" class="headerlink" title="Centos7下的Docker-ce的安装方法"></a>Centos7下的Docker-ce的安装方法</h2><p>系统版本信息：<code>Linux centos7 3.10.0-1127.18.2.el7.x86_64 GNU/Linux</code></p>
 <p>安装依赖</p>
 <pre><code class="line-numbers language-bash">yum install -y yum-utils device-mapper-persistent-data lvm2
 # yum-util 提供 yum-config-manager 功能，后两者为devicemapper驱动依赖</code></pre>
@@ -6254,7 +6708,7 @@ systemctl enable docker.service        # 开启开机自启动</code></pre>
 <p>测试</p>
 <p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200825214420.png"></p>
 <hr>
-<h2 id="二、Ubuntu下Docker-ce的安装方法"><a href="#二、Ubuntu下Docker-ce的安装方法" class="headerlink" title="二、Ubuntu下Docker-ce的安装方法"></a>二、Ubuntu下Docker-ce的安装方法</h2><p>APT换源，推荐科大源</p>
+<h2 id="Ubuntu下Docker-ce的安装方法"><a href="#Ubuntu下Docker-ce的安装方法" class="headerlink" title="Ubuntu下Docker-ce的安装方法"></a>Ubuntu下Docker-ce的安装方法</h2><p>APT换源，推荐科大源</p>
 <pre><code class="line-numbers language-bash">sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
 sudo sed -i &#39;s/archive.ubuntu.com/mirrors.ustc.edu.cn/g&#39; /etc/apt/sources.list
 sudo apt update</code></pre>
@@ -6275,7 +6729,7 @@ sudo systemctl restart docker</code></pre>
 <pre><code class="line-numbers language-bash">sudo groupadd docker
 sudo usermod -aG docker $USER
 docker pull hello-world        # 测试</code></pre>
-<h2 id="三、关于WSL中的使用"><a href="#三、关于WSL中的使用" class="headerlink" title="三、关于WSL中的使用"></a>三、关于WSL中的使用</h2><p>wsl中根据Linux发行版本进行安装后还需要执行以下步骤</p>
+<h2 id="Docker在WSL中的使用"><a href="#Docker在WSL中的使用" class="headerlink" title="Docker在WSL中的使用"></a>Docker在WSL中的使用</h2><p>wsl中根据Linux发行版本进行安装后还需要执行以下步骤</p>
 <ol>
 <li><p>对socket文件进行赋权：<code>sudo chmod -R 777 /var/run/docker.sock</code>，解决无权限通信error问题</p>
 </li>
@@ -6288,7 +6742,7 @@ docker pull hello-world        # 测试</code></pre>
 </ol>
 <h2 id="Docker仓库的换源问题"><a href="#Docker仓库的换源问题" class="headerlink" title="Docker仓库的换源问题"></a>Docker仓库的换源问题</h2><p><code>vi /etc/docker/daemon.json</code></p>
 <pre><code class="line-numbers language-bash">&#123;
-    &quot;registry-mirrors&quot;: [&quot;https://registry.docker-cn.com&quot;]
+    &quot;registry-mirrors&quot;: [&quot;https://docker.mirrors.ustc.edu.cn&quot;]
 &#125;</code></pre>
 <p><code>systemctl restart docker.service</code></p>
 <ul>
@@ -6425,6 +6879,17 @@ npm -v</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>Python数据类型分析及常用方法</title>
+    <url>/2019/Python/Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<hr>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker部署httpbin网络测试服务</title>
     <url>/2019/Docker/Docker%E9%83%A8%E7%BD%B2httpbin%E5%8F%8A%E5%B8%B8%E7%94%A8API/</url>
     <content><![CDATA[<p>httpbin是大神kennethreitz为搭建测试用的http服务而写的一个开源项目，httpbin 这个服务应用能测试HTTP请求及响应的各种信息，比如 cookie、ip、headers 和登录验证等，且支持 GET、POST 等多种方法，对 web 开发和测试具有很大的帮助。</p>
@@ -6458,6 +6923,571 @@ print(log)      # 无效代理</code></pre>
 ]]></content>
       <tags>
         <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis数据库·Python API</title>
+    <url>/2019/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7PythonAPI/</url>
+    <content><![CDATA[</br>
+
+<p>redis库是python操作redis数据库的接口库</p>
+<pre><code class="line-numbers language-bash">pip install redis</code></pre>
+<a id="more"></a>
+
+
+
+<h2 id="1-连接Redis"><a href="#1-连接Redis" class="headerlink" title="1. 连接Redis"></a>1. 连接Redis</h2><h3 id="1-1-普通连接"><a href="#1-1-普通连接" class="headerlink" title="1.1 普通连接"></a>1.1 普通连接</h3><p>redis模块提供了两个类用于构建redis数据库连接对象</p>
+<ul>
+<li><p>redis.StructRedis：日常使用该类即可，redis命令行client的大部分命令都可以通过该类构建的对象执行，如</p>
+<pre><code>import redis
+
+conn = redis.StructRedis(host=&#39;127.0.0.1&#39;, port=6379, db=1, decode_responses=True)
+
+conn.keys(&#39;*&#39;)
+# [&#39;key1&#39;, &#39;key2&#39;]</code></pre>
+<p>decode_responses=True：表示将返回的二进制数据进行解码，b’key1’–&gt;”key1”</p>
+</li>
+<li><p>redis.Redis：StructRedis的子类，为了向后兼容低版本redis，并不常用</p>
+</li>
+</ul>
+<h3 id="1-2-创建连接池"><a href="#1-2-创建连接池" class="headerlink" title="1.2 创建连接池"></a>1.2 创建连接池</h3><pre><code class="line-numbers language-python"># 使用默认方式连接到数据库
+pool = redis.ConnectionPool(host=&#39;127.0.0.1&#39;, port=6379, db=0)
+conn = redis.StrictRedis(connection_pool=pool)</code></pre>
+<h3 id="1-3-redis-url方式连接到数据库"><a href="#1-3-redis-url方式连接到数据库" class="headerlink" title="1.3 redis url方式连接到数据库"></a>1.3 redis url方式连接到数据库</h3><p>RedisUrl类型</p>
+<pre><code>redis://[:password]@host:port/db    # TCP连接
+rediss://[:password]@host:port/db   # Redis TCP+SSL 连接
+unix://[:password]@/path/to/socket.sock?db=db    # Redis Unix Socket 连接</code></pre>
+<p>连接方法</p>
+<pre><code class="line-numbers language-python"># 普通连接
+conn = redis.StrictRedis(connection_pool=pool)
+# 连接池
+conn = redis.ConnectionPool.from_url(&#39;redis://@localhost:6379/1&#39;)</code></pre>
+<h2 id="2-redis对象api"><a href="#2-redis对象api" class="headerlink" title="2. redis对象api"></a>2. redis对象api</h2><h3 id="String操作"><a href="#String操作" class="headerlink" title="String操作"></a>String操作</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+<th>示例</th>
+<th>示例结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>set(name, value)</td>
+<td>给name赋值为value</td>
+<td>redis.set(‘name’, ‘Bob’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>get(name)</td>
+<td>返回数据库中key为name的string的value</td>
+<td>redis.get(‘name’)</td>
+<td>b’Bob’</td>
+</tr>
+<tr>
+<td>getset(name, value)</td>
+<td>给数据库中key为name的string赋予值value并返回上次的value</td>
+<td>redis.getset(‘name’, ‘Mike’)</td>
+<td>b’Bob’</td>
+</tr>
+<tr>
+<td>mget(keys, *args)</td>
+<td>返回多个key对应的value</td>
+<td>redis.mget([‘name’, ‘nickname’])</td>
+<td>[b’Mike’, b’Miker’]</td>
+</tr>
+<tr>
+<td>setnx(name, value)</td>
+<td>如果key不存在才设置value</td>
+<td>redis.setnx(‘newname’, ‘James’)</td>
+<td>第一次运行True，第二次False</td>
+</tr>
+<tr>
+<td>setex(name, time, value)</td>
+<td>设置可以对应的值为string类型的value，并指定此键值对应的有效期</td>
+<td>redis.setex(‘name’, 1, ‘James’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>setrange(name, offset, value)</td>
+<td>设置指定key的value值的子字符串</td>
+<td>redis.set(‘name’, ‘Hello’) redis.setrange(‘name’, 6, ‘World’)</td>
+<td>11，修改后的字符串长度</td>
+</tr>
+<tr>
+<td>mset(mapping)</td>
+<td>批量赋值</td>
+<td>redis.mset({‘name1’: ‘Durant’, ‘name2’: ‘James’})</td>
+<td>True</td>
+</tr>
+<tr>
+<td>msetnx(mapping)</td>
+<td>key均不存在时才批量赋值</td>
+<td>redis.msetnx({‘name3’: ‘Smith’, ‘name4’: ‘Curry’})</td>
+<td>True</td>
+</tr>
+<tr>
+<td>incr(name, amount=1)</td>
+<td>key为name的value增值操作，默认1，key不存在则被创建并设为amount</td>
+<td>redis.incr(‘age’, 1)</td>
+<td>1，即修改后的值</td>
+</tr>
+<tr>
+<td>decr(name, amount=1)</td>
+<td>key为name的value减值操作，默认1，key不存在则被创建并设置为-amount</td>
+<td>redis.decr(‘age’, 1)</td>
+<td>-1，即修改后的值</td>
+</tr>
+<tr>
+<td>append(key, value)</td>
+<td>key为name的string的值附加value</td>
+<td>redis.append(‘nickname’, ‘OK’)</td>
+<td>13，即修改后的字符串长度</td>
+</tr>
+<tr>
+<td>substr(name, start, end=-1)</td>
+<td>返回key为name的string的value的子串</td>
+<td>redis.substr(‘name’, 1, 4)</td>
+<td>b’ello’</td>
+</tr>
+<tr>
+<td>getrange(key, start, end)</td>
+<td>获取key的value值从start到end的子字符串</td>
+<td>redis.getrange(‘name’, 1, 4)</td>
+<td>b’ello’</td>
+</tr>
+</tbody></table>
+<h3 id="Key操作"><a href="#Key操作" class="headerlink" title="Key操作"></a>Key操作</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+<th>示例</th>
+<th>示例结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>exists(name)</td>
+<td>判断一个key是否存在</td>
+<td>redis.exists(‘name’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>delete(name)</td>
+<td>删除一个key</td>
+<td>redis.delete(‘name’)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>type(name)</td>
+<td>判断key类型</td>
+<td>redis.type(‘name’)</td>
+<td>b’string’</td>
+</tr>
+<tr>
+<td>keys(pattern)</td>
+<td>获取所有符合规则的key</td>
+<td>redis.keys(‘n*’)</td>
+<td>[b’name’]</td>
+</tr>
+<tr>
+<td>randomkey()</td>
+<td>获取随机的一个key</td>
+<td>randomkey()</td>
+<td>b’name’</td>
+</tr>
+<tr>
+<td>rename(src, dst)</td>
+<td>将key重命名</td>
+<td>redis.rename(‘name’, ‘nickname’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>dbsize()</td>
+<td>获取当前数据库中key的数目</td>
+<td>dbsize()</td>
+<td>100</td>
+</tr>
+<tr>
+<td>expire(name, time)</td>
+<td>设定key的过期时间，单位秒</td>
+<td>redis.expire(‘name’, 2)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>ttl(name)</td>
+<td>获取key的过期时间，单位秒，-1为永久不过期</td>
+<td>redis.ttl(‘name’)</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>move(name, db)</td>
+<td>将key移动到其他数据库</td>
+<td>move(‘name’, 2)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>flushdb()</td>
+<td>删除当前选择数据库中的所有key</td>
+<td>flushdb()</td>
+<td>True</td>
+</tr>
+<tr>
+<td>flushall()</td>
+<td>删除所有数据库中的所有key</td>
+<td>flushall()</td>
+<td>True</td>
+</tr>
+</tbody></table>
+<h3 id="List操作"><a href="#List操作" class="headerlink" title="List操作"></a>List操作</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+<th>示例</th>
+<th>示例结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rpush(name, *values)</td>
+<td>在key为name的list尾添加值为value的元素，可以传多个</td>
+<td>redis.rpush(‘list’, 1, 2, 3)</td>
+<td>3，list大小</td>
+</tr>
+<tr>
+<td>lpush(name, *values)</td>
+<td>在key为name的list头添加值为value的元素，可以传多个</td>
+<td>redis.lpush(‘list’, 0)</td>
+<td>4，list大小</td>
+</tr>
+<tr>
+<td>llen(name)</td>
+<td>返回key为name的list的长度</td>
+<td>redis.llen(‘list’)</td>
+<td>4</td>
+</tr>
+<tr>
+<td>lrange(name, start, end)</td>
+<td>返回key为name的list中start至end之间的元素</td>
+<td>redis.lrange(‘list’, 1, 3)</td>
+<td>[b’3’, b’2’, b’1’]</td>
+</tr>
+<tr>
+<td>ltrim(name, start, end)</td>
+<td>截取key为name的list，保留索引为start到end的内容</td>
+<td>ltrim(‘list’, 1, 3)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>lindex(name, index)</td>
+<td>返回key为name的list中index位置的元素</td>
+<td>redis.lindex(‘list’, 1)</td>
+<td>b’2’</td>
+</tr>
+<tr>
+<td>lset(name, index, value)</td>
+<td>给key为name的list中index位置的元素赋值，越界则报错</td>
+<td>redis.lset(‘list’, 1, 5)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>lrem(name, count, value)</td>
+<td>删除count个key的list中值为value的元素</td>
+<td>redis.lrem(‘list’, 2, 3)</td>
+<td>1，即删除的个数</td>
+</tr>
+<tr>
+<td>lpop(name)</td>
+<td>返回并删除key为name的list中的首元素</td>
+<td>redis.lpop(‘list’)</td>
+<td>b’5’</td>
+</tr>
+<tr>
+<td>rpop(name)</td>
+<td>返回并删除key为name的list中的尾元素</td>
+<td>redis.rpop(‘list’)</td>
+<td>b’2’</td>
+</tr>
+<tr>
+<td>blpop(keys, timeout=0)</td>
+<td>返回并删除名称为在keys中的list中的首元素，如果list为空，则会一直阻塞等待</td>
+<td>redis.blpop(‘list’)</td>
+<td>[b’5’]</td>
+</tr>
+<tr>
+<td>brpop(keys, timeout=0)</td>
+<td>返回并删除key为name的list中的尾元素，如果list为空，则会一直阻塞等待</td>
+<td>redis.brpop(‘list’)</td>
+<td>[b’2’]</td>
+</tr>
+<tr>
+<td>rpoplpush(src, dst)</td>
+<td>返回并删除名称为src的list的尾元素，并将该元素添加到名称为dst的list的头部</td>
+<td>redis.rpoplpush(‘list’, ‘list2’)</td>
+<td>b’2’</td>
+</tr>
+</tbody></table>
+<h3 id="Set操作"><a href="#Set操作" class="headerlink" title="Set操作"></a>Set操作</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+<th>示例</th>
+<th>示例结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sadd(name, *values)</td>
+<td>向key为name的set中添加元素</td>
+<td>redis.sadd(‘tags’, ‘Book’, ‘Tea’, ‘Coffee’)</td>
+<td>3，即插入的数据个数</td>
+</tr>
+<tr>
+<td>srem(name, *values)</td>
+<td>从key为name的set中删除元素</td>
+<td>redis.srem(‘tags’, ‘Book’)</td>
+<td>1，即删除的数据个数</td>
+</tr>
+<tr>
+<td>spop(name)</td>
+<td>随机返回并删除key为name的set中一个元素</td>
+<td>redis.spop(‘tags’)</td>
+<td>b’Tea’</td>
+</tr>
+<tr>
+<td>smove(src, dst, value)</td>
+<td>从src对应的set中移除元素并添加到dst对应的set中</td>
+<td>redis.smove(‘tags’, ‘tags2’, ‘Coffee’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>scard(name)</td>
+<td>返回key为name的set的元素个数</td>
+<td>redis.scard(‘tags’)</td>
+<td>3</td>
+</tr>
+<tr>
+<td>sismember(name, value)</td>
+<td>测试member是否是key为name的set的元素</td>
+<td>redis.sismember(‘tags’, ‘Book’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>sinter(keys, *args)</td>
+<td>返回所有给定key的set的交集</td>
+<td>redis.sinter([‘tags’, ‘tags2’])</td>
+<td>{b’Coffee’}</td>
+</tr>
+<tr>
+<td>sinterstore(dest, keys, *args)</td>
+<td>求交集并将交集保存到dest的集合</td>
+<td>redis.sinterstore(‘inttag’, [‘tags’, ‘tags2’])</td>
+<td>1</td>
+</tr>
+<tr>
+<td>sunion(keys, *args)</td>
+<td>返回所有给定key的set的并集</td>
+<td>redis.sunion([‘tags’, ‘tags2’])</td>
+<td>{b’Coffee’, b’Book’, b’Pen’}</td>
+</tr>
+<tr>
+<td>sunionstore(dest, keys, *args)</td>
+<td>求并集并将并集保存到dest的集合</td>
+<td>redis.sunionstore(‘inttag’, [‘tags’, ‘tags2’])</td>
+<td>3</td>
+</tr>
+<tr>
+<td>sdiff(keys, *args)</td>
+<td>返回所有给定key的set的差集</td>
+<td>redis.sdiff([‘tags’, ‘tags2’])</td>
+<td>{b’Book’, b’Pen’}</td>
+</tr>
+<tr>
+<td>sdiffstore(dest, keys, *args)</td>
+<td>求差集并将差集保存到dest的集合</td>
+<td>redis.sdiffstore(‘inttag’, [‘tags’, ‘tags2’])</td>
+<td>3</td>
+</tr>
+<tr>
+<td>smembers(name)</td>
+<td>返回key为name的set的所有元素</td>
+<td>redis.smembers(‘tags’)</td>
+<td>{b’Pen’, b’Book’, b’Coffee’}</td>
+</tr>
+<tr>
+<td>srandmember(name)</td>
+<td>随机返回key为name的set的一个元素，但不删除元素</td>
+<td>redis.srandmember(‘tags’)</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="Sorted-Set操作"><a href="#Sorted-Set操作" class="headerlink" title="Sorted Set操作"></a>Sorted Set操作</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+<th>示例</th>
+<th>示例结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zadd(name, args, *kwargs)</td>
+<td>向key为name的zset中添加元素member，score用于排序。如果该元素存在，则更新其顺序</td>
+<td>redis.zadd(‘grade’, 100, ‘Bob’, 98, ‘Mike’)</td>
+<td>2，即添加的元素个数</td>
+</tr>
+<tr>
+<td>zrem(name, *values)</td>
+<td>删除key为name的zset中的元素</td>
+<td>redis.zrem(‘grade’, ‘Mike’)</td>
+<td>1，即删除的元素个数</td>
+</tr>
+<tr>
+<td>zincrby(name, value, amount=1)</td>
+<td>如果在key为name的zset中已经存在元素value，则该元素的score增加amount，否则向该集合中添加该元素，其score的值为amount</td>
+<td>redis.zincrby(‘grade’, ‘Bob’, -2)</td>
+<td>98.0，即修改后的值</td>
+</tr>
+<tr>
+<td>zrank(name, value)</td>
+<td>返回key为name的zset中元素的排名（按score从小到大排序）即下标</td>
+<td>redis.zrank(‘grade’, ‘Amy’)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>zrevrank(name, value)</td>
+<td>返回key为name的zset中元素的倒数排名（按score从大到小排序）即下标</td>
+<td>redis.zrevrank(‘grade’, ‘Amy’)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>zrevrange(name, start, end, withscores=False)</td>
+<td>返回key为name的zset（按score从大到小排序）中的index从start到end的所有元素</td>
+<td>redis.zrevrange(‘grade’, 0, 3)</td>
+<td>[b’Bob’, b’Mike’, b’Amy’, b’James’]</td>
+</tr>
+<tr>
+<td>zrangebyscore(name, min, max, start=None, num=None, withscores=False)</td>
+<td>返回key为name的zset中score在给定区间的元素</td>
+<td>redis.zrangebyscore(‘grade’, 80, 95)</td>
+<td>[b’Amy’, b’James’]</td>
+</tr>
+<tr>
+<td>zcount(name, min, max)</td>
+<td>返回key为name的zset中score在给定区间的数量</td>
+<td>redis.zcount(‘grade’, 80, 95)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>zcard(name)</td>
+<td>返回key为name的zset的元素个数</td>
+<td>redis.zcard(‘grade’)</td>
+<td>3</td>
+</tr>
+<tr>
+<td>zremrangebyrank(name, min, max)</td>
+<td>删除key为name的zset中排名在给定区间的元素</td>
+<td>redis.zremrangebyrank(‘grade’, 0, 0)</td>
+<td>1，即删除的元素个数</td>
+</tr>
+<tr>
+<td>zremrangebyscore(name, min, max)</td>
+<td>删除key为name的zset中score在给定区间的元素</td>
+<td>redis.zremrangebyscore(‘grade’, 80, 90)</td>
+<td>1，即删除的元素个数</td>
+</tr>
+</tbody></table>
+<h3 id="Hash操作"><a href="#Hash操作" class="headerlink" title="Hash操作"></a>Hash操作</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+<th>示例</th>
+<th>示例结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hset(name, key, value)</td>
+<td>向key为name的hash中添加映射</td>
+<td>hset(‘price’, ‘cake’, 5)</td>
+<td>1，即添加的映射个数</td>
+</tr>
+<tr>
+<td>hsetnx(name, key, value)</td>
+<td>向key为name的hash中添加映射，如果映射键名不存在</td>
+<td>hsetnx(‘price’, ‘book’, 6)</td>
+<td>1，即添加的映射个数</td>
+</tr>
+<tr>
+<td>hget(name, key)</td>
+<td>返回key为name的hash中field对应的value</td>
+<td>redis.hget(‘price’, ‘cake’)</td>
+<td>5</td>
+</tr>
+<tr>
+<td>hmget(name, keys, *args)</td>
+<td>返回key为name的hash中各个键对应的value</td>
+<td>redis.hmget(‘price’, [‘apple’, ‘orange’])</td>
+<td>[b’3’, b’7’]</td>
+</tr>
+<tr>
+<td>hmset(name, mapping)</td>
+<td>向key为name的hash中批量添加映射</td>
+<td>redis.hmset(‘price’, {‘banana’: 2, ‘pear’: 6})</td>
+<td>True</td>
+</tr>
+<tr>
+<td>hincrby(name, key, amount=1)</td>
+<td>将key为name的hash中映射的value增加amount</td>
+<td>redis.hincrby(‘price’, ‘apple’, 3)</td>
+<td>6，修改后的值</td>
+</tr>
+<tr>
+<td>hexists(name, key)</td>
+<td>key为namehash中是否存在键名为key的映射</td>
+<td>redis.hexists(‘price’, ‘banana’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>hdel(name, *keys)</td>
+<td>key为namehash中删除键名为key的映射</td>
+<td>redis.hdel(‘price’, ‘banana’)</td>
+<td>True</td>
+</tr>
+<tr>
+<td>hlen(name)</td>
+<td>从key为name的hash中获取映射个数</td>
+<td>redis.hlen(‘price’)</td>
+<td>6</td>
+</tr>
+<tr>
+<td>hkeys(name)</td>
+<td>从key为name的hash中获取所有映射键名</td>
+<td>redis.hkeys(‘price’)</td>
+<td>[b’cake’, b’book’, b’banana’, b’pear’]</td>
+</tr>
+<tr>
+<td>hvals(name)</td>
+<td>从key为name的hash中获取所有映射键值</td>
+<td>redis.hvals(‘price’)</td>
+<td>[b’5’, b’6’, b’2’, b’6’]</td>
+</tr>
+<tr>
+<td>hgetall(name)</td>
+<td>从key为name的hash中获取所有映射键值对</td>
+<td>redis.hgetall(‘price’)</td>
+<td>{b’cake’: b’5’, b’book’: b’6’, b’orange’: b’7’, b’pear’: b’6’}</td>
+</tr>
+<tr>
+<td>                                                                                     </td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+]]></content>
+      <tags>
+        <tag>数据库</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
