@@ -92,6 +92,11 @@ net start LxssManager    </code></pre>
       </tags>
   </entry>
   <entry>
+    <title></title>
+    <url>/2020/Docker/Docker%E5%AE%9E%E4%BE%8B%C2%B7Centos%E5%88%9B%E5%BB%BA%E5%8F%8A%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>Python命名空间及作用域总结</title>
     <url>/2020/Python/Python%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%8F%8A%E4%BD%9C%E7%94%A8%E5%9F%9F/</url>
     <content><![CDATA[<h4 id="命名空间（namespace）-名称存储"><a href="#命名空间（namespace）-名称存储" class="headerlink" title="命名空间（namespace）- 名称存储"></a>命名空间（namespace）- 名称存储</h4><blockquote>
@@ -445,6 +450,99 @@ Out[9]: &#39;Example website&#39;</code></pre>
       <tags>
         <tag>爬虫</tag>
         <tag>常用</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何自搭建代理服务器·基于Linux</title>
+    <url>/2020/Linux/%E5%A6%82%E4%BD%95%E8%87%AA%E6%90%AD%E5%BB%BA%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<p>爬虫因为网站限制的原因经常用到ip代理，解决方案无非几种：</p>
+<ul>
+<li>网络上寻找一些免费代理，优点：免费不限量；缺点：可用性较低，验证费时间费资源。一些有免费代理的网站，<span class="exturl" data-url="aHR0cHM6Ly93d3cueGljaWRhaWxpLmNvbS8=">西刺代理<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL2lwLnpkYXllLmNvbS9GcmVlSVBsaXN0Lmh0bWw=">站大爷<i class="fa fa-external-link-alt"></i></span>，<span class="exturl" data-url="aHR0cDovL3d3dy44OWlwLmNuL2luZGV4Lmh0bWw=">89免费代理<i class="fa fa-external-link-alt"></i></span>等等，网上可以搜出一大堆。</li>
+<li>购买代理ip，和找免费的差不多，一般有免费代理ip的网站基本都有收费的api。优点：可用性较高，较稳定。缺点：要钱。严格说，这个也不算缺点，要钱很多人也能接受，带来的方便还是很大程度的。</li>
+<li>自己搭建ip代理，自己租服务器自己搭。优点：稳定，可控。缺点：麻烦，成本高。</li>
+</ul>
+<p>其实代理自己整一台服务器搭一下就可以，就是其中曲折有点多···，搭建代理也有很多种协议，工具，都实验过后选择使用tinyproxy，简单方便。</p>
+<a id="more"></a>
+
+<hr>
+<h4 id="Tinyproxy的安装"><a href="#Tinyproxy的安装" class="headerlink" title="Tinyproxy的安装"></a>Tinyproxy的安装</h4><p>Ubuntu系直接执行安装命令即可：<code>apt install -y tinyproxy</code></p>
+<p>Centos系需要先安装epel源，然后进行安装</p>
+<pre><code class="line-numbers language-bash">yum -y install epel-release 
+yum -y install tinyproxy</code></pre>
+<p>版本验证</p>
+<pre><code class="line-numbers language-bash">tinyproxy -v        # tinyproxy 1.10.0</code></pre>
+<h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><p>在使用之前配置一下配置文件：<code>vim /etc/tinyproxy/tinyproxy.conf</code>，常用配置项：</p>
+<pre><code class="line-numbers language-bash">Bind 127.0.0.1            # 允许访问服务的域名，默认只允许本地，没有限制的话注释掉即可
+Port 10086                # 服务开放的端口，默认8888</code></pre>
+<h4 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h4><pre><code class="line-numbers language-bash">service tinyproxy start        # 开启
+service tinyproxy restart        # 重启</code></pre>
+<pre><code class="line-numbers language-bash">service tinyproxy status    # 查询状态</code></pre>
+<pre><code class="line-numbers language-bash">● tinyproxy.service - Tinyproxy lightweight HTTP Proxy
+     Loaded: loaded (/lib/systemd/system/tinyproxy.service; enabled; vendor preset: enabled)
+     Active: active (running) since Mon 2020-04-14 15:23:46 CST; 4s ago
+       Docs: man:tinyproxy(8)
+             man:tinyproxy.conf(5)
+    Process: 80144 ExecStart=/usr/bin/tinyproxy $FLAGS (code=exited, status=0/SUCCESS)
+    Process: 80152 ExecStartPost=/bin/sleep 0.1 (code=exited, status=0/SUCCESS)
+   Main PID: 80159 (tinyproxy)
+      Tasks: 11 (limit: 2319)
+     Memory: 4.5M
+     CGroup: /system.slice/tinyproxy.service
+             ├─80159 /usr/bin/tinyproxy
+             ├─80161 /usr/bin/tinyproxy
+             ├─80162 /usr/bin/tinyproxy
+             ├─80163 /usr/bin/tinyproxy
+             ├─80164 /usr/bin/tinyproxy
+             ├─80165 /usr/bin/tinyproxy
+             ├─80166 /usr/bin/tinyproxy
+             ├─80167 /usr/bin/tinyproxy
+             ├─80168 /usr/bin/tinyproxy
+             ├─80169 /usr/bin/tinyproxy
+             └─80170 /usr/bin/tinyproxy
+
+Sep 14 15:23:46 ubuntu20 systemd[1]: tinyproxy.service: Main process exited, code=exited, status=2/INVALIDARGUMENT
+Sep 14 15:23:46 ubuntu20 systemd[1]: tinyproxy.service: Failed with result &#39;exit-code&#39;.
+Sep 14 15:23:46 ubuntu20 systemd[1]: Stopped Tinyproxy lightweight HTTP Proxy.
+Sep 14 15:23:46 ubuntu20 systemd[1]: Starting Tinyproxy lightweight HTTP Proxy...
+Sep 14 15:23:46 ubuntu20 systemd[1]: Started Tinyproxy lightweight HTTP Proxy.</code></pre>
+<h4 id="测试代理的可用性"><a href="#测试代理的可用性" class="headerlink" title="测试代理的可用性"></a>测试代理的可用性</h4><p>我的代理搭建在阿里云上，IP47.93.230.127，port10086，本地wsl使用curl代理方法测试</p>
+<pre><code class="line-numbers language-bash"># -x  -- [protocol://]host[:port] Use this proxy
+curl -x 47.93.230.127:10086 httpbin.org/get</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200914152459.png"></p>
+<h4 id="错误：Can’t-open-PID-file"><a href="#错误：Can’t-open-PID-file" class="headerlink" title="错误：Can’t open PID file"></a>错误：Can’t open PID file</h4><p><strong>错误描述：</strong></p>
+<ul>
+<li><p>tinyproxy.service: Can’t open PID file /run/tinyproxy/tinyproxy.pid (yet?) after start: No such file or directory</p>
+</li>
+<li><p>服务start时并没有出现错误，修改了配置文件后重启服务出现该错误</p>
+</li>
+</ul>
+<p><strong>分析：</strong></p>
+<ul>
+<li>PIDfile指定了一个用于存储服务的PID的文件路径，系统管理器在服务启动后会从这个文件中读取服务主进程的PID</li>
+<li>service命令调用顺序为：<code>ExecStart-&gt;ExecStartPost-&gt;PIDFile</code></li>
+<li>如果服务启动后该文件还没有写完，则会报告错误该文件不可读</li>
+<li>为了使系统管理器读取时该文件已写完，需在服务启动后加入一段延时，这时需要用到ExecStartPost=命令来调用/bin/sleep，参数为0.1。ExecStartPost=指令只会在ExecStart=调用成功后运行。</li>
+</ul>
+<p><strong>解决方案：</strong></p>
+<pre><code class="line-numbers language-bash"># 打开文件/lib/systemd/system/tinyproxy.service并在[Service]选项下添加以下内容：
+ExecStartPost=/bin/sleep 0.1
+
+# 重新加载systemd程序的配置文件
+systemctl daemon-reload
+
+# 重启tinyproxy服务
+service tinyproxy restart
+
+# 查看tinyproxy服务状态
+service tinyproxy status</code></pre>
+<p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200914152548.png"></p>
+<p><strong>扩展：</strong></p>
+<p>相关配置信息详阅systemd.service配置文件参考</p>
+<p>systemd.service — Service unit configuration：<span class="exturl" data-url="aHR0cHM6Ly93d3cuZnJlZWRlc2t0b3Aub3JnL3NvZnR3YXJlL3N5c3RlbWQvbWFuL3N5c3RlbWQuc2VydmljZS5odG1s">https://www.freedesktop.org/software/systemd/man/systemd.service.html<i class="fa fa-external-link-alt"></i></span></p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>爬虫</tag>
       </tags>
   </entry>
   <entry>
