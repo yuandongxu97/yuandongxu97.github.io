@@ -1,0 +1,393 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/note.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/note.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/note.png"><link rel="mask-icon" href="/note.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css"><script src="/lib/pace/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yoursite.com",root:"/",scheme:"Gemini",version:"7.8.0",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:15,onmobile:!0},copycode:{enable:!0,show_result:!1,style:"mac"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!0,lazyload:!1,pangu:!0,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!0,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"content.json"}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.css"><meta name="description" content="同时使用QQ和微信是多进程，potplayer同时播放声音&#x2F;视频是多线程，但Python因为GIL的原因同一时间仅有一个线程在运行，所以GIL存在的情况下任何多线程是基于线程切换的伪多线程，仅能利用多核CPU的一个核心，是并发执行而非并行执行。 threading模块中包含了关于线程操作的丰富功能，包括：常用线程函数，线程、锁、递归锁、事件、条件变量、信号量、定时器、栅栏等 threading函数"><meta property="og:type" content="article"><meta property="og:title" content="Python标准库·多线程threading"><meta property="og:url" content="http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E7%BA%BF%E7%A8%8Bthreading/index.html"><meta property="og:site_name" content="苑东旭的博客"><meta property="og:description" content="同时使用QQ和微信是多进程，potplayer同时播放声音&#x2F;视频是多线程，但Python因为GIL的原因同一时间仅有一个线程在运行，所以GIL存在的情况下任何多线程是基于线程切换的伪多线程，仅能利用多核CPU的一个核心，是并发执行而非并行执行。 threading模块中包含了关于线程操作的丰富功能，包括：常用线程函数，线程、锁、递归锁、事件、条件变量、信号量、定时器、栅栏等 threading函数"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710143848.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710144034.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710144343.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710144951.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710153752.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710154254.png"><meta property="article:published_time" content="2020-04-04T16:00:00.000Z"><meta property="article:modified_time" content="2020-10-07T15:34:47.526Z"><meta property="article:author" content="yuandongxu"><meta property="article:tag" content="Python标准库"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710143848.png"><link rel="canonical" href="http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E7%BA%BF%E7%A8%8Bthreading/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>Python标准库·多线程threading | 苑东旭的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">苑东旭的博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">笔记·归纳·总结</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">11</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">69</span></a></li><li class="menu-item menu-item-书签"><a href="/tools" rel="section"><i class="fa fa-bookmark fa-fw"></i>书签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>站内搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E7%BA%BF%E7%A8%8Bthreading/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><meta itemprop="name" content="yuandongxu"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="苑东旭的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Python标准库·多线程threading</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2020-04-05 00:00:00" itemprop="dateCreated datePublished" datetime="2020-04-05T00:00:00+08:00">2020-04-05</time> </span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>14k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-tag"></i> </span><span class="post-meta-item-text">标签：</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">Python标准库</span></a> </span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E7%BA%BF%E7%A8%8Bthreading/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E7%BA%BF%E7%A8%8Bthreading/" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><p>同时使用QQ和微信是多进程，potplayer同时播放声音/视频是多线程，但Python因为GIL的原因同一时间仅有一个线程在运行，所以<strong>GIL存在的情况下任何多线程是基于线程切换的伪多线程</strong>，仅能利用多核CPU的一个核心，是并发执行而非并行执行。</p><p>threading模块中包含了关于线程操作的丰富功能，包括：常用线程函数，线程、锁、递归锁、事件、条件变量、信号量、定时器、栅栏等</p><p><strong>threading函数</strong></p><ul><li><strong>threading.active_count()：</strong>返回当前存活的threading.Thread线程对象数量，等同于len(threading.enumerate())。</li><li><strong>threading.current_thread()：</strong>返回此函数的调用者控制的threading.Thread线程对象。如果当前调用者控制的线程不是通过threading.Thread创建的，则返回一个功能受限的虚拟线程对象。</li><li><strong>threading.get_ident()：</strong>返回当前线程的线程标识符。注意当一个线程退出时，它的线程标识符可能会被之后新创建的线程复用。</li><li><strong>threading.enumerate()：</strong>返回当前存活的threading.Thread线程对象列表。</li><li><strong>threading.main_thread()：</strong>返回主线程对象，通常情况下，就是程序启动时Python解释器创建的threading._MainThread线程对象。</li><li><strong>threading.stack_size([size])：</strong>返回创建线程时使用的堆栈大小。也可以使用可选参数size指定之后创建线程时的堆栈大小，size可以是0或者一个不小于32KiB的正整数。如果参数没有指定，则默认为0。如果系统或者其他原因不支持改变堆栈大小，则会报RuntimeError错误；如果指定的堆栈大小不合法，则会报ValueError，但并不会修改这个堆栈的大小。</li></ul><p><strong>threading常量</strong></p><ul><li><strong>threading.TIMEOUT_MAX：</strong>指定阻塞函数（如Lock.acquire()、RLock.acquire()、Condition.wait()等）中参数timeout的最大值，在给这些阻塞函数传参时如果超过了这个指定的最大值会抛出OverflowError错误。</li></ul><a id="more"></a><hr><h3 id="多线程类：threading-Thread"><a href="#多线程类：threading-Thread" class="headerlink" title="多线程类：threading.Thread"></a>多线程类：threading.Thread</h3><p>Thread是线程类，有两种使用方法，直接传入要运行的方法<strong>或</strong>从Thread继承并覆盖run()：</p><h4 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h4><p><em>Thread(group=None, target=None, name=None, args=(), kwargs={})</em></p><ul><li><strong>group</strong>: 线程组，目前还没有实现，库引用中提示必须是None；</li><li><strong>target</strong>: 要执行的方法名称；</li><li><strong>name</strong>: 指定当前线程名称； 可以使用<code>threading.current_thread().name</code>方法获取当前线程名称</li><li><strong>args/kwargs:</strong> 要传入方法的参数。</li></ul><h4 id="实例方法"><a href="#实例方法" class="headerlink" title="实例方法"></a>实例方法</h4><ul><li><strong>isAlive():</strong> 返回线程是否在运行。正在运行指启动后、终止前。</li><li><strong>get/setName(name):</strong> 获取/设置线程名。</li><li><strong>run():</strong> 线程准备就绪，等待CPU调度</li><li><strong>is/setDaemon(bool):</strong> 获取/设置是后台线程（默认前台线程（False））。（在start之前设置）<ul><li>如果是后台线程，主线程执行过程中，后台线程也在进行，主线程执行完毕后，后台线程不论成功与否，主线程和后台线程均停止</li><li>如果是前台线程，主线程执行过程中，前台线程也在进行，主线程执行完毕后，等待前台线程也执行完成后，程序停止</li></ul></li><li><strong>start():</strong> 启动线程。</li><li><strong>join([timeout]):</strong> 阻塞当前上下文环境的线程，直到调用此方法的线程终止或到达指定的timeout（可选参数）。</li></ul><h4 id="具体应用"><a href="#具体应用" class="headerlink" title="具体应用"></a>具体应用</h4><h5 id="创建普通线程：main对child无影响"><a href="#创建普通线程：main对child无影响" class="headerlink" title="创建普通线程：main对child无影响"></a>创建普通线程：main对child无影响</h5><p>（1）直接使用threading.Thread类</p><pre><code class="language-python">import threading
+import time
+
+def test(sum):
+    time.sleep(sum)
+
+t1 = threading.Thread(target=test, args=(3, ))
+# 程序开始
+t1.start()      # 子线程start
+time.sleep(1)   # 主线程休眠1s</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710143848.png"></p><p>（2）继承threading.Thread类，重写run方法</p><pre><code class="language-python">import threading
+import time
+
+
+class MyThread(threading.Thread):
+    &#39;&#39;&#39;继承threading.Thread&#39;&#39;&#39;
+
+    def __init__(self, sum):
+        super(MyThread, self).__init__()  # 显式继承父类的初始化函数
+        self.sum = sum
+
+    def run(self):
+        time.sleep(self.sum)
+
+
+t1 = MyThread(3)
+# start
+t1.start()  
+time.sleep(1)</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710144034.png"></p><h5 id="创建守护线程：main杀掉child"><a href="#创建守护线程：main杀掉child" class="headerlink" title="创建守护线程：main杀掉child"></a>创建守护线程：main杀掉child</h5><p>threading.Thread实例化的线程对象默认setDeamon=False，即非守护线程，亦称为前台线程。</p><ul><li>子线程为前台线程：子线程与主线程不相关，主线程结束，子线程继续运行。</li><li>子线程为守护线程：子线程与主线程相关，主线程结束，子线程停止运行。</li></ul><p>使用普通线程的例子</p><pre><code class="language-python">import threading
+import time
+
+def test(sum):
+    for i in range(sum):
+        time.sleep(1)
+        print(i)
+
+t1 = threading.Thread(target=test, args=(3, ), daemon=True)
+# start
+# t1.setDaemon(True)
+t1.start()      # 子线程start
+time.sleep(1)   # 主线程休眠1s
+
+# 0</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710144343.png"></p><h5 id="创建阻塞线程：mian等待child"><a href="#创建阻塞线程：mian等待child" class="headerlink" title="创建阻塞线程：mian等待child"></a>创建阻塞线程：mian等待child</h5><p>调用线程对象的join方法，可以使线程阻塞当前上下文环境，直到调用此方法的线程终止或到达指定的timeout，即使设置了setDeamon（True）主线程依然要等待子线程结束。</p><p>具体应用：如多线程爬虫计算爬取成功率需要所有爬取子线程结束后才能计算，否则得到的是错误的计算结果。</p><pre><code class="language-python">import threading
+import time
+
+def test(sum):
+    for i in range(sum):
+        time.sleep(1)
+        print(i)
+
+t1 = threading.Thread(target=test, args=(3, ))
+# start
+t1.setDaemon(True)
+t1.start()      # 子线程start
+t1.join()
+time.sleep(1)   # 主线程休眠1s
+
+# 0
+# 1
+# 2</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710144951.png"></p><h4 id="阻塞线程-join-的正确用法"><a href="#阻塞线程-join-的正确用法" class="headerlink" title="阻塞线程(join)的正确用法"></a>阻塞线程(join)的正确用法</h4><p>正确用法</p><p>多线程下不应该是启动一个线程join一次，而应该创建一个线程队列，待所有线程启动后再一次添加</p><pre><code class="language-python">thread_list = []
+thread_sum = 5
+
+for thread in range(thread_sum):
+    t = threading.Thread(target=test, args=(3, ))
+    t.start()
+    thread_list.append(t)
+for thread in thread_list:
+    thread.join()
+
+time.sleep(1)</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710153752.png"></p><p>错误用法</p><p>错误的join会非但没有减少IO消耗，还增加了GIL的额外开销</p><pre><code class="language-python">thread_sum = 5
+
+for thread in range(thread_sum):
+    t = threading.Thread(target=test, args=(3, ))
+    t.start()
+    t.join()
+
+time.sleep(1)</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200710154254.png"></p><h3 id="锁：threading-Lock"><a href="#锁：threading-Lock" class="headerlink" title="锁：threading.Lock"></a>锁：threading.Lock</h3><p>threading.Lock是直接通过_thread模块扩展实现的。</p><p>当锁在被锁定时，它并不属于某一个特定的线程。</p><p>锁只有“锁定”和“非锁定”两种状态，当锁被创建时，是处于“非锁定”状态的。当锁已经被锁定时，再次调用acquire()方法会被阻塞执行，直到锁被调用release()方法释放掉锁并将其状态改为“非锁定”。</p><p>同一个线程获取锁后，如果在释放锁之前再次获取锁会导致当前线程阻塞，除非有另外的线程来释放锁，如果只有一个线程，并且发生了这种情况，会导致这个线程一直阻塞下去，即形成了死锁。所以在获取锁时需要保证锁已经被释放掉了，或者使用递归锁来解决这种情况。</p><ul><li><strong>acquire(blocking=True, timeout=-1)：</strong>获取锁，并将锁的状态改为“锁定”，成功返回True，失败返回False。当一个线程获得锁时，会阻塞其他尝试获取锁的线程，直到这个锁被释放掉。timeout默认值为-1，即将无限阻塞等待直到获得锁，如果设为其他的值时（单位为秒的浮点数），将最多阻塞等待timeout指定的秒数。当blocking为False时，timeout参数被忽略，即没有获得锁也不进行阻塞。</li><li><strong>release()：</strong>释放一个锁，并将其状态改为“非锁定”，需要注意的是任何线程都可以释放锁，不只是获得锁的线程（因为锁不属于特定的线程）。release()方法只能在锁处于“锁定”状态时调用，如果在“非锁定”状态时调用则会报RuntimeError错误。</li></ul><p>使用锁实现线程同步的简单示例：</p><pre><code class="language-Python">&quot;&quot;&quot;
+使用锁实现线程同步
+&quot;&quot;&quot;
+import time
+import threading
+
+# 创建锁
+lock = threading.Lock()
+
+# 全局变量
+global_resource = [None] * 5
+
+
+def change_resource(para, sleep):
+    # 请求锁
+    lock.acquire()
+
+    # 这段代码如果不加锁，第一个线程运行结束后global_resource中是乱的，输出为：修改全局变量为： [&#39;hello&#39;, &#39;hi&#39;, &#39;hi&#39;, &#39;hello&#39;, &#39;hello&#39;]
+    # 第二个线程运行结束后，global_resource中还是乱的，输出为：修改全局变量为： [&#39;hello&#39;, &#39;hi&#39;, &#39;hi&#39;, &#39;hi&#39;, &#39;hi&#39;]
+    global global_resource
+    for i in range(len(global_resource)):
+        global_resource[i] = para
+        time.sleep(sleep)
+    print(&quot;修改全局变量为：&quot;, global_resource)
+
+    # 释放锁
+    lock.release()
+
+
+def main():
+    thread_hi = threading.Thread(target=change_resource, args=(&#39;hi&#39;, 2))
+    thread_hello = threading.Thread(target=change_resource, args=(&#39;hello&#39;, 1))
+    thread_hi.start()
+    thread_hello.start()
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre><pre><code>修改全局变量为： [&#39;hi&#39;, &#39;hi&#39;, &#39;hi&#39;, &#39;hi&#39;, &#39;hi&#39;]
+修改全局变量为： [&#39;hello&#39;, &#39;hello&#39;, &#39;hello&#39;, &#39;hello&#39;, &#39;hello&#39;]</code></pre><h3 id="递归锁：threading-RLock"><a href="#递归锁：threading-RLock" class="headerlink" title="递归锁：threading.RLock"></a>递归锁：threading.RLock</h3><p>递归锁和普通锁的差别在于加入了“所属线程”和“递归等级”的概念，释放锁必须有获取锁的线程来进行释放，同时，同一个线程在释放锁之前再次获取锁将不会阻塞当前线程，只是在锁的递归等级上加了1（获得锁时的初始递归等级为1）。</p><p>使用普通锁时，对于一些可能造成死锁的情况，可以考虑使用递归锁来解决。</p><ul><li><strong>acquire(blocking=True, timeout=-1)：</strong>与普通锁的不同之处在于：当使用默认值时，如果这个线程已经拥有锁，那么锁的递归等级加1。线程获得锁时，该锁的递归等级被初始化为1。当多个线程被阻塞时，只有一个线程能在锁被解时获得锁，这种情况下，acquire()是没有返回值的。</li><li><strong>release()：</strong>没有返回值，调用一次则递归等级减1，递归等级为零时表示这个线程的锁已经被释放掉，其他线程可以获取锁了。可能在一个线程中调用了多次acquire()，导致锁的递归等级大于了1，那么就需要调用对应次数的release()来完全释放锁，并将它的递归等级减到零，其他的线程才能获取锁，不然就会一直被阻塞着。</li></ul><p><strong>递归锁使用简单示例：</strong></p><pre><code class="language-python">&quot;&quot;&quot;
+在普通锁中可能造成死锁的情况，可以考虑使用递归锁解决
+&quot;&quot;&quot;
+import time
+import threading
+
+
+# 如果是使用的两个普通锁，那么就会造成死锁的情况，程序一直阻塞而不会退出
+# rlock_hi = threading.Lock()
+# rlock_hello = threading.Lock()
+
+# 使用成一个递归锁就可以解决当前这种死锁情况
+rlock_hi = rlock_hello = threading.RLock()
+
+
+def test_thread_hi():
+    # 初始时锁内部的递归等级为1
+    rlock_hi.acquire()
+    print(&#39;线程test_thread_hi获得了锁rlock_hi&#39;)
+    time.sleep(2)
+    # 如果再次获取同样一把锁，则不会阻塞，只是内部的递归等级加1
+    rlock_hello.acquire()
+    print(&#39;线程test_thread_hi获得了锁rlock_hello&#39;)
+    # 释放一次锁，内部递归等级减1
+    rlock_hello.release()
+    # 这里再次减，当递归等级为0时，其他线程才可获取到此锁
+    rlock_hi.release()
+
+
+def test_thread_hello():
+    rlock_hello.acquire()
+    print(&#39;线程test_thread_hello获得了锁rlock_hello&#39;)
+    time.sleep(2)
+    rlock_hi.acquire()
+    print(&#39;线程test_thread_hello获得了锁rlock_hi&#39;)
+    rlock_hi.release()
+    rlock_hello.release()
+
+
+def main():
+    thread_hi = threading.Thread(target=test_thread_hi)
+    thread_hello = threading.Thread(target=test_thread_hello)
+    thread_hi.start()
+    thread_hello.start()
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre><pre><code>线程test_thread_hi获得了锁rlock_hi
+线程test_thread_hi获得了锁rlock_hello
+线程test_thread_hello获得了锁rlock_hello
+线程test_thread_hello获得了锁rlock_hi</code></pre><h3 id="条件变量：threading-Condition"><a href="#条件变量：threading-Condition" class="headerlink" title="条件变量：threading.Condition"></a>条件变量：threading.Condition</h3><p>它的wait()方法释放锁，并阻塞程序直到其他线程调用notify()或者notify_all()方法唤醒，然后wait()方法重新获取锁，这个方法也可以指定timeout超时时间。<br>它的notify()方法唤醒一个正在等待的线程，notify_all()则是唤醒所有正在等待的线程。notify()或者notify_all()并不会释放锁，所以被唤醒的线程并不会立即从它们的wait()方法出返回并执行，只有在调用了notify()或者notify_all()方法的线程放弃了锁的所有权后才会返回对应的线程并执行，即先通知再释放锁。</p><p><strong>threading.Condition(lock=None)：</strong>一个条件变量对象允许一个或多个线程等待，直到被另一个线程通知。lock参数必须是一个Lock对象或者RLock对象，并且会作为底层锁使用，默认使用RLock。</p><ul><li><strong>acquire(*args)：</strong>请求底层锁。此方法调用底层锁对应的方法和返回对应方法的返回值。</li><li><strong>release()：</strong>释放底层锁。此方法调用底层所对应的方法，没有返回值。</li><li><strong>wait(timeout=None)：</strong>释放锁，等待直到被通知（再获取锁）或者发生超时事件。如果线程在调用此方法时本身并没有锁（即线程首先得有锁），则会报RuntimeError错误。这个方法释放底层锁，然后阻塞线程，直到另一个线程中的同一个条件变量使用notify()或notify_all()唤醒，或者超时事件发生，一旦被唤醒或者超时，则会重新去获取锁并返回（成功返回True，否则返回False）。timeout参数为浮点类型的秒数。在RLock中使用一次release方法，可能并不能释放锁，因为锁可能被acquire()了多次，但是在条件变量对象中，它调用了RLock类的内部方法，可以一次就完全释放锁，重新获取锁时也会重置锁的递归等级。</li><li><strong>wait_for(predicate, timeout=None)：</strong>与wait方法相似，等待，直到条件计算为True，返回最后一次的predicate的返回值。predicate参数为一个返回值为布尔值的可调用对象。调用此方法的时候会先调用predicate对象，如果返回的就是True，则不会释放锁，直接往后执行。另一个线程通知后，在它释放锁时，才会触发wait_for方法等待事件，这时如果predicate结果为True，则尝试获取锁，获取成功后则继续往后执行，如果为False，则会一直阻塞下去。此方法如果忽略timeout参数，就相当于：while not predicate(): condition_lock.wait()。</li><li><strong>notify(n=1)：</strong>唤醒一个等待这个条件的线程，如果调用这个方法的线程在没有获得锁的情况下调用这个方法，会报RuntimeError错误。默认唤醒一个线程，可以通过参数n设置唤醒n个正在等待这个条件变量的线程，如果没有线程在等待，调用这个方法不会发生任何事。如果等待的线程中正好有n个线程，那么这个方法可以准确的唤醒这n个线程，但是等待的线程超过指定的n个，有时候可能会唤醒超过n个的线程，所以依赖参数n是不安全的行为。</li><li><strong>notify_all()：</strong>唤醒所有等待这个条件的线程。这个方法与notify()不同之处在于它唤醒所有线程，而不是特定n个。</li></ul><p><strong>条件变量简单示例：</strong></p><pre><code class="language-python">&quot;&quot;&quot;
+让一个线程等待，直到另一个线程通知
+&quot;&quot;&quot;
+import time
+import threading
+
+
+# 创建条件变量对象
+condition_lock = threading.Condition()
+
+PRE = 0
+
+
+# predicate可调用函数
+def pre():
+    print(PRE)
+    return PRE
+
+
+def test_thread_hi():
+    # 在使用wait/wait_for之前必须先获得锁
+    condition_lock.acquire()
+
+    print(&#39;等待线程test_thread_hello的通知&#39;)
+    # 先执行一次pre，返回False后释放掉锁，等另一个线程释放掉锁后再次执行pre，返回True后再次获取锁
+    # wait_for的返回值不是True和False，而是predicate参数的返回值
+    condition_lock.wait_for(pre)
+    # condition_lock.wait()
+    print(&#39;继续执行&#39;)
+
+    # 不要忘记使用wait/wait_for之后要释放锁
+    condition_lock.release()
+
+
+def test_thread_hello():
+    time.sleep(1)
+    condition_lock.acquire()
+
+    global PRE
+    PRE = 1
+    print(&#39;修改PRE值为1&#39;)
+
+    print(&#39;通知线程test_thread_hi可以准备获取锁了&#39;)
+    condition_lock.notify()
+
+    # 先notify/notify_all之后在释放锁
+    condition_lock.release()
+    print(&#39;你获取锁吧&#39;)
+
+
+def main():
+    thread_hi = threading.Thread(target=test_thread_hi)
+    thread_hello = threading.Thread(target=test_thread_hello)
+    thread_hi.start()
+    thread_hello.start()
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre><pre><code>等待线程test_thread_hello的通知
+0
+修改PRE值为1
+通知线程test_thread_hi可以准备获取锁了
+你获取锁吧
+1
+继续执行</code></pre><h3 id="信号量：threading-Semaphore"><a href="#信号量：threading-Semaphore" class="headerlink" title="信号量：threading.Semaphore"></a>信号量：threading.Semaphore</h3><p>一个信号量管理一个内部计数器，acquire()方法会减少计数器，release()方法则增加计数器，计数器的值永远不会小于零，当调用acquire()时，如果发现该计数器为零，则阻塞线程，直到调用release()方法使计数器增加。</p><p><strong>threading.Semaphore(value=1)：</strong>value参数默认值为1，如果指定的值小于0，则会报ValueError错误。一个信号量对象管理一个原子性的计数器，代表release()方法调用的次数减去acquire()方法的调用次数，再加上一个初始值。</p><ul><li><strong>acquire(blocking=True, timeout=None)：</strong>默认情况下，在进入时，如果计数器大于0，则减1并返回True，如果等于0，则阻塞直到使用release()方法唤醒，然后减1并返回True。被唤醒的线程顺序是不确定的。如果blocking设置为False，调用这个方法将不会发生阻塞。timeout用于设置超时的时间，在timeout秒的时间内没有获取到信号量，则返回False，否则返回True。</li><li><strong>release()：</strong>释放一个信号量，将内部计数器增加1。当计数器的值为0，且有其他线程正在等待它大于0时，唤醒这个线程。</li></ul><p><strong>信号量对象简单示例：</strong></p><pre><code class="language-python">&quot;&quot;&quot;
+通过信号量对象管理一次性运行的线程数量
+&quot;&quot;&quot;
+import time
+import threading
+
+# 创建信号量对象，初始化计数器值为3
+semaphore3 = threading.Semaphore(3)
+
+
+def thread_semaphore(index):
+    # 信号量计数器减1
+    semaphore3.acquire()
+    time.sleep(2)
+    print(&#39;thread_%s is running...&#39; % index)
+    # 信号量计数器加1
+    semaphore3.release()
+
+
+def main():
+    # 虽然会有9个线程运行，但是通过信号量控制同时只能有3个线程运行
+    # 第4个线程启动时，调用acquire发现计数器为0了，所以就会阻塞等待计数器大于0的时候
+    for index in range(9):
+        threading.Thread(target=thread_semaphore, args=(index, )).start()
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre><h3 id="事件：threading-Event"><a href="#事件：threading-Event" class="headerlink" title="事件：threading.Event"></a>事件：threading.Event</h3><p>一个事件对象管理一个内部标志，初始状态默认为False，set()方法可将它设置为True，clear()方法可将它设置为False，wait()方法将线程阻塞直到内部标志的值为True。</p><p>如果一个或多个线程需要知道另一个线程的某个状态才能进行下一步的操作，就可以使用线程的event事件对象来处理。</p><ul><li><strong>is_set()：</strong>当内部标志为True时返回True。</li><li><strong>set()：</strong>设置内部标志为True。此时所有等待中的线程将被唤醒，调用wait()方法的线程将不会被阻塞。</li><li><strong>clear()：</strong>将内部标志设置为False。所有调用wait()方法的线程将被阻塞，直到调用set()方法将内部标志设置为True。</li><li><strong>wait(timeout=None)：</strong>阻塞线程直到内部标志为True，或者发生超时事件。如果调用时内部标志就是True，那么不会被阻塞，否则将被阻塞。timeout为浮点类型的秒数。</li></ul><p><strong>事件对象简单示例：</strong></p><pre><code class="language-python">&quot;&quot;&quot;
+事件对象使用实例
+&quot;&quot;&quot;
+import time
+import threading
+
+# 创建事件对象，内部标志默认为False
+event = threading.Event()
+
+
+def student_exam(student_id):
+    print(&#39;学生%s等监考老师发卷。。。&#39; % student_id)
+    event.wait()
+    print(&#39;开始考试了！&#39;)
+
+
+def invigilate_teacher():
+    time.sleep(5)
+    print(&#39;考试时间到，学生们可以开始考试了！&#39;)
+    # 设置内部标志为True，并唤醒所有等待的线程
+    event.set()
+
+
+def main():
+    for student_id in range(3):
+        threading.Thread(target=student_exam, args=(student_id, )).start()
+
+    threading.Thread(target=invigilate_teacher).start()
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre><pre><code>学生0等监考老师发卷。。。
+学生1等监考老师发卷。。。
+学生2等监考老师发卷。。。
+考试时间到，学生们可以开始考试了！
+开始考试了！
+开始考试了！
+开始考试了！</code></pre><h3 id="定时器：threading-Timer"><a href="#定时器：threading-Timer" class="headerlink" title="定时器：threading.Timer"></a>定时器：threading.Timer</h3><p>表示一个操作需要在等待一定时间之后执行，相当于一个定时器。Timer类是threading.Thread的子类，所以它可以像一个自定义线程一样工作。<br>和线程一样，可以通过start()方法启动定时器，在定时器计时结束之前（线程开启之前）可以使用cancel()方法停止计时器。计时器等待的时间可能与用户设置的时间不完全一样。</p><p><strong>threading.Timer(interval, function, args=None, kwargs=None)</strong></p><ul><li><strong>interval：</strong>间隔时间，即定时器秒数。</li><li><strong>function：</strong>执行的函数。</li><li><strong>args：</strong>传入function的参数，如果为None，则会传入一个空列表。</li><li><strong>kwargs：</strong>传入function的关键字参数，如果为None，则会传入一个空字典。</li></ul><p><strong>cancel()：</strong>停止计时器，并取消对应函数的执行，这个方法只有在计时器还没有计时结束之前才会生效，如果已经开始执行函数，则不会生效。</p><h3 id="栅栏对象：threading-Barrier"><a href="#栅栏对象：threading-Barrier" class="headerlink" title="栅栏对象：threading.Barrier"></a>栅栏对象：threading.Barrier</h3><p>栅栏对象用于一个固定数量的线程，而这些线程需要等待彼此的情况。这些线程中的每个线程都会尝试调用wait()方法，然后阻塞，直到所有线程都调用了wait()方法，然后所有线程会被同时释放。</p><p><strong>threading.Barrier(parties, action=None, timeout=None)</strong></p><ul><li><ul><li><strong>parties：</strong>指定需要创建的栅栏对象的线程数。</li><li><strong>action：</strong>一个可调用对象，当所有线程都被释放时，在释放前，其中一个线程（随机）会自动调用这个对象。</li><li><strong>timeout：</strong>设置wait()方法的超时时间。</li></ul></li><li><strong>wait(timeout=None)：</strong>通过栅栏。当所有线程都调用了这个方法，则所有线程会被同时释放。如果提供了timeout参数，那么此参数是优先于初始化方法中的timeout参数的。返回值为range(parties)中的一个整数，每个线程的返回值都不同。如果提供了action参数，那么在所有线程释放前，其中一个线程（随机）会调用这个action参数对象，并且如果这个action调用发生了异常，则栅栏对象将进入破损状态。如果wait()方法发生了超时事件，那么栅栏对象也将进入破损状态。如果栅栏对象进入破损状态或者重置栅栏对象时仍有线程在等待释放，则会报BrokenBarrierError异常。</li><li><strong>reset()：</strong>将一个栅栏对象重置为默认的初始态。如果此时有任何线程正在等待释放，那么将会报BrokenBarrierError异常。如果barrier中有线程的状态是未知的，那么可能需要外部的某种同步来确保线程已被释放。如果栅栏对象已经破损，那么最好是丢弃它并重新创建一个新的栅栏对象。</li><li><strong>abort()：</strong>使栅栏对象进入破损状态。这将导致所有已经调用和未调用的wait()方法引发BrokenBarrierError异常。比如，需要放弃一个线程，但又不想引发死锁的情况，就可以调用这个方法。一个更好的办法是提供一个合理的timeout参数值，来自动避免某个线程出错。</li><li><strong>parties：</strong>通过栅栏的线程数量。</li><li><strong>n_waiting：</strong>在栅栏中正在等待的线程数量。</li><li><strong>broken：</strong>如果栅栏对象为破损状态则返回True。</li></ul><p>栅栏对象简单示例：</p><pre><code class="language-python">&quot;&quot;&quot;
+栅栏对象使用示例
+&quot;&quot;&quot;
+import time
+import threading
+
+
+def test_action():
+    print(&#39;所有栅栏线程释放前调用此函数！&#39;)
+
+
+# 创建线程数为3的栅栏对象，当“拦住”3个线程的wait后放行，然后又继续“拦”（如果有的话）
+barrier = threading.Barrier(3, test_action)
+
+
+def barrier_thread(sleep):
+    time.sleep(sleep)
+    print(&#39;barrier thread-%s wait...&#39; % sleep)
+    # 阻塞线程，直到阻塞线程数达到栅栏指定数量
+    barrier.wait()
+    print(&#39;barrier thread-%s end!&#39; % sleep)
+
+
+def main():
+    # 这里开启了6个线程，则一次会拦截3个
+    for sleep in range(6):
+        threading.Thread(target=barrier_thread, args=(sleep, )).start()
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre><pre><code>barrier thread-0 wait...
+barrier thread-1 wait...
+barrier thread-2 wait...
+所有栅栏线程释放前调用此函数！
+barrier thread-2 end!
+barrier thread-0 end!
+barrier thread-1 end!
+barrier thread-3 wait...
+barrier thread-4 wait...
+barrier thread-5 wait...
+所有栅栏线程释放前调用此函数！
+barrier thread-5 end!
+barrier thread-3 end!
+barrier thread-4 end!</code></pre><h3 id="多线程与多进程的理解"><a href="#多线程与多进程的理解" class="headerlink" title="多线程与多进程的理解"></a><strong>多线程与多进程的理解</strong></h3><p>在网上查多线程资料的时候，很多文章讲到了对Python的多线程与多进程的理解，包括相同之处和它们之间的区别，我就整理了一些点放在这里：</p><p><strong>进程ID：</strong>多线程的主进程和它的子线程的进程ID，即os.getpid()，都是相同的，都是主进程的进程ID。多进程则是主进程和它的子进程都有各自的进程ID，都不相同。</p><p><strong>共享数据：</strong>多线程可以共享主进程内的数据，但是多进程用的都是各自的数据，无法共享。</p><p><strong>主线程：</strong>由Python解释器运行主py时，也就是开启了一个Python进程，而这个py是这个进程内的一个线程，不过不同于其他线程，它是主线程，同时这个进程内还有其他的比如垃圾回收等解释器级别的线程，所以进程就等于主线程这种理解是有误的。</p><p><strong>CPU多核利用：</strong>Python解释器的线程只能在CPU单核上运行，开销小，但是这也是缺点，因为没有利用CPU多核的特点。Python的多进程是可以利用多个CPU核心的，但也有其他语言的多线程是可以利用多核的。</p><p><strong>单核与多核：</strong>一个CPU的主要作用是用来做计算的，多个CPU核心如果都用来做计算，那么效率肯定会提高很多，但是对于IO来说，多个CPU核心也没有太大用处，因为没有输入，后面的动作也无法执行。所以如果一个程序是计算密集型的，那么就该利用多核的优势（比如使用Python的多进程），如果是IO密集型的，那么使用单核的多线程就完全够了。</p><p><strong>线程或进程间的切换：</strong>线程间的切换是要快于进程间的切换的。</p><p><strong>死锁：</strong>指的是两个或两个以上的线程或进程在请求锁的时候形成了互相等待阻塞的情况，导致这些线程或进程无法继续执行下去，这时候称系统处于死锁状态或者系统产生了死锁，这些线程或进程就称为死锁线程或死锁进程。解决死锁的办法可以使用递归锁，即threading.RLock，然后线程或进程就可以随意请求和释放锁了，而不用担心别的线程或进程也在请求锁而产生死锁的情况。</p><p><strong>信号量与进程池：</strong>进程池Pool(n)只能是“池”中的n个进程运行，不能有新的进程，信号量只要保证最大线程数就行，而不是只有这几个线程，旧的线程运行结束，就可以继续来新的线程。</p></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> Python标准库</a></div><div class="post-nav"><div class="post-nav-item"><a href="/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="prev" title="Linux常用命令"><i class="fa fa-chevron-left"></i> Linux常用命令</a></div><div class="post-nav-item"><a href="/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E6%A0%87%E5%87%86%E6%97%A5%E5%BF%97logging/" rel="next" title="Python标准库·日志logging">Python标准库·日志logging <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%B1%BB%EF%BC%9Athreading-Thread"><span class="nav-text">多线程类：threading.Thread</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-text">构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95"><span class="nav-text">实例方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E5%BA%94%E7%94%A8"><span class="nav-text">具体应用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%99%AE%E9%80%9A%E7%BA%BF%E7%A8%8B%EF%BC%9Amain%E5%AF%B9child%E6%97%A0%E5%BD%B1%E5%93%8D"><span class="nav-text">创建普通线程：main对child无影响</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B%EF%BC%9Amain%E6%9D%80%E6%8E%89child"><span class="nav-text">创建守护线程：main杀掉child</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%98%BB%E5%A1%9E%E7%BA%BF%E7%A8%8B%EF%BC%9Amian%E7%AD%89%E5%BE%85child"><span class="nav-text">创建阻塞线程：mian等待child</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%BB%E5%A1%9E%E7%BA%BF%E7%A8%8B-join-%E7%9A%84%E6%AD%A3%E7%A1%AE%E7%94%A8%E6%B3%95"><span class="nav-text">阻塞线程(join)的正确用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%EF%BC%9Athreading-Lock"><span class="nav-text">锁：threading.Lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E9%94%81%EF%BC%9Athreading-RLock"><span class="nav-text">递归锁：threading.RLock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%EF%BC%9Athreading-Condition"><span class="nav-text">条件变量：threading.Condition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%EF%BC%9Athreading-Semaphore"><span class="nav-text">信号量：threading.Semaphore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%EF%BC%9Athreading-Event"><span class="nav-text">事件：threading.Event</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8%EF%BC%9Athreading-Timer"><span class="nav-text">定时器：threading.Timer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%85%E6%A0%8F%E5%AF%B9%E8%B1%A1%EF%BC%9Athreading-Barrier"><span class="nav-text">栅栏对象：threading.Barrier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-text">多线程与多进程的理解</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="yuandongxu" src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><p class="site-author-name" itemprop="name">yuandongxu</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">69</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">11</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span> </span><span class="links-of-author-item"><a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script><script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script><div class="widget-wrap"><h3 class="widget-title"></h3><div id="myCanvasContainer" class="widget tagcloud"><canvas width="250" height="250" id="resCanvas" style="width:100%"><ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag">Python标准库</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag">软件</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a><span class="tag-list-count">8</span></li></ul></canvas></div></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">yuandongxu</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">222k</span></div><script src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.js" async></script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var e,t,o,n,r,a=document.getElementsByTagName("link");if(0<a.length)for(i=0;i<a.length;i++)"canonical"==a[i].rel.toLowerCase()&&a[i].href&&(e=a[i].href);t=e?e.split(":")[0]:window.location.protocol.split(":")[0],e=e||window.location.href,window,n=e,r=document.referrer,/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi.test(n)||(o="https"===String(t).toLowerCase()?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif",r?(o+="?r="+encodeURIComponent(document.referrer),n&&(o+="&l="+n)):n&&(o+="?l="+n),(new Image).src=o)}()</script><script src="/js/local-search.js"></script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}</script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E7%BA%BF%E7%A8%8Bthreading/',]
+      });
+      });</script><script>NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'ppTfB90JLFHWAP8jtgDULtBY-gzGzoHsz',
+      appKey     : '3QvYOEbjnbDB09UCGm4Pmbdx',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});</script></body></html>

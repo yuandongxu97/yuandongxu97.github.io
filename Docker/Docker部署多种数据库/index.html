@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/note.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/note.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/note.png"><link rel="mask-icon" href="/note.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css"><script src="/lib/pace/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yoursite.com",root:"/",scheme:"Gemini",version:"7.8.0",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:15,onmobile:!0},copycode:{enable:!0,show_result:!1,style:"mac"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!0,lazyload:!1,pangu:!0,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!0,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"content.json"}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.css"><meta name="description" content="redis mongodb mysql"><meta property="og:type" content="article"><meta property="og:title" content="Docker快速部署多种数据库及配置使用"><meta property="og:url" content="http://yoursite.com/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/index.html"><meta property="og:site_name" content="苑东旭的博客"><meta property="og:description" content="redis mongodb mysql"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913214746.png"><meta property="article:published_time" content="2019-05-04T16:00:00.000Z"><meta property="article:modified_time" content="2020-09-13T13:48:52.589Z"><meta property="article:author" content="yuandongxu"><meta property="article:tag" content="Docker"><meta property="article:tag" content="数据库"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913214746.png"><link rel="canonical" href="http://yoursite.com/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>Docker快速部署多种数据库及配置使用 | 苑东旭的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">苑东旭的博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">笔记·归纳·总结</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">11</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">69</span></a></li><li class="menu-item menu-item-书签"><a href="/tools" rel="section"><i class="fa fa-bookmark fa-fw"></i>书签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>站内搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://yoursite.com/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><meta itemprop="name" content="yuandongxu"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="苑东旭的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Docker快速部署多种数据库及配置使用</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-05T00:00:00+08:00">2019-05-05</time> </span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>2.6k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-tag"></i> </span><span class="post-meta-item-text">标签：</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a> </span><span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a> </span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><ul><li><strong>redis</strong></li><li><strong>mongodb</strong></li><li><strong>mysql</strong></li></ul><a id="more"></a><hr><h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><p>为了方便，我们可以将MongoDB的数据目录映射到主机上来</p><pre><code class="language-bash">mkdir -p /data/mongodata        # 创建数据目录</code></pre><p>拉取镜像</p><pre><code class="language-bash">docker pull mongo</code></pre><p>启动MongoDB容器</p><pre><code class="language-bash">docker run -d --name mongo -v /data/mongodata:/data/db -p 27017:27017 mongo --auth</code></pre><ul><li><p>–name mongo 容器名称</p></li><li><p>–v /data/mongodata:/data/db 映射数据目录</p></li><li><p>-p 27017:27017 端口映射，前面的是主机端口，后面的是docker中的端口</p></li><li><p>mongo –auth 以账号验证模式启动</p></li></ul><p><strong>创建账号</strong></p><p>创建root用户、密码为123，所有数据库读写权限</p><pre><code class="language-bash">docker exec -it mongo mongo admin --eval &quot;db.createUser(&#123;user: &#39;root&#39;, pwd: &#39;123&#39;, roles: [ &#123; role: &#39;root&#39;, db: &#39;admin&#39; &#125; , &#39;readWriteAnyDatabase&#39;] &#125;)&quot;</code></pre><p><strong>设置随Docker启动</strong></p><pre><code class="language-bash">docker update --restart=always mongo          </code></pre><h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>拉取镜像</p><pre><code class="language-bash">docker pull redis</code></pre><p>准备一份redis配置文件，我放在了<code>/etc/redis/my.conf</code>，配置项如下：</p><pre><code class="language-json">bind 0.0.0.0                            # 允许任意IP地址访问
+protected-mode no                        # 不需要密码就能访问
+port 6379                                # 使用的TCP端口
+tcp-backlog 511
+timeout 0                                # 不超时
+tcp-keepalive 300                        # TCP连接保持时间,5min
+supervised no
+pidfile /var/run/redis_6379.pid
+loglevel notice
+logfile &quot;&quot;
+databases 16
+always-show-logo yes
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir ./
+slave-serve-stale-data yes
+slave-read-only yes
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+repl-disable-tcp-nodelay no
+slave-priority 100
+lazyfree-lazy-eviction no
+lazyfree-lazy-expire no
+lazyfree-lazy-server-del no
+slave-lazy-flush no
+appendonly no
+appendfilename &quot;appendonly.aof&quot;
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+aof-use-rdb-preamble no
+lua-time-limit 5000
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events &quot;&quot;
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+aof-rewrite-incremental-fsync yes</code></pre><p>创建容器</p><ul><li>后台模式</li><li>映射本地16379至容器6379，也就是说redis开放在本地16379端口，避免被扫库（我太难了）</li><li>映射本地配置文件至容器</li><li>容器命名为redis16379</li></ul><pre><code class="language-bash">docker run -d -p 16379:6379 -v /etc/redis/my.conf:/etc/redis/redis.conf --name redis16379 redis</code></pre><p>设置随Docker启动</p><pre><code class="language-bash">docker update --restart=always redis16379     </code></pre><h3 id="本地连接"><a href="#本地连接" class="headerlink" title="本地连接"></a>本地连接</h3><p>安装redis-cli</p><pre><code class="language-bash">apt install redis-tools</code></pre><pre><code class="language-bash">redis-cli -p 16379</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913214746.png"></p><h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><p>需要安装指定版本的话，查看远端的版本</p><pre><code class="language-bash">$ docker search mysql</code></pre><p>下载MySQL镜像（image）</p><pre><code class="language-bash">$ docker pull mysql            # latest
+$ docker pull mysql:5.7        # 5.7</code></pre><p>查看本地镜像</p><pre><code class="language-bash">$ docker images
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+mysql                latest              c8ee894bd2bd        2 weeks ago         456MB</code></pre><p>先创建一个临时的mysql，进入容器中</p><pre><code class="language-bash">docker run --rm --name mysqlTemp -it -v /usr/local/mysql/:/var/lib/mysql  -e MYSQL_ROOT_PASSWORD=123456 mysql /bin/bash </code></pre><blockquote><p>– rm 退出后就删除该容器<br>-v /usr/local/mysql/:/var/lib/mysql 装主机目录/usr/local/mysql/映射Docker中的/var/lib/mysql目录<br>-it 交互模式<br>/bin/bash 进入 bash 命令模式</p></blockquote><p>查看 my.cnf文件。<br><code>cat /etc/mysql/my.cnf</code></p><pre><code class="language-bash">$ cat /etc/mysql/my.cnf
+
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+secure-file-priv= NULL
+
+symbolic-links=0
+
+!includedir /etc/mysql/conf.d/</code></pre><p>如果是完整的my.cnf文件，直接复制出去，如果不是，则需要把includedir目录一起复到主机</p><p>拷贝配置文件</p><p>把Docker中的/etc/mysql/my.cnf文件拷贝到Docker的/var/lib/mysql目录，及主机的/usr/local/mysql/目录中</p><pre><code class="language-bash">cp /etc/mysql/my.cnf /var/lib/mysql</code></pre><p>把Docker中includedir目录复制出去</p><pre><code class="language-bash">cp -R /etc/mysql/conf.d/ /var/lib/mysql/conf.d</code></pre><p>退出bash，Docker中临时用的mysqlTemp会被删除</p><p>然后可以查看/usr/local/mysql/目录下有mysql所有的配置文件</p><pre><code class="language-bash">[root@iZbp17pvndv49r9ozf5hbcZ ~]# ls /usr/local/mysql/
+conf.d  my.cnf</code></pre><p>这里就可以修改配置了。<br>改完之后，创建正式的mysql容器</p><pre><code class="language-bash">docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123455 -v /usr/local/mysql/data:/var/lib/mysql -v /usr/local/mysql/my.cnf:/etc/mysql/my.cnf -v /usr/local/mysql/conf.d:/etc/mysql/conf.d -d mysql</code></pre><p>如果my.cnf 是完整的配置，这里不需要映射conf.d和mysql.conf.d这二个目录</p><pre><code class="language-bash">docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123455 -v /usr/local/mysql/data:/var/lib/mysql -v /usr/local/mysql/my.cnf:/etc/mysql/my.cnf  -d mysql</code></pre><ul><li>–name 容器名称</li><li>-p 端口映射</li><li>-v 配置文件映射：将 宿主机上修改的自定义配置文件，映射到 容器中</li><li>-e MYSQL_ROOT_PASSWORD 设置root密码</li><li>-d 守护进程模式运行</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Docker/" rel="tag"><i class="fa fa-tag"></i> Docker</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> 数据库</a></div><div class="post-nav"><div class="post-nav-item"><a href="/Linux/Linux%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85Python/" rel="prev" title="Linux源码编译安装Python"><i class="fa fa-chevron-left"></i> Linux源码编译安装Python</a></div><div class="post-nav-item"><a href="/%E9%9A%8F%E7%AC%94/HTTP%E5%8D%8F%E8%AE%AE/" rel="next" title="Http与https协议相关笔记">Http与https协议相关笔记 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB"><span class="nav-text">MongoDB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis"><span class="nav-text">Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E8%BF%9E%E6%8E%A5"><span class="nav-text">本地连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL"><span class="nav-text">MySQL</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="yuandongxu" src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><p class="site-author-name" itemprop="name">yuandongxu</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">69</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">11</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span> </span><span class="links-of-author-item"><a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script><script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script><div class="widget-wrap"><h3 class="widget-title"></h3><div id="myCanvasContainer" class="widget tagcloud"><canvas width="250" height="250" id="resCanvas" style="width:100%"><ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag">Python标准库</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag">软件</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a><span class="tag-list-count">8</span></li></ul></canvas></div></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">yuandongxu</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">222k</span></div><script src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.js" async></script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var e,t,o,n,r,a=document.getElementsByTagName("link");if(0<a.length)for(i=0;i<a.length;i++)"canonical"==a[i].rel.toLowerCase()&&a[i].href&&(e=a[i].href);t=e?e.split(":")[0]:window.location.protocol.split(":")[0],e=e||window.location.href,window,n=e,r=document.referrer,/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi.test(n)||(o="https"===String(t).toLowerCase()?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif",r?(o+="?r="+encodeURIComponent(document.referrer),n&&(o+="&l="+n)):n&&(o+="?l="+n),(new Image).src=o)}()</script><script src="/js/local-search.js"></script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}</script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'http://yoursite.com/Docker/Docker%E9%83%A8%E7%BD%B2%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93/',]
+      });
+      });</script><script>NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'ppTfB90JLFHWAP8jtgDULtBY-gzGzoHsz',
+      appKey     : '3QvYOEbjnbDB09UCGm4Pmbdx',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});</script></body></html>

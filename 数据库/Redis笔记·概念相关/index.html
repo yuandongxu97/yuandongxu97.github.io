@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/note.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/note.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/note.png"><link rel="mask-icon" href="/note.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css"><script src="/lib/pace/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yoursite.com",root:"/",scheme:"Gemini",version:"7.8.0",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:15,onmobile:!0},copycode:{enable:!0,show_result:!1,style:"mac"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!0,lazyload:!1,pangu:!0,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!0,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"content.json"}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.css"><meta name="description" content="REmote DIctionary Server(Redis) 是一个由Salvatore Sanfilippo写的key-value存储系统，使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。  Redis的安装与配置 常用配置文件 Redis的工作模式 ···"><meta property="og:type" content="article"><meta property="og:title" content="Redis数据库·概念相关"><meta property="og:url" content="http://yoursite.com/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%A6%82%E5%BF%B5%E7%9B%B8%E5%85%B3/index.html"><meta property="og:site_name" content="苑东旭的博客"><meta property="og:description" content="REmote DIctionary Server(Redis) 是一个由Salvatore Sanfilippo写的key-value存储系统，使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。  Redis的安装与配置 常用配置文件 Redis的工作模式 ···"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913182909.png"><meta property="og:image" content="c:/Users/yuan/AppData/Roaming/Typora/typora-user-images/image-20200913184519375.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913212940.gif"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213259.png"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213350.png"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213412.png"><meta property="article:published_time" content="2019-07-03T16:00:00.000Z"><meta property="article:modified_time" content="2020-09-13T15:23:21.199Z"><meta property="article:author" content="yuandongxu"><meta property="article:tag" content="数据库"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913182909.png"><link rel="canonical" href="http://yoursite.com/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%A6%82%E5%BF%B5%E7%9B%B8%E5%85%B3/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>Redis数据库·概念相关 | 苑东旭的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">苑东旭的博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">笔记·归纳·总结</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">11</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">69</span></a></li><li class="menu-item menu-item-书签"><a href="/tools" rel="section"><i class="fa fa-bookmark fa-fw"></i>书签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>站内搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://yoursite.com/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%A6%82%E5%BF%B5%E7%9B%B8%E5%85%B3/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><meta itemprop="name" content="yuandongxu"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="苑东旭的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Redis数据库·概念相关</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-07-04 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-04T00:00:00+08:00">2019-07-04</time> </span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>2.1k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-tag"></i> </span><span class="post-meta-item-text">标签：</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a> </span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%A6%82%E5%BF%B5%E7%9B%B8%E5%85%B3/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%A6%82%E5%BF%B5%E7%9B%B8%E5%85%B3/" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><p>REmote DIctionary Server(Redis) 是一个由Salvatore Sanfilippo写的key-value存储系统，使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p><ul><li>Redis的安装与配置</li><li>常用配置文件</li><li>Redis的工作模式</li><li>···</li></ul><a id="more"></a><h2 id="Redis安装与配置"><a href="#Redis安装与配置" class="headerlink" title="Redis安装与配置"></a>Redis安装与配置</h2><h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p>进入Redis.io选择需要的安装包下载安装即可，官网下载地址：<span class="exturl" data-url="aHR0cHM6Ly9yZWRpcy5pby9kb3dubG9hZA==">https://redis.io/download<i class="fa fa-external-link-alt"></i></span></p><p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913182909.png"></p><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><pre><code class="language-bash">apt install redis    # server+client
+apt install redis-server    # server
+apt install redis-tools        # client</code></pre><p>默认配置文件：<code>/etc/redis/redis.conf</code></p><p>客户端启动：<code>redis-cli</code></p><h3 id="使用源码启动服务"><a href="#使用源码启动服务" class="headerlink" title="使用源码启动服务"></a>使用源码启动服务</h3><p><span class="exturl" data-url="aHR0cDovL2Rvd25sb2FkLnJlZGlzLmlvL3JlbGVhc2VzLw==">http://download.redis.io/releases/<i class="fa fa-external-link-alt"></i></span> ，下载需要版本的源码，使用步骤如下：</p><pre><code class="language-bash">wget http://download.redis.io/releases/redis-5.0.0.tar.gz
+tar redis-5.0.0.tar.gz
+cd redis-5.0.0
+make</code></pre><p>启动服务</p><pre><code class="language-bash">redis-5.0.0/src/redis-server /etc/redis/redis.conf</code></pre><p><img src="C:\Users\yuan\AppData\Roaming\Typora\typora-user-images\image-20200913184519375.png" alt="image-20200913184519375"></p><p>启动客户端</p><pre><code>redis-5.0.0/src/redis-cli</code></pre><h2 id="常用配置文件"><a href="#常用配置文件" class="headerlink" title="常用配置文件"></a>常用配置文件</h2><pre><code class="language-bash">vim /etc/redis/redis.conf</code></pre><pre><code class="language-json">bind 0.0.0.0                            # 允许任意IP地址访问
+protected-mode no                        # 不需要密码就能访问
+port 6379                                # 使用的TCP端口
+tcp-backlog 511
+timeout 0                                # 不超时
+tcp-keepalive 300                        # TCP连接保持时间,5min
+supervised no
+pidfile /var/run/redis_6379.pid
+loglevel notice
+logfile &quot;&quot;
+databases 16
+always-show-logo yes
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir ./
+slave-serve-stale-data yes
+slave-read-only yes
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+repl-disable-tcp-nodelay no
+slave-priority 100
+lazyfree-lazy-eviction no
+lazyfree-lazy-expire no
+lazyfree-lazy-server-del no
+slave-lazy-flush no
+appendonly no
+appendfilename &quot;appendonly.aof&quot;
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+aof-use-rdb-preamble no
+lua-time-limit 5000
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events &quot;&quot;
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+aof-rewrite-incremental-fsync yes</code></pre><h2 id="Redis的工作模式"><a href="#Redis的工作模式" class="headerlink" title="Redis的工作模式"></a>Redis的工作模式</h2><p>和 MySQL 类似，Redis 系统地包括服务器端（redis-server）和客户端（redis-cli）两个角色R， 服务器通常使用 TCP 端口 6379，客户端和服务器通过 RESP 协议通信，如图</p><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20200913212940.gif"></p><p>其常用的工作模式是客户端发送一个请求，服务器处理该请求，然后将结果返回给客户端，</p><p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213259.png"></p><p>另外一种工作模式是管道（pipelining）模式，其不等待前面的回应消息就发送下一条请求以提升吞吐量</p><p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213350.png"></p><p>第三种工作模式是订阅模式，就是客户端先告诉服务器其关心哪些数据，然后在这些数据发生改变时服务器主动发送消息通知客户端。在该模式中，客户端不是主动去请求某个数据，而是服务器主动通知客户端某个数据的最新值</p><p><img src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/img/20200913213412.png"></p></div><footer class="post-footer"><div class="post-tags"><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> 数据库</a></div><div class="post-nav"><div class="post-nav-item"><a href="/Linux/%E5%A6%82%E4%BD%95%E5%88%B6%E4%BD%9CLinux%E5%90%AF%E5%8A%A8%E7%9B%98%E5%B9%B6%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F/" rel="prev" title="Vi/vim的使用"><i class="fa fa-chevron-left"></i> Vi/vim的使用</a></div><div class="post-nav-item"><a href="/Python/%E7%9F%A5%E8%AF%86%E7%82%B9/Python%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/" rel="next" title="Python高阶函数">Python高阶函数 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="nav-text">Redis安装与配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#windows"><span class="nav-text">windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%BA%90%E7%A0%81%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-text">使用源码启动服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">常用配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="nav-text">Redis的工作模式</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="yuandongxu" src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><p class="site-author-name" itemprop="name">yuandongxu</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">69</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">11</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span> </span><span class="links-of-author-item"><a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script><script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script><div class="widget-wrap"><h3 class="widget-title"></h3><div id="myCanvasContainer" class="widget tagcloud"><canvas width="250" height="250" id="resCanvas" style="width:100%"><ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag">Python标准库</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag">软件</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a><span class="tag-list-count">8</span></li></ul></canvas></div></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">yuandongxu</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">222k</span></div><script src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.js" async></script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var e,t,o,n,r,a=document.getElementsByTagName("link");if(0<a.length)for(i=0;i<a.length;i++)"canonical"==a[i].rel.toLowerCase()&&a[i].href&&(e=a[i].href);t=e?e.split(":")[0]:window.location.protocol.split(":")[0],e=e||window.location.href,window,n=e,r=document.referrer,/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi.test(n)||(o="https"===String(t).toLowerCase()?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif",r?(o+="?r="+encodeURIComponent(document.referrer),n&&(o+="&l="+n)):n&&(o+="?l="+n),(new Image).src=o)}()</script><script src="/js/local-search.js"></script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}</script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'http://yoursite.com/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E7%AC%94%E8%AE%B0%C2%B7%E6%A6%82%E5%BF%B5%E7%9B%B8%E5%85%B3/',]
+      });
+      });</script><script>NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'ppTfB90JLFHWAP8jtgDULtBY-gzGzoHsz',
+      appKey     : '3QvYOEbjnbDB09UCGm4Pmbdx',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});</script></body></html>

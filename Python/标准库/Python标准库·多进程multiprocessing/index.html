@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/note.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/note.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/note.png"><link rel="mask-icon" href="/note.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css"><script src="/lib/pace/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yoursite.com",root:"/",scheme:"Gemini",version:"7.8.0",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:15,onmobile:!0},copycode:{enable:!0,show_result:!1,style:"mac"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!0,lazyload:!1,pangu:!0,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!0,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"content.json"}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.css"><meta name="description" content="相比于threading的GIL限制，multiprocessing同时提供了本地和远程并发操作，通过使用子进程而非线程有效地绕过了GIL，可以充分利用多CPU及多核的性能，实现了真正意义上的并发设计、并行执行。 本文只是根据官方文档学习了multiprocessing模块中进程的基本操作，包括  创建进程 进程启动方式 进程间通信 进程间同步 进程池  如果需要其他更多操作，可以参考：Pytho"><meta property="og:type" content="article"><meta property="og:title" content="Python标准库·多进程multiprocessing"><meta property="og:url" content="http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E8%BF%9B%E7%A8%8Bmultiprocessing/index.html"><meta property="og:site_name" content="苑东旭的博客"><meta property="og:description" content="相比于threading的GIL限制，multiprocessing同时提供了本地和远程并发操作，通过使用子进程而非线程有效地绕过了GIL，可以充分利用多CPU及多核的性能，实现了真正意义上的并发设计、并行执行。 本文只是根据官方文档学习了multiprocessing模块中进程的基本操作，包括  创建进程 进程启动方式 进程间通信 进程间同步 进程池  如果需要其他更多操作，可以参考：Pytho"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-04-01T16:00:00.000Z"><meta property="article:modified_time" content="2020-10-10T05:27:19.156Z"><meta property="article:author" content="yuandongxu"><meta property="article:tag" content="Python标准库"><meta name="twitter:card" content="summary"><link rel="canonical" href="http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E8%BF%9B%E7%A8%8Bmultiprocessing/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>Python标准库·多进程multiprocessing | 苑东旭的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">苑东旭的博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">笔记·归纳·总结</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">11</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">69</span></a></li><li class="menu-item menu-item-书签"><a href="/tools" rel="section"><i class="fa fa-bookmark fa-fw"></i>书签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>站内搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E8%BF%9B%E7%A8%8Bmultiprocessing/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><meta itemprop="name" content="yuandongxu"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="苑东旭的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Python标准库·多进程multiprocessing</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2020-04-02 00:00:00" itemprop="dateCreated datePublished" datetime="2020-04-02T00:00:00+08:00">2020-04-02</time> </span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>16k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-tag"></i> </span><span class="post-meta-item-text">标签：</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">Python标准库</span></a> </span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E8%BF%9B%E7%A8%8Bmultiprocessing/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E8%BF%9B%E7%A8%8Bmultiprocessing/" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><p>相比于threading的GIL限制，multiprocessing同时提供了本地和远程并发操作，通过使用子进程而非线程有效地绕过了GIL，可以充分利用多CPU及多核的性能，实现了真正意义上的并发设计、并行执行。</p><p>本文只是根据官方文档学习了<code>multiprocessing</code>模块中进程的基本操作，包括</p><ul><li>创建进程</li><li>进程启动方式</li><li>进程间通信</li><li>进程间同步</li><li>进程池</li></ul><p>如果需要其他更多操作，可以参考：<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnB5dGhvbi5vcmcvMy44L2xpYnJhcnkvbXVsdGlwcm9jZXNzaW5nLmh0bWw/aGlnaGxpZ2h0PW11bHRpcHJvY2Vzc2luZyNtdWx0aXByb2Nlc3NpbmcucG9vbC5Qb29s">Python官当文档·multiprocessing<i class="fa fa-external-link-alt"></i></span></p><a id="more"></a><h3 id="创建进程"><a href="#创建进程" class="headerlink" title="创建进程"></a>创建进程</h3><p>实例化<code>Process</code>类创建一个进程对象，然后调用它的<code>start</code>方法即可生成一个新的进程（子进程）。<code>Process</code>进程对象的使用其实和多线程模块<code>threading</code>中的<code>Thread</code>线程对象非常相似，可以参考着来使用。</p><pre><code class="language-python">&quot;&quot;&quot;
+简单示例：创建一个子进程
+&quot;&quot;&quot;
+import os
+from multiprocessing import Process
+
+
+def func(s):
+    # 输出传入的参数，当前子进程的进程ID，当前进程的父进程ID
+    print(s, os.getpid(), os.getppid())
+
+
+# 注意：此处的if __name__ == &#39;__main__&#39;语句不能少
+if __name__ == &#39;__main__&#39;:
+    # 打印当前进程的进程ID
+    print(os.getpid())
+    print(&#39;main process start...&#39;)
+    # 创建进程对象
+    p = Process(target=func, args=(&#39;hello&#39;, ))
+    # 生成一个进程，并开始运行新的进程
+    p.start()
+    # 等待子进程运行完毕
+    p.join()
+    print(&#39;main process end!&#39;)</code></pre><p>打印输出</p><pre><code>13888
+main process start...
+hello 12484 13888
+main process end!</code></pre><p><strong>Process类</strong><br><code>Process(group=None, target=None, name=None, args=(), kwargs=&#123;&#125;, *, daemon=None)</code>：<code>group</code>不用特别指定，使用默认就行；<code>target</code>表示需要调用的对象；<code>name</code>表示新进程的名称；<code>args</code>和<code>kwargs</code>表示传给<code>target</code>对象的元组参数和字典参数；<code>daemon</code>是一个关键字参数，使用时必须指定参数名，表示是否为守护进程，如果不指定则默认继承自调用者进程。<br><strong>注：</strong>需要注意的是如果重写了<code>Process</code>的<code>__init__</code>方法，那么在做任何操作之前需要先调用<code>Process.__init__()</code>方法。<br>常用的方法和属性：</p><ul><li><code>run</code>：表示进程活动的方法，即此方法的运行是在新开启的进程中，如果在子类中重写了此方法，应该在此方法中调用<code>target</code>对象。</li><li><code>start()</code>：用于启动进程活动（注意此方法是在调用者进程中，而不是在新的进程中），并用于保证<code>run</code>方法在一个新的进程中被调用。</li><li><code>join([timeout])</code>：如果<code>timeout</code>参数没有指定（默认），则会阻塞当前进程直到调用<code>join</code>方法的进程（子进程）运行结束，如果指定了<code>timeout</code>参数，则会阻塞指定的秒数。注意，<code>join</code>方法不能在<code>start</code>方法之前调用，但<code>join</code>方法可以调用多次。如果想要知道进程的状态（包括是否结束），可以查看进程对象的<code>exitcode</code>值来进行判断。</li><li><code>name</code>：进程名称，没什么实际意义，只是用来表示进程，多个进程可能有相同的名称。如果没有特别指定，则默认命名格式为<code>Process-N1:N2:N3...</code>。</li><li><code>is_alive()</code>：此进程是否存活。</li><li><code>damemon</code>：表示进程是否为守护进程，这个标识必须在<code>start()</code>方法调用之前进行设置，如果不设置，默认继承创建者进程。当一个进程终止时，会尝试终止它的所有守护子进程，需要注意的是，守护进程是不允许创建子进程的。</li><li><code>pid</code>：进程ID。</li><li><code>exitcode</code>：进程退出状态，当进程还未结束时，值为None，如果进程结束了，会用一个负值<code>-N</code>表示结束信号。</li><li><code>authkey</code>：进程的身份验证密钥（字节字符串），当<code>multiprocessing</code>被初始化时，主进程会使用<code>os.urandom()</code>分配一个随机的字符串，当创建<code>Process</code>子进程时，子进程会继承其父进程的身份密钥，当然，你也可以修改子进程的身份密钥。</li><li><code>sentinel</code>：系统对象的数字句柄，当进程结束时将变为“ready”。如果想要使用<code>multiprocessing.connection.wait()</code>一次等待多个事件，那可以使用这个值，否则调用<code>join()</code>方法会更简单。</li><li><code>terminate()</code>：终止进程，在Unix上使用的是<code>SIGTERM</code>信号，在Windows上使用的是<code>TerminateProcess()</code>。注意，进程的后代进程不会被终止（会变成“孤儿”进程）。另外，如果被终止的进程在使用<code>Pipe</code>或<code>Queue</code>时，它们有可能会被损害，并无法被其他进程使用；如果被终止的进程已获得锁或信号量等，则有可能导致其他进程死锁。所以请谨慎使用此方法。</li><li><code>kill()</code>：也是终止进程，但是在Unix上使用的是<code>SIGKILL</code>信号。</li><li><code>close()</code>：关闭<code>Process</code>对象，并释放与之关联的所有资源，如果底层进程仍在运行，则会引发<code>ValueError</code>。而且，一旦<code>close()</code>方法成功返回，<code>Process</code>对象的大多数方法和属性也可能会引发<code>ValueError</code>。</li></ul><h3 id="进程启动方式"><a href="#进程启动方式" class="headerlink" title="进程启动方式"></a>进程启动方式</h3><p><code>multiprocessing</code>模块中进程的启动方式有三种spawn、fork和forkserver，在不同的系统平台上它们的使用和默认设置也会有所不同：</p><ul><li><strong>spawn：</strong>由父进程启动一个新的Python解释器<code>Process</code>子进程，子进程只会继承<code>run()</code>方法中所必需的资源，而父进程中那些非必需的文件描述符和句柄是不会被继承的。而且，相对于使用fork和forkserver来启动进程，spawn方法启动是非常慢的。spawn启动方式可以在Unix和Windows上使用，且Windows上默认使用此方法启动。</li><li><strong>fork：</strong>父进程使用<code>os.fork()</code>来产生一个新的Python解释器分叉（fork）子进程，子进程在开始时与父进程是相同的，即子进程会继承父进程拥有的所有资源。这种方式的问题在于当父进程中存在多线程时，启动的新的子进程的安全性需要自己留意。fort启动方式只能在Unix中使用，且也是Unix中默认的启动方式。</li><li><strong>forkserver：</strong>程序会先使用forkserver启动一个服务器进程，然后当需要运行一个新的进程时，父进程会先连接到服务器并请求其分叉（fork）一个新的进程。 相比于fork启动方式，由于forkserver启动的服务器进程是单线程的进程，所以由它通过<code>os.fork()</code>启动的进程是安全的（此服务器进程没有多线程的情况）。forkserver启动方式可以在Unix平台使用，并支持通过Unix管道传递文件描述符。</li></ul><p><strong>设置统一的启动方式：</strong>可以在程序运行开始时，即<code>if __name__ == &quot;__main__&quot;</code>中使用<code>multiprocessing.set_start_method(method)</code>函数来设置启动方式，设置时传入对应启动方式的字符串即可（”spawn”/“fork”/“forkserver”）。但是需要注意两点，一是需要在<code>if __name__ == &quot;__main__&quot;</code>子句中指定，二是只能指定一次，指定之后就不能在其他地方再次指定。<br><strong>设置特定的启动方式：</strong>可以使用<code>multiprocessing.get_context(method)</code>函数来设置上下文中的启动方式，需要注意的是在此上下文中创建的对象可能与其他上下文中的对象不兼容，比如，使用fork方式的上下文中的锁不能传递给spawn或forkserver中使用，另外，如果你不想采用默认的方式或者全局统一的方式，就可以考虑使用<code>get_context(method)</code>方法来指定自己的启动方式。<br><strong>注：</strong>在Unix上，spawn和forkserver启动方法不能和“冻结的”可执行内容一同使用（例如，PyInstaller和cx_Freeze包产生的二进制文件），但是fork启动方法可以。</p><h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><p>使用多进程时，一般使用消息机制（<code>Pipe()</code>管道和<code>Queue()</code>队列）实现进程间的通信，而且应该尽可能地避免同步操作，例如锁。（如果这两种方式不能满足你的要求，可以参考下官方文档中关于<code>multiprocessing.connection</code>的描述，它提供了如监听器对象<code>Listener</code>和客户端对象<code>Client</code>等通信方式，感兴趣的话也可以去看下）<br><strong>Pipe类</strong><br><code>Pipe([duplex])</code>：返回一对连接对象（conn1，conn2），它们代表了管道的两端。参数<code>duplex</code>默认True，表示双向的（双工通信），表示管道每一端都可以进行发送和接收数据；如果设置False，则表示单向的（单工通信），此时conn1只能接受数据，conn2只能发送数据。</p><pre><code class="language-python">&quot;&quot;&quot;
+简单示例：使用管道Pipe进行进程间通信
+&quot;&quot;&quot;
+from multiprocessing import Process, Pipe
+
+
+def func(conn):
+    print(&#39;send a list object ot other side...&#39;)
+    # 从管道对象的一端发送数据对象
+    conn.send([&#39;33&#39;, 44, None])
+    conn.close()
+
+
+if __name__ == &#39;__main__&#39;:
+    # 默认创建一个双工管道对象，返回的两个对象代表管道的两端，
+    # 双工表示两端的对象都可以发送和接收数据，但是需要注意，
+    # 需要避免多个进程或线程从一端同时读或写数据
+    parent_conn, child_conn = Pipe()
+    p = Process(target=func, args=(child_conn, ))
+    p.start()
+    # 从管道的另一端接收数据对象
+    print(parent_conn.recv())
+    p.join()</code></pre><p><strong>Connection类</strong><br><code>multiprocessing.connection.Connection</code>：<code>Connection</code>对象允许收发可以序列化的对象或字符串，<code>Connection</code>对象通常使用<code>Pipe</code>来创建。<br>常用的方法:</p><ul><li><code>send(obj)</code>：将一个对象发送到连接的另一端，另一端可以使用<code>recv()</code>方法来读取。注意，发送的对象必须是可以序列化的，对象如果过大可能会引发<code>ValueError</code>异常。</li><li><code>recv()</code>：返回一个对端使用<code>send()</code>方法发送的对象，该方法会一直阻塞直到接收到对象为止。如果对端关闭了连接或者没有东西可以接收时，将会抛出<code>EOFError</code>异常。</li><li><code>fileno()</code>：返回由连接对象使用的描述符或句柄。</li><li><code>close()</code>：关闭连接。当连接对象被垃圾回收时，这个方法会被自动调用。</li><li><code>poll([timeout])</code>：返回连接对象中是否有可以读取的数据，如果未指定参数<code>timeout</code>（默认），此方法会立刻返回结果，如果指定了<code>timeout</code>，则会阻塞对应<code>timeout</code>秒数，如果<code>timeout</code>为None，则会一直阻塞，不会发生超时。</li><li><code>send_bytes(buffer[, offset[, size]])</code>：从一个<code>bytes-like object</code>（字节类对象）中取出字节数组作为一条完整消息发送。<code>offset</code>参数表示偏移量或者<code>buffer</code>中数据的位置，<code>size</code>表示从<code>offset</code>开始读取多少数据。如果<code>buffer</code>过大，可能会引发<code>ValueError</code>异常。</li><li><code>recv_bytes([maxlength])</code>：以字符串的形式返回一条对端发送过来的字节数据，此方法会一直阻塞直到接收到消息，如果对端关闭了连接或者没有数据可以接收时，将会抛出<code>EOFError</code>异常。如果接收的数据长度大于了<code>maxlength</code>指定的长度，那么也会抛出<code>EOFError</code>异常，并且此时此连接对象不再可读。</li><li><code>recv_bytes_into(buffer[, offset])</code>：将一条完整的字节数据读入<code>buffer</code>，并返回数据的字节数。此方法会一直阻塞直到接收到数据，如果对端关闭或者没有数据可以读取，则会抛出<code>EOFError</code>异常。<code>buffer</code>必须是一个可写入的字节类对象，如果指定了<code>offset</code>参数，将会从<code>offset</code>指定的位置开始写入<code>buffer</code>，如果<code>buffer</code>过小，也会引发<code>BufferTooShort</code>异常。</li></ul><p><strong>Queue类</strong><br><code>Queue</code>队列采用的是FIFO（先进先出）的通信方式。（另外还有<code>SimpleQueue</code>和<code>JoinableQueue</code>，感兴趣的可以参考下官方文档）<br>当一个对象被放入队列中时，这个对象首先会被一个后台线程序列化，然后会将序列化的数据通过一个底层管道传递到队列中，从队列中将数据取出来时也会进行反序列化的操作。<br>注意一点，在一个空队列中放入对象后，它的<code>empty()</code>方法会在一个极小的延迟后才会返回False。<br><strong>注：</strong>如果一个子进程将一些对象放入队列中，那么这个进程在所有缓冲区的对象被刷新进管道之前，是不会终止的，所以，通常在终止这类进程时，应该保证队列中的数据都已被使用了。（见示例中的注释）</p><pre><code class="language-python">&quot;&quot;&quot;
+简单示例：使用队列Queue进行进程间通信
+&quot;&quot;&quot;
+from multiprocessing import Process, Queue
+
+
+def func(q):
+    print(&#39;put a list object to queue...&#39;)
+    # 向Queue对象中添加一个对象
+    q.put([&#39;33&#39;, 44, None])
+    # q.put(&#39;X&#39; * 1000000)
+
+
+if __name__ == &#39;__main__&#39;:
+    # 创建一个队列
+    q = Queue()
+    p = Process(target=func, args=(q, ))
+    p.start()
+    # 从Queue对象中获取一个对象
+    print(q.get())
+    # 这里需要注意，当向队列中放入的数据较大时，比如将[&#39;33&#39;, 44, None]替换为&#39;X&#39; * 1000000时，
+    # 就会在join()处卡死，为了避免这种情况，
+    # 通常的做法是先使用get()将数据取出来，再使用join()方法
+    p.join()</code></pre><p><code>Queue([maxsize])</code>：返回一个使用Pipe管道和少量锁和信号量实现的共享队列实例，当一个进程将一个对象放入队列时，一个写入线程将会启动并将对象从缓冲区写入管道中。<br><strong>注：</strong><code>multiprocessing.Queue</code>实现了标准库<code>queue.Queue</code>中除了<code>task_done()</code>和<code>join()</code>的所有方法。<br>常用的方法和属性：</p><ul><li><code>qsize()</code>：返回队列的大致长度，但这个数字在多进程或多线程的环境中通常是不可靠的。注意，在Unix平台上，例如<code>Mac OS X</code>，这个方法可能会抛出<code>NotImplementedError</code>，因为该平台没有实现<code>sem_getvalue()</code>。</li><li><code>empty()</code>：队列为空则返回True，否则返回False，在多进程或多线程的环境中，此方法是不可靠的。</li><li><code>full()</code>：队列满则返回True，否则返回False，在多进程或多线程的环境中，此方法是不可靠的。</li><li><code>put(obj[, block[, timeout]])</code>：将对象<code>obj</code>放入队列。如果参数<code>block</code>为True（默认）且<code>timeout</code>为None（默认），则会阻塞当前进程，直到有空的缓冲槽。如果设置了<code>timeout</code>，则会阻塞指定的<code>timeout</code>秒数，如果阻塞<code>timeout</code>指定秒数后还是没有可用的缓冲槽，则会抛出<code>queue.Full</code>异常。如果<code>block</code>为False，此时会忽略<code>timeout</code>参数，并且当前有空的缓冲槽可用时才能放入对象，否则会抛出<code>queue.Full</code>异常。</li><li><code>put_nowait(obj)</code>：相当于<code>put(obj, False)</code>。</li><li><code>get([block[, timeout]])</code>：从队列中获取一个对象。如果参数<code>block</code>为True（默认）且<code>timeout</code>为None（默认），则会阻塞当前进程，直到获取到对象。如果设置了<code>timeout</code>，则会阻塞指定的<code>timeout</code>秒数，如果阻塞<code>timeout</code>指定秒数后还是没有获取到对象，则会抛出<code>queue.Empty</code>异常。如果<code>block</code>设置为False，此时会忽略<code>timeout</code>参数，并且当前有对象可以获取时才能获取，否则会抛出<code>queue.Empty</code>异常。</li><li><code>get_nowait()</code>：相当于<code>get(False)</code>。</li><li><code>close()</code>：表示当前进程将不会再往队列中放入对象了。一旦缓冲区的所有数据被写入管道后，对应的后台线程就会退出。而且这个方法在队列被gc回收时会自动调用。</li><li><code>join_thread()</code>：等待后台线程，这个方法仅在调用了<code>close()</code>方法之后可以被调用，并且会阻塞当前进程，当变为非阻塞状态之后，队列的后台线程会退出，以此确保缓冲区中的所有数据都被写入管道中。默认情况下，如果一个进程不是此队列的创建者进程，当它退出时，默认会尝试等待这个队列的后台线程，当然这个进程也可以使用<code>cancel_join_thread()</code>方法使<code>join_thread()</code>方法什么都不做直接跳过。</li><li><code>cancel_join_thread()</code>：用于防止<code>join_thread()</code>方法阻塞当前进程，即防止进程退出时自动等待队列后线程的情况。使用这个方法有可能会导致队列中的数据丢失，因此大多情况下这个方法并不需要用到，当然，如果你只是想要进程马上退出，也不在意数据的丢失，那么可以使用这个方法。</li></ul><p><strong>注：</strong><code>multiprocessing</code>使用了<code>queue.Empty</code>和<code>queue.Full</code>异常去表示超时，需要从内置的<code>queue</code>模块中导入它们，而不是从<code>multiprocessing</code>中导入。</p><h3 id="进程间同步"><a href="#进程间同步" class="headerlink" title="进程间同步"></a>进程间同步</h3><p>通常来说同步原语在多进程环境中并不像在多线程环境中那么必要，但是也可以参考下。注意，也可以使用<code>Manager()</code>对象创建同步原语。<br><code>multiprocessing.Barrier(parties[, action[, timeout]])</code>：类似<code>threading.Barrier</code>的栅栏对象。<br><code>multiprocessing.Semaphore([value])</code>：信号量对象，类似于<code>threading.Semaphore</code>。<br><code>multiprocessing.BoundedSemaphore([value])</code>：类似<code>threading.BoundedSemaphore</code>的有界信号量对象。<br><code>multiprocessing.Condition([lock])</code>：是<code>threading.Condition</code>的别名，参数<code>lock</code>应该是<code>multiprocessing</code>中的<code>Lock</code>或者<code>RLock</code>对象。<br><code>multiprocessing.Event</code>：类似<code>threading.Event</code>的事件对象。<br><code>multiprocessing.Lock</code>：原始锁，除非特别说明，否则用法与<code>threading.Lock</code>是一致的。</p><ul><li><code>acquire(block=True, timeout=None)</code>：获取锁，需要注意一下参数<code>block</code>和<code>timeout</code>与<code>threading.Lock</code>中的名称和用法的区别。如果<code>block</code>设置为True（默认值），此方法会阻塞进程直到获取锁；如果<code>block</code>参数设置为False，进程将不会阻塞，且会忽略<code>timeout</code>参数；如果设置了<code>timeout</code>参数且为正数，则会阻塞指定秒数，如果设置为负数，则等效于值为0的情况，如果<code>timeout</code>为None（默认值），则会一直阻塞，需要注意<code>timeout</code>设置为负数和0时，其作用和<code>threading.Lock</code>是不一致的。此方法的返回值，在获取到锁并将锁的状态设置为“锁住”时返回True，超时或者没有获取到锁时返回False。</li><li><code>release()</code>：释放锁，注意，任何进程或线程都可释放这种锁，并不是只有获取锁的进程或线程才可以释放锁。当试图释放一个未“锁住”的锁时会引发<code>ValueError</code>异常。其他用法与<code>threading.Lock</code>是一致的。</li></ul><p><code>multiprocessing.RLock</code>：递归锁，类似于<code>threading.RLock</code>，只能由获取锁的进程或线程来进行释放，并且可以获取多次，注意，释放次数必须要与获取次数一致。</p><ul><li><code>acquire(block=True, timeout=None)</code>：当<code>block</code>设置为True时（默认值），会阻塞进程直到获取锁，如果当前进程已经获取到了锁（递归锁可以多次获取），那么不会阻塞，并且锁内的递归等级加1，并返回True。如果<code>block</code>设置为False，则不会阻塞，此时如果没有获取到锁，则锁内的递归等级不会变，并返回False。<code>timeout</code>的使用与<code>multiprocessing.Lock.acquire</code>是一样的，但是注意，此参数与<code>threading.RLock</code>中的使用是有区别的。</li><li><code>release()</code>：释放锁，使锁内的递归等级减1。如果释放后锁的递归等级降低为0，则会重置锁的状态为“释放”状态，表名此时锁没有被任何进程或线程持有；如果释放后锁的递归等级不为0，则锁定状态还是“未释放”的状态，当前进程或线程仍然是锁的持有者。如果锁已经处于“释放”状态，或者是非锁的持有者调用了此方法，则会抛出<code>AssertionError</code>异常，注意这个异常与<code>threading.RLock.release()</code>中抛出的异常是不同的。</li></ul><pre><code class="language-python">&quot;&quot;&quot;
+简单示例：使用锁保证进程间的同步操作
+&quot;&quot;&quot;
+from multiprocessing import Process, Lock
+
+
+def func(lc, num):
+    # 使用锁保证以下代码同一时间只有一个进程在执行
+    lc.acquire()
+    print(&#39;process num: &#39;, num)
+    lc.release()
+
+
+if __name__ == &#39;__main__&#39;:
+    lock = Lock()
+    for i in range(5):
+        Process(target=func, args=(lock, i)).start()</code></pre><p>打印输出</p><pre><code>process num:  0
+process num:  1
+process num:  3
+process num:  2
+process num:  4</code></pre><h3 id="进程间共享数据"><a href="#进程间共享数据" class="headerlink" title="进程间共享数据"></a>进程间共享数据</h3><p>在多进程的并发编程中应当尽量避免使用共享状态，但是如果必须要使用的话，<code>multiprocessing</code>模块提供了两种方式来使用：共享内存和服务进程管理器（<code>Manager()</code>管理器对象会开启一个服务进程，允许不同机器上的进程通过网络共享数据，本文就不写了，感兴趣的可以去官方文档了解下（有对应的中文文档））。<br><strong>共享内存</strong><br>可以在共享内存中创建可被子进程继承的共享<code>ctypes</code>对象，特点是快捷方便。<br><code>multiprocessing.Value(typecode_or_type, *args, lock=True)</code>：返回一个在共享内存上创建的<code>ctypes</code>对象，可以通过它的<code>value</code>属性来访问它的值。</p><ul><li><code>typecode_or_type</code>：指定返回的对象类型，可以是一个ctypes类型，也可以是<code>array</code>模块中每个类型对应的单字符的字符串。</li><li><code>args</code>：这个参数会传给这个类的构造函数。</li><li><code>lock</code>：默认为True，则会新建一个递归锁用于对这个值的同步访问操作；如果<code>lock</code>指定为一个<code>Lock</code>或<code>RLock</code>，则会使用这个锁来控制这个变量的同步操作；如果<code>lock</code>为False，那么这个值将没有锁进行保护，也就是说这个变量不是进程安全的。</li><li><strong>注：</strong>如果想要进行<code>+=</code>这种操作时，因为这种操作并不是原子性的，它是分开的读和写操作，所以可以考虑使用如下方式进行这种操作：<code>with my_value_obj.get_lock(): my_value_obj.value += 1</code>。</li></ul><p><code>multiprocessing.Array(typecode_or_type, size_or_initializer, *, lock=True)</code>：返回一个在共享内存中创建的<code>ctypes</code>类型的数组。</p><ul><li><code>typecode_or_type</code>：指定数组中元素的类型，可以是一个ctypes类型，也可以是<code>array</code>模块中每个类型对应的单字符的字符串。</li><li><code>size_or_initializer</code>：如果是一个整数，则用于指定数组的长度，否则，应该传入一个序列用于初始化这个数组对象，这个序列的长度就是这个数组对象的长度。</li><li><code>lock</code>：默认为True，则会新建一个锁用于对这个值的同步访问操作；如果<code>lock</code>指定为一个<code>Lock</code>或<code>RLock</code>，则会使用这个锁来控制这个变量的同步操作；如果<code>lock</code>为False，那么这个值将没有锁进行保护，也就是说这个变量不是进程安全的。</li><li><strong>注：</strong><code>ctypes.c_char</code>类型的数组具有 value和raw属性，可以用来保存和提取字符串。</li></ul><pre><code class="language-python">&quot;&quot;&quot;
+简单示例：使用共享内存的方式，共享值Value对象和数据Array对象
+&quot;&quot;&quot;
+from multiprocessing import Process, Value, Array
+
+
+def func(n, a):
+    n.value = 3.333
+    for i in range(len(a)):
+        a[i] = -a[i]
+
+
+if __name__ == &#39;__main__&#39;:
+    num = Value(&#39;d&#39;, 0.0)  # 第一个参数d表示数据类型“double”双精度浮点类型
+    arr = Array(&#39;i&#39;, range(6))  # 第一个参数i表示数据类型“integer”整型
+    p = Process(target=func, args=(num, arr))
+    p.start()
+    p.join()
+    print(num.value)
+    print(arr[:])</code></pre><p>打印输出</p><pre><code>3.333
+[0, -1, -2, -3, -4, -5]</code></pre><h3 id="进程池"><a href="#进程池" class="headerlink" title="进程池"></a>进程池</h3><p>创建一个<code>Pool</code>进程池对象，并执行提交给它的任务，进程池对象允许其中的进程以不同的方式运行，但是需要注意，<code>Pool</code>对象的方法只能是创建它的进程才能调用。<br><strong>Pool类</strong><br><code>multiprocessing.pool.Pool([processes[, initializer[, initargs[, maxtasksperchild[, context]]]]])</code>：创建一个进程池对象，支持带有超时和回调的异步结果，以及一个并行的map实现。</p><ul><li><code>processes</code>：指定进程池中的工作进程数量，如果为None，则使用<code>os.cpu_count()</code>的返回值。</li><li><code>initializer</code>和<code>initargs</code>：如果<code>initializer</code>不为None，则每个工作进程将会在启动时调用<code>initializer(*initargs)</code>。</li><li><code>maxtasksperchild</code>：指定一个工作进程在退出或者被一个新的进程替代之前能完成的任务数量，以便保证资源的释放。默认为None，表示工作进程的寿命与进程池是相同的。</li><li><code>context</code>：指定启动的工作进程的上下文。通常一个进程池是通过<code>multiprocessing.Pool()</code>或者上下文对象的<code>Pool()</code>来创建的，而这两种创建进程池的方式都是可以的。</li><li><strong>注：</strong>使用进程池对象时，应该正确终结该对象，应该将进程池对象当做上下文管理器来使用（<code>with</code>语句），或者手动调用<code>close()</code>和<code>terminate()</code>方法，而依赖于垃圾回收器来销毁进程池对象是不正确的做法。</li></ul><p>进程池对象的常用方法：</p><ul><li><code>apply(func[, args[, kwds]])</code>：在进程池中开启一个新的进程并执行<code>func</code>函数，另外两个参数则是函数的参数，在这个函数执行完之前，当前进程会一直阻塞。</li><li><code>apply_async(func[, args[, kwds[, callback[, error_callback]]]])</code>：这是<code>apply</code>方法的一个变体，会返回一个<code>AsyncResult</code>结果对象。如果指定了<code>callback</code>参数，则会在<code>func</code>函数执行成功后将返回结果当做参数传入<code>callback</code>指定的可调用对象，执行失败则会调用<code>error_callback</code>指定的可调用对象。</li><li><code>map(func, iterable[, chunksize])</code>：内置<code>map()</code>函数的一个并行版本，会一直阻塞当前进程直到运行完可迭代对象中的所有元素，并返回结果。此方法会将可迭代对象分割为许多块，<code>chunksize</code>参数用于指定每个块的大小，并行的进程，每个进程会对应一个块，每次会运行块中的一个元素。注意，对于比较大的迭代对象，可能会很耗时，此时可以考虑使用<code>imap()</code>或者<code>imap_unordered()</code>，并且使用时指定<code>chunksize</code>参数可能会得到更好的效率。</li><li><code>map_async(func, iterable[, chunksize[, callback[, error_callback]]])</code>：<code>map</code>方法的一个变体，可以返回一个处理后的<code>AsyncResult</code>结果对象。其他参数的使用与<code>appply_async</code>方法是一致的。</li><li><code>imap(func, iterable[, chunksize])</code>：<code>map()</code>方法的延迟执行版本，对于较大的迭代，<code>chunksize</code>设置一个较大的值会比默认值<code>1</code>会有更高的执行效率，同样，对于比较消耗内存的迭代，建议使用这个方法，而不是使用<code>map()</code>方法。如果<code>chunksize</code>为<code>1</code>，则<code>imap()</code>方法返回的迭代器的<code>next()</code>方法拥有一个可选的参数<code>timeout</code>，如果在指定的<code>timeout</code>时间内未得到执行结果，<code>next(timeout)</code>就会抛出<code>multiprocessing.TimeoutError</code>异常。</li><li><code>imap_unordered(func, iterable[, chunksize])</code>：和<code>imap()</code>类似，只不过返回的结果是无序的，当然只有一个进程的时候，返回的结果就是有序的。</li><li><code>starmap(func, iterable[, chunksize])</code>：和<code>map()</code>类似，不过<code>iterable</code>中的每个元素都会被再次解包作为<code>func</code>的参数传入进去，如<code>[(1, 2), (3, 4)]</code>会转化为类似<code>[func(1, 2), func(3, 4)]</code>。</li><li><code>starmap_async(func, iterable[, chunksize[, callback[, error_callback]]])</code>：和<code>starmap</code>类似，会返回一个结果对象。</li><li><code>close()</code>：会阻止后续任务提交到进程池，当所有任务都执行完成后，工作进程就会退出。</li><li><code>terminate()</code>：不用等待未完成的任务，立即停止工作进程，当进程池被垃圾回收时，此方法会被立即调用。</li><li><code>join()</code>：等待工作进程结束，注意，调用此方法前必须先调用<code>close()</code>方法或<code>terminate()</code>方法。</li></ul><p><strong>AsyncResult类</strong><br><code>multiprocessing.pool.AsyncResult</code>：<code>apply_async()</code>和<code>map_async()</code>这两个方法返回的结果对象对应的类。<br>常用的方法：</p><ul><li><code>get([timeout])</code>：用于获取执行结果。如果<code>timeout</code>参数不是None，并且在指定时间内没有得到执行结果，则会抛出<code>multiprocessing.TimeoutError</code>异常。</li><li><code>wait([timeout])</code>：阻塞当前进程，直到返回结果，或者<code>timeout</code>超时。</li><li><code>ready()</code>：判断执行是否完成。</li><li><code>successful()</code>：判断调用是否已经完成，并且未引发异常，如果未执行完成，则会引发<code>ValueError</code>异常。</li></ul><pre><code class="language-python">&quot;&quot;&quot;
+这是官方文档上给出的示例，我就直接贴在这儿了
+&quot;&quot;&quot;
+from multiprocessing import Pool
+import time
+
+
+def f(x):
+    return x * x
+
+
+if __name__ == &#39;__main__&#39;:
+    with Pool(processes=4) as pool:  # start 4 worker processes
+        result = pool.apply_async(f, (10,))  # evaluate &quot;f(10)&quot; asynchronously in a single process
+        print(result.get(timeout=1))  # prints &quot;100&quot; unless your computer is *very* slow
+
+        print(pool.map(f, range(10)))  # prints &quot;[0, 1, 4,..., 81]&quot;
+
+        it = pool.imap(f, range(10))
+        print(next(it))  # prints &quot;0&quot;
+        print(next(it))  # prints &quot;1&quot;
+        print(it.next(timeout=1))  # prints &quot;4&quot; unless your computer is *very* slow
+
+        result = pool.apply_async(time.sleep, (10,))
+        print(result.get(timeout=1))  # raises multiprocessing.TimeoutError</code></pre><h3 id="编程指导"><a href="#编程指导" class="headerlink" title="编程指导"></a>编程指导</h3><p>这是官方文档中对于<code>multiprocessing</code>模块给出的一些编程建议，<strong>对于所有启动方法</strong></p><ul><li><strong>避免共享状态：</strong>应该避免在进程间传递大量数据，传递的数据应该越少越好。最好使用队列或者管道进行进程间的通信，而不是使用底层的同步原语。</li><li><strong>可序列化：</strong>保证代理的方法的参数是可序列化的。</li><li><strong>代理的线程安全：</strong>不要在多线程之间同时使用一个代理对象，除非你用锁保护它，但是在多进程之间使用相同的代理对象是不会有问题的。</li><li><strong>使用join避免僵尸进程：</strong>在Unix上，如果一个进程执行完成但是没有被<code>join</code>，就会变成僵尸进程。一般来说，僵尸进程不会很多，因为每次启动新进程或者<code>active_children()</code>被调用时，所有已执行完成且没有被<code>join</code>的进程都会被自动被<code>join</code>，而且对一个执行完成的进程调用<code>Process.is_alive</code>也会<code>join</code>这个进程。尽管如此，对自己启动的进程显式调用<code>join</code>依然是最佳的实践。</li><li><strong>继承优于序列化、反序列化：</strong>当使用spawn或者forkserver的启动方式时，<code>multiprocessing</code>模块中的许多类型都必须是可序列化的，这样子进程才能使用它们。但是，通常我们都应该避免使用管道和队列来发送共享对象到另一个进程，而是应该优先采用让子进程通过继承的方式从父进程中访问这些共享对象。</li><li><strong>避免手动杀死进程：</strong>通过<code>Process.terminate</code>终止一个进程很容易导致这个进程正在使用的资源（如锁、信号量、管道和队列）损坏或者变得不可用，导致其他需要使用这些资源的进程无法使用。所以，最好是那些从来不使用这些共享资源的进程才调用<code>Process.terminate</code>。</li><li><strong>使用队列的进程的join：</strong>如果一个进程使用了队列，并往队列中放入数据，那么这个进程会一直阻塞，直到所有的缓存项都被<code>feeder</code>线程传递给底层管道，这意味着，在这个进程使用<code>join</code>方法之前，需要保证放入队列的全部数据都已经被其他的线程或进程消费完，否则不能保证这个队列的进程可以正常终止（注意，非守护进程都会自动<code>join</code>）。如下是一个死锁的示例：解决办法是交换最后两行或者删除<code>p.join()</code>这一行。</li></ul><pre><code class="language-python">from multiprocessing import Process, Queue
+
+def f(q):
+    q.put(&#39;X&#39; * 1000000)
+
+if __name__ == &#39;__main__&#39;:
+    queue = Queue()
+    p = Process(target=f, args=(queue,))
+    p.start()
+    p.join()                    # this deadlocks
+    obj = queue.get()</code></pre><ul><li><strong>显式传递资源给子进程：</strong>在Unix上，使用fork方式启动的子进程可以使用父进程中全局创建的共享资源，但是还是建议显式的传递资源给子进程，这样保证了子进程结束后，这个资源也不会被回收，如果直接使用，有可能会导致子进程结束时这个资源被释放掉。如下，示例1为错误示范，应该为示例2的方式。</li></ul><pre><code class="language-python">&quot;&quot;&quot;示例1&quot;&quot;&quot;
+from multiprocessing import Process, Lock
+
+
+def f():
+    ... do something using &quot;lock&quot; ...
+
+
+if __name__ == &#39;__main__&#39;:
+    lock = Lock()
+    for i in range(10):
+        Process(target=f).start()
+&quot;&quot;&quot;示例2&quot;&quot;&quot;
+from multiprocessing import Process, Lock
+
+
+def f(l):
+    ... do something using &quot;l&quot; ...
+
+
+if __name__ == &#39;__main__&#39;:
+    lock = Lock()
+    for i in range(10):
+        Process(target=f, args=(lock,)).start()</code></pre><p><strong>spawn和forkserver启动方式</strong><br>spawn和forkserver的以下一些特点，相对于另外一种fork启动方式，会有一些区别和限制。</p><ul><li><strong>更依赖序列化：</strong><code>Process.__init__()</code>的所有参数都必须是可序列化的，同样的，<code>Process</code>的子类实例在调用<code>start</code>方法时也必须保证是可以被序列化的。</li><li><strong>全局变量：</strong>如果子进程在代码中尝试访问一个全局变量时，需要小心，它此时的值可能与父进程中执行<code>Process.start</code>方法时的值不一样了，当然，如果它是模块级别的常量时，是没问题的。</li><li><strong>安全导入主模块：</strong>需要确保主模块可以被新启动的Python解释器（比如启动了一个子进程）安全导入而不会引发其他问题。见示例1和示例2。</li></ul><p>示例1：以下代码会引发<code>RuntimeError</code>。</p><pre><code class="language-python">from multiprocessing import Process
+
+
+def foo():
+    print(&#39;hello&#39;)
+
+
+p = Process(target=foo)
+p.start()</code></pre><p>示例2：对于以上代码，应该使用<code>if __name__ == &#39;__main__&#39;</code>来保护程序入口点。</p><pre><code class="language-python">from multiprocessing import Process, freeze_support, set_start_method
+
+
+def foo():
+    print(&#39;hello&#39;)
+
+
+# 这个入口点可以允许子进程安全导入此模块并使用此模块中的foo函数
+if __name__ == &#39;__main__&#39;:
+    freeze_support()  # 如果正常运行程序而不是需要打包“冻结”，则可以忽略此句。
+    set_start_method(&#39;spawn&#39;)
+    p = Process(target=foo)
+    p.start()</code></pre></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> Python标准库</a></div><div class="post-nav"><div class="post-nav-item"><a href="/%E7%88%AC%E8%99%AB/Scrapy%E6%A1%86%E6%9E%B6/scrapy%20middleware%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="prev" title="Scrapy框架笔记·Middleware中间件"><i class="fa fa-chevron-left"></i> Scrapy框架笔记·Middleware中间件</a></div><div class="post-nav-item"><a href="/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="Linux常用命令">Linux常用命令 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%BF%9B%E7%A8%8B"><span class="nav-text">创建进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F"><span class="nav-text">进程启动方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-text">进程间通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E5%90%8C%E6%AD%A5"><span class="nav-text">进程间同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE"><span class="nav-text">进程间共享数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%B1%A0"><span class="nav-text">进程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E6%8C%87%E5%AF%BC"><span class="nav-text">编程指导</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="yuandongxu" src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><p class="site-author-name" itemprop="name">yuandongxu</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">69</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">11</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span> </span><span class="links-of-author-item"><a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script><script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script><div class="widget-wrap"><h3 class="widget-title"></h3><div id="myCanvasContainer" class="widget tagcloud"><canvas width="250" height="250" id="resCanvas" style="width:100%"><ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag">Python标准库</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag">软件</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a><span class="tag-list-count">8</span></li></ul></canvas></div></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">yuandongxu</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">222k</span></div><script src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.js" async></script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var e,t,o,n,r,a=document.getElementsByTagName("link");if(0<a.length)for(i=0;i<a.length;i++)"canonical"==a[i].rel.toLowerCase()&&a[i].href&&(e=a[i].href);t=e?e.split(":")[0]:window.location.protocol.split(":")[0],e=e||window.location.href,window,n=e,r=document.referrer,/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi.test(n)||(o="https"===String(t).toLowerCase()?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif",r?(o+="?r="+encodeURIComponent(document.referrer),n&&(o+="&l="+n)):n&&(o+="?l="+n),(new Image).src=o)}()</script><script src="/js/local-search.js"></script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}</script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'http://yoursite.com/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E5%A4%9A%E8%BF%9B%E7%A8%8Bmultiprocessing/',]
+      });
+      });</script><script>NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'ppTfB90JLFHWAP8jtgDULtBY-gzGzoHsz',
+      appKey     : '3QvYOEbjnbDB09UCGm4Pmbdx',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});</script></body></html>
