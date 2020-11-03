@@ -1,0 +1,658 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/note.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/note.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/note.png"><link rel="mask-icon" href="/note.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css"><script src="/lib/pace/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yoursite.com",root:"/",scheme:"Gemini",version:"7.8.0",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:15,onmobile:!0},copycode:{enable:!0,show_result:!1,style:"mac"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!0,lazyload:!1,pangu:!0,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!0,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"content.json"}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.css"><meta name="description" content="一、Flask介绍（轻量级的框架，非常快速的就能把程序搭建起来）Flask是一个基于Python开发并且依赖jinja2模板和Werkzeug WSGI服务的一个微型框架，对于Werkzeug本质是Socket服务端，其用于接收http请求并对请求进行预处理，然后触发Flask框架，开发人员基于Flask框架提供的功能对请求进行相应的处理，并返回给用户，如果要返回给用户复杂的内容时，需要借助jin"><meta property="og:type" content="article"><meta property="og:title" content="Flask知识整理"><meta property="og:url" content="http://yoursite.com/Python/Flask/index.html"><meta property="og:site_name" content="苑东旭的博客"><meta property="og:description" content="一、Flask介绍（轻量级的框架，非常快速的就能把程序搭建起来）Flask是一个基于Python开发并且依赖jinja2模板和Werkzeug WSGI服务的一个微型框架，对于Werkzeug本质是Socket服务端，其用于接收http请求并对请求进行预处理，然后触发Flask框架，开发人员基于Flask框架提供的功能对请求进行相应的处理，并返回给用户，如果要返回给用户复杂的内容时，需要借助jin"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180107160456565-1909212451.png"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1057762/201709/1057762-20170918163803337-478209396.png"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1057762/201709/1057762-20170918165632165-2077598826.png"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002129551-1702350524.png"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002150441-1692454105.png"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002214519-340547811.png"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002339004-478741395.png"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153505097-1906265054.png"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153849004-1739492250.png"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153920738-2108982455.png"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153947363-940880815.png"><meta property="og:image" content="https://images2017.cnblogs.com/blog/1184802/201801/1184802-20180104233933237-2120353157.png"><meta property="og:image" content="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif"><meta property="og:image" content="https://images2018.cnblogs.com/blog/1195739/201804/1195739-20180425102513168-1283642565.png"><meta property="article:published_time" content="2020-03-04T16:00:00.000Z"><meta property="article:modified_time" content="2020-10-13T15:41:29.530Z"><meta property="article:author" content="yuandongxu"><meta property="article:tag" content="Flask"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180107160456565-1909212451.png"><link rel="canonical" href="http://yoursite.com/Python/Flask/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>Flask知识整理 | 苑东旭的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">苑东旭的博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">笔记·归纳·总结</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">16</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">94</span></a></li><li class="menu-item menu-item-书签"><a href="/sidebar/bookmark.html" rel="section"><i class="fa fa-bookmark fa-fw"></i>书签</a></li><li class="menu-item menu-item-分享"><a href="/sidebar/download.html" rel="section"><i class="fa fa-download fa-fw"></i>分享</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>站内搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://yoursite.com/Python/Flask/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><meta itemprop="name" content="yuandongxu"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="苑东旭的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Flask知识整理</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2020-03-05 00:00:00" itemprop="dateCreated datePublished" datetime="2020-03-05T00:00:00+08:00">2020-03-05</time> </span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>21k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-tag"></i> </span><span class="post-meta-item-text">标签：</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/Flask/" itemprop="url" rel="index"><span itemprop="name">Flask</span></a> </span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/Python/Flask/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/Python/Flask/" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><h1 id="一、Flask介绍（轻量级的框架，非常快速的就能把程序搭建起来）"><a href="#一、Flask介绍（轻量级的框架，非常快速的就能把程序搭建起来）" class="headerlink" title="一、Flask介绍（轻量级的框架，非常快速的就能把程序搭建起来）"></a>一、Flask介绍（轻量级的框架，非常快速的就能把程序搭建起来）</h1><p>Flask是一个基于Python开发并且依赖jinja2模板和Werkzeug WSGI服务的一个微型框架，对于Werkzeug本质是Socket服务端，其用于接收http请求并对请求进行预处理，然后触发Flask框架，开发人员基于Flask框架提供的功能对请求进行相应的处理，并返回给用户，如果要返回给用户复杂的内容时，需要借助jinja2模板来实现对模板的处理，即：将模板和数据进行渲染，将渲染后的字符串返回给用户浏览器。</p><p>“微”(micro) 并不表示你需要把整个 Web 应用塞进单个 Python 文件（虽然确实可以 ），也不意味着 Flask 在功能上有所欠缺。微框架中的“微”意味着 Flask 旨在保持核心简单而易于扩展。Flask 不会替你做出太多决策——比如使用何种数据库。而那些 Flask 所选择的——比如使用何种模板引擎——则很容易替换。除此之外的一切都由可由你掌握。如此，Flask 可以与您珠联璧合。</p><p>默认情况下，Flask 不包含数据库抽象层、表单验证，或是其它任何已有多种库可以胜任的功能。然而，Flask 支持用扩展来给应用添加这些功能，如同是 Flask 本身实现的一样。众多的扩展提供了数据库集成、表单验证、上传处理、各种各样的开放认证技术等功能。Flask 也许是“微小”的，但它已准备好在需求繁杂的生产环境中投入使用。</p><pre><code>pip3 install flask</code></pre><pre><code>#Flask依赖一个实现wsgi协议的模块：werkzeug
+from werkzeug.wrappers import Request, Response
+
+@Request.application
+def hello(request):
+    return Response(&#39;Hello World!&#39;)
+
+if __name__ == &#39;__main__&#39;:
+    from werkzeug.serving import run_simple
+    run_simple(&#39;localhost&#39;, 4000, hello)</code></pre><p>flask依赖wsgi，实现wsgi模块：wsgiref,werkzeug,uwsgi</p><h2 id="与Django的简单比较"><a href="#与Django的简单比较" class="headerlink" title="与Django的简单比较"></a>与Django的简单比较</h2><pre><code>Django：无socket，依赖第三方模块wsgi,中间件，路由系统（CBV，FBV），视图函数，ORM。cookie,session,Admin,Form,缓存，信号，序列化。。
+Flask:无socket,中间件（需要扩展），路由系统，视图（CBV）、第三方模块（依赖jinja2）,cookie，session弱爆了</code></pre><h1 id="二、基本使用"><a href="#二、基本使用" class="headerlink" title="二、基本使用"></a>二、基本使用</h1><pre><code>from flask import Flask
+app = Flask(__name__)
+
+@app.route(&#39;/&#39;)
+def hello_world():
+    return &#39;Hello World!&#39;
+
+if __name__ == &#39;__main__&#39;:
+    app.run()</code></pre><h2 id="1-实例化Flask对象时，可选的参数"><a href="#1-实例化Flask对象时，可选的参数" class="headerlink" title="1.实例化Flask对象时，可选的参数"></a>1.实例化Flask对象时，可选的参数</h2><pre><code>app = Flask(__name__)    # 这是实例化一个Flask对象，最基本的写法
+# 但是Flask中还有其他参数，以下是可填的参数，及其默认值
+
+def __init__(self, import_name, static_path=None, static_url_path=None,
+                 static_folder=&#39;static&#39;, template_folder=&#39;templates&#39;,
+                 instance_path=None, instance_relative_config=False,
+                 root_path=None):</code></pre><p><strong>template_folder</strong>：模板所在文件夹的名字</p><p><strong>root_path</strong>：可以不用填，会自动找到，当前执行文件，所在目录地址</p><p>在return render_template时会将上面两个进行拼接，找到对应的模板地址</p><p><strong>static_folder</strong>：静态文件所在文件的名字，默认是static，可以不用填</p><p><strong>static_url_path</strong>：静态文件的地址前缀，写成什么，访问静态文件时，就要在前面加上这个</p><pre><code>app = Flask(__name__,template_folder=&#39;templates&#39;,static_url_path=&#39;/xxxxxx&#39;)</code></pre><p>如：在根目录下创建目录，templates和static，则return render_template时，可以找到里面的模板页面；如在static文件夹里存放11.png，在引用该图片时，静态文件地址为：/xxxxxx/11.png</p><p><strong>instance_path</strong>和<strong>instance_relative_config</strong>是配合来用的、</p><p>这两个参数是用来找配置文件的，当用app.config.from_pyfile(‘settings.py’)这种方式导入配置文件的时候会用到</p><p><strong>instance_relative_config：</strong>默认为False，当设置为True时<strong>，</strong>from_pyfile会从*<strong>*instance_path**</strong>指定的地址下查找文件。</p><p><strong>instsnce_path</strong>：指定from_pyfile查询文件的路径，不设置时，默认寻找和app.run()的执行文件同级目录下的instance文件夹；如果配置了instance_path（<strong>注意需要是绝对路径</strong>），就会从指定的地址下里面的文件</p><h3 id="绑定路由关系的两种方式"><a href="#绑定路由关系的两种方式" class="headerlink" title="绑定路由关系的两种方式"></a>绑定路由关系的两种方式</h3><pre><code>#方式一
+    @app.route(&#39;/index.html&#39;,methods=[&#39;GET&#39;,&#39;POST&#39;],endpoint=&#39;index&#39;)
+    def index():
+        return &#39;Index&#39;
+
+#方式二
+
+def index():
+    return &quot;Index&quot;
+
+self.add_url_rule(rule=&#39;/index.html&#39;, endpoint=&quot;index&quot;, view_func=index, methods=[&quot;GET&quot;,&quot;POST&quot;])    #endpoint是别名
+or
+app.add_url_rule(rule=&#39;/index.html&#39;, endpoint=&quot;index&quot;, view_func=index, methods=[&quot;GET&quot;,&quot;POST&quot;])
+app.view_functions[&#39;index&#39;] = index</code></pre><p><strong>添加路由关系的本质：</strong>将url和视图函数封装成一个Rule对象，添加到Flask的url_map字段中</p><h2 id="2-Flask中装饰器应用"><a href="#2-Flask中装饰器应用" class="headerlink" title="2.Flask中装饰器应用"></a>2.Flask中装饰器应用</h2><pre><code>from flask import Flask,render_template,request,redirect,session
+app = Flask(__name__)
+app.secret_key = &quot;sdsfdsgdfgdfgfh&quot;   # 设置session时，必须要加盐，否则报错
+
+def wrapper(func):
+    def inner(*args,**kwargs):
+        if not session.get(&quot;user_info&quot;):
+            return redirect(&quot;/login&quot;)
+        ret = func(*args,**kwargs)
+        return ret
+    return inner
+
+@app.route(&quot;/login&quot;,methods=[&quot;GET&quot;,&quot;POST&quot;])  # 指定该路由可接收的请求方式，默认为GET
+def login():
+    if request.method==&quot;GET&quot;:
+        return render_template(&quot;login.html&quot;)
+    else:
+        # print(request.values)   #这个里面什么都有，相当于body
+        username = request.form.get(&quot;username&quot;)
+        password = request.form.get(&quot;password&quot;)
+        if username==&quot;haiyan&quot; and password==&quot;123&quot;:
+            session[&quot;user_info&quot;] = username
+            # session.pop(&quot;user_info&quot;)  #删除session
+            return redirect(&quot;/index&quot;)
+        else:
+            # return render_template(&quot;login.html&quot;,**&#123;&quot;msg&quot;:&quot;用户名或密码错误&quot;&#125;)
+            return render_template(&quot;login.html&quot;,msg=&quot;用户名或者密码错误&quot;)
+
+@app.route(&quot;/index&quot;,methods=[&quot;GET&quot;,&quot;POST&quot;])
+@wrapper    #自己定义装饰器时，必须放在路由的装饰器下面
+def index():
+    # if not session.get(&quot;user_info&quot;):
+    #     return redirect(&quot;/login&quot;)
+    return render_template(&quot;index.html&quot;)
+
+
+if __name__ == &#39;__main__&#39;:
+    app.run(debug=True) </code></pre><p>debug = True 是指进入调试模式，服务器会在 我们的代码修改后， 自动重新载入，有错误的话会提醒，每次修改代码后就不需要再手动重启</p><p><span class="exturl" data-url="aHR0cDovL3d3dy5jbmJsb2dzLmNvbS9odWNob25nL3AvODIyNzg4OC5odG1sI19sYWJlbDE=">点击查看详情<i class="fa fa-external-link-alt"></i></span></p><h2 id="4-请求响应相关"><a href="#4-请求响应相关" class="headerlink" title="4.请求响应相关"></a>4.请求响应相关</h2><h3 id="1-获取请求数据，及相应"><a href="#1-获取请求数据，及相应" class="headerlink" title="1.获取请求数据，及相应"></a>1.获取请求数据，及相应</h3><pre><code>　　　　- request
+            - request.form   #POST请求的数据
+            - request.args   #GET请求的数据，不是完全意义上的字典，通过.to_dict可以转换成字典
+            - request.querystring  #GET请求，bytes形式的
+        - response
+            - return render_tempalte()    
+            - return redirect()
+            - return &quot;&quot;
+            v = make_response(返回值)  #可以把返回的值包在了这个函数里面，然后再通过.set_cookie绑定cookie等
+        - session
+            - 存在浏览器上，并且是加密的
+            - 依赖于：secret_key</code></pre><h3 id="2-flask中获取URL后面的参数-from-urllib-parse-import-urlencode-quote-unquote"><a href="#2-flask中获取URL后面的参数-from-urllib-parse-import-urlencode-quote-unquote" class="headerlink" title="2.flask中获取URL后面的参数(from urllib.parse import urlencode,quote,unquote)"></a>2.flask中获取URL后面的参数(from urllib.parse import urlencode,quote,unquote)</h3><p>GET请求：</p><p>URL为:　 <span class="exturl" data-url="aHR0cDovLzEyNy4wLjAuMTo1MDAwL2xvZ2luP25hbWU9JTI3JUU4JTgzJUExJUU1JTg2JUIyJTI3JmFtcDtuaWQ9Mg==">http://127.0.0.1:5000/login?name=%27%E8%83%A1%E5%86%B2%27&amp;nid=2<i class="fa fa-external-link-alt"></i></span></p><pre><code>from urllib.parse import urlencode,quote,unquote
+
+def login():
+    if request.method == &#39;GET&#39;:
+        s1 = request.args
+        s2 = request.args.to_dict()
+        s3 = urlencode(s1)
+        s4 = urlencode(s2)
+        s5 = unquote(s3)
+        s6 = unquote(s4)
+        s7 = quote(&quot;胡冲&quot;)
+        print(&#39;s1&#39;,s1)
+        print(&#39;s2&#39;,s2)
+        print(&#39;s3&#39;,s3)
+        print(&#39;s4&#39;,s4)
+        print(&#39;s5&#39;,s5)
+        print(&#39;s6&#39;,s6)
+        print(&#39;s7&#39;,s7)
+
+        return render_template(&#39;login.html&#39;)
+
+#############结果如下####################
+
+s1 ImmutableMultiDict([(&#39;name&#39;, &quot;&#39;胡冲&#39;&quot;), (&#39;nid&#39;, &#39;2&#39;)])
+s2 &#123;&#39;name&#39;: &quot;&#39;胡冲&#39;&quot;, &#39;nid&#39;: &#39;2&#39;&#125;
+s3 name=%27%E8%83%A1%E5%86%B2%27&amp;nid=2
+s4 name=%27%E8%83%A1%E5%86%B2%27&amp;nid=2
+s5 name=&#39;胡冲&#39;&amp;nid=2
+s6 name=&#39;胡冲&#39;&amp;nid=2
+s7 %E8%83%A1%E5%86%B2</code></pre><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="三、配置文件"><a href="#三、配置文件" class="headerlink" title="三、配置文件"></a>三、配置文件</h1><p><span class="exturl" data-url="aHR0cDovL3d3dy5jbmJsb2dzLmNvbS9odWNob25nL3AvODIyNzg4OC5odG1sI19sYWJlbDA=">点击查看<i class="fa fa-external-link-alt"></i></span></p><pre><code>flask中的配置文件是一个flask.config.Config对象（继承字典）,默认配置为：``  ``&#123;``    ``&#39;DEBUG&#39;``:                get_debug_flag(default``=``False``), 是否开启Debug模式``    ``&#39;TESTING&#39;``:               ``False``,             是否开启测试模式``    ``&#39;PROPAGATE_EXCEPTIONS&#39;``:         ``None``,             ``    ``&#39;PRESERVE_CONTEXT_ON_EXCEPTION&#39;``:    ``None``,``    ``&#39;SECRET_KEY&#39;``:              ``None``,``    ``&#39;PERMANENT_SESSION_LIFETIME&#39;``:      timedelta(days``=``31``),``    ``&#39;USE_X_SENDFILE&#39;``:            ``False``,``    ``&#39;LOGGER_NAME&#39;``:             ``None``,``    ``&#39;LOGGER_HANDLER_POLICY&#39;``:        ``&#39;always&#39;``,``    ``&#39;SERVER_NAME&#39;``:             ``None``,``    ``&#39;APPLICATION_ROOT&#39;``:           ``None``,``    ``&#39;SESSION_COOKIE_NAME&#39;``:         ``&#39;session&#39;``,``    ``&#39;SESSION_COOKIE_DOMAIN&#39;``:        ``None``,``    ``&#39;SESSION_COOKIE_PATH&#39;``:         ``None``,``    ``&#39;SESSION_COOKIE_HTTPONLY&#39;``:       ``True``,``    ``&#39;SESSION_COOKIE_SECURE&#39;``:        ``False``,``    ``&#39;SESSION_REFRESH_EACH_REQUEST&#39;``:     ``True``,``    ``&#39;MAX_CONTENT_LENGTH&#39;``:          ``None``,``    ``&#39;SEND_FILE_MAX_AGE_DEFAULT&#39;``:      timedelta(hours``=``12``),``    ``&#39;TRAP_BAD_REQUEST_ERRORS&#39;``:       ``False``,``    ``&#39;TRAP_HTTP_EXCEPTIONS&#39;``:         ``False``,``    ``&#39;EXPLAIN_TEMPLATE_LOADING&#39;``:       ``False``,``    ``&#39;PREFERRED_URL_SCHEME&#39;``:         ``&#39;http&#39;``,``    ``&#39;JSON_AS_ASCII&#39;``:            ``True``,``    ``&#39;JSON_SORT_KEYS&#39;``:            ``True``,``    ``&#39;JSONIFY_PRETTYPRINT_REGULAR&#39;``:     ``True``,``    ``&#39;JSONIFY_MIMETYPE&#39;``:           ``&#39;application/json&#39;``,``    ``&#39;TEMPLATES_AUTO_RELOAD&#39;``:        ``None``,``  ``&#125;` `方式一：``  ``app.config[``&#39;DEBUG&#39;``] ``=` `True` `  ``PS： 由于Config对象本质上是字典，所以还可以使用app.config.update(...)` `方式二：``  ``app.config.from_pyfile(``&quot;python文件名称&quot;``)``    ``如：``      ``settings.py``        ``DEBUG ``=` `True` `      ``app.config.from_pyfile(``&quot;settings.py&quot;``)` `  ``app.config.from_envvar(``&quot;环境变量名称&quot;``)``    ``环境变量的值为python文件名称名称，内部调用from_pyfile方法` `  ``app.config.from_json(``&quot;json文件名称&quot;``)``    ``JSON文件名称，必须是json格式，因为内部会执行json.loads` `  ``app.config.from_mapping(&#123;``&#39;DEBUG&#39;``:``True``&#125;)``    ``字典格式` `  ``app.config.from_object(``&quot;python类或类的路径&quot;``)` `    ``app.config.from_object(``&#39;pro_flask.settings.TestingConfig&#39;``)` `    ``settings.py` `      ``class` `Config(``object``):``        ``DEBUG ``=` `False``        ``TESTING ``=` `False``        ``DATABASE_URI ``=` `&#39;sqlite://:memory:&#39;` `      ``class` `ProductionConfig(Config):``        ``DATABASE_URI ``=` `&#39;mysql://user@localhost/foo&#39;` `      ``class` `DevelopmentConfig(Config):``        ``DEBUG ``=` `True` `      ``class` `TestingConfig(Config):``        ``TESTING ``=` `True` `    ``PS: 从sys.path中已经存在路径开始写``  ` `  ``PS: settings.py文件默认路径要放在程序root_path目录，如果instance_relative_config为``True``，则就是instance_path目录</code></pre><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="四、路由系统"><a href="#四、路由系统" class="headerlink" title="四、路由系统"></a>四、路由系统</h1><h2 id="1-可传入参数："><a href="#1-可传入参数：" class="headerlink" title="1.可传入参数："></a>1.可传入参数：</h2><pre><code>@app.route(&#39;/user/&lt;username&gt;&#39;)   #常用的   不加参数的时候默认是字符串形式的
+@app.route(&#39;/post/&lt;int:post_id&gt;&#39;)  #常用的   #指定int，说明是整型的
+@app.route(&#39;/post/&lt;float:post_id&gt;&#39;)
+@app.route(&#39;/post/&lt;path:path&gt;&#39;)
+@app.route(&#39;/login&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])</code></pre><pre><code>DEFAULT_CONVERTERS ``=` `&#123;``  ``&#39;default&#39;``:     UnicodeConverter,``  ``&#39;string&#39;``:      UnicodeConverter,``  ``&#39;any&#39;``:       AnyConverter,``  ``&#39;path&#39;``:       PathConverter,``  ``&#39;int&#39;``:       IntegerConverter,``  ``&#39;float&#39;``:      FloatConverter,``  ``&#39;uuid&#39;``:       UUIDConverter,``&#125;</code></pre><h2 id="2-反向生成URL：-url-for"><a href="#2-反向生成URL：-url-for" class="headerlink" title="2.反向生成URL： url_for"></a>2.反向生成URL： url_for</h2><p>endpoint(“name”) #别名，相当于django中的name</p><pre><code>from flask import Flask, url_for
+
+@app.route(&#39;/index&#39;,endpoint=&quot;xxx&quot;)  #endpoint是别名
+def index():
+    v = url_for(&quot;xxx&quot;)
+    print(v)
+    return &quot;index&quot;
+
+@app.route(&#39;/zzz/&lt;int:nid&gt;&#39;,endpoint=&quot;aaa&quot;)  #endpoint是别名
+def zzz(nid):
+    v = url_for(&quot;aaa&quot;,nid=nid)
+    print(v)
+    return &quot;index2&quot;</code></pre><h2 id="3-app-route和app-add-url-rule参数"><a href="#3-app-route和app-add-url-rule参数" class="headerlink" title="3. @app.route和app.add_url_rule参数"></a>3. @app.route和app.add_url_rule参数</h2><pre><code>@app.route和app.add_url_rule参数：
+            rule,                       URL规则
+            view_func,                  视图函数名称
+            defaults=None,              默认值,当URL中无参数，函数需要参数时，使用defaults=&#123;&#39;k&#39;:&#39;v&#39;&#125;为函数提供参数
+            endpoint=None,              名称，用于反向生成URL，即： url_for(&#39;名称&#39;)
+            methods=None,               允许的请求方式，如：[&quot;GET&quot;,&quot;POST&quot;]
+
+
+            strict_slashes=None,        对URL最后的 / 符号是否严格要求，
+                                        如：
+                                            @app.route(&#39;/index&#39;,strict_slashes=False)，　#当为False时，url上加不加斜杠都行
+                                                访问 http://www.xx.com/index/ 或 http://www.xx.com/index均可
+                                            @app.route(&#39;/index&#39;,strict_slashes=True)　　#当为True时，url后面必须不加斜杠
+                                                仅访问 http://www.xx.com/index 
+            redirect_to=None,           由原地址直接重定向到指定地址，原url有参数时，跳转到的新url也得传参，注意：新url中不用指定参数类型，直接用旧的参数的类型
+                                        如：
+                                            @app.route(&#39;/index/&lt;int:nid&gt;&#39;, redirect_to=&#39;/home/&lt;nid&gt;&#39;) # 访问index时，会直接自动跳转到home，执行home的函数，
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　不执行index的
+                                            　　　　　　　　　　　　　　　　　　　　　　　　　　或
+                                            def func(adapter, nid):
+                                                return &quot;/home/888&quot;
+                                            @app.route(&#39;/index/&lt;int:nid&gt;&#39;, redirect_to=func)
+
+            subdomain=None,             子域名访问
+                                                from flask import Flask, views, url_for
+
+                                                app = Flask(import_name=__name__)
+                                                app.config[&#39;SERVER_NAME&#39;] = &#39;haiyan.com:5000&#39;
+
+
+                                                @app.route(&quot;/&quot;, subdomain=&quot;admin&quot;)
+                                                def static_index():
+                                                    &quot;&quot;&quot;Flask supports static subdomains
+                                                    This is available at static.your-domain.tld&quot;&quot;&quot;
+                                                    return &quot;admin.xxx.com&quot;
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　#动态生成
+                                                @app.route(&quot;/dynamic&quot;, subdomain=&quot;&lt;username&gt;&quot;)
+                                                def username_index(username):
+                                                    &quot;&quot;&quot;Dynamic subdomains are also supported
+                                                    Try going to user1.your-domain.tld/dynamic&quot;&quot;&quot;
+                                                    return username + &quot;.your-domain.tld&quot;
+
+
+                                                if __name__ == &#39;__main__&#39;:
+                                                    app.run()
+        所有的域名都得与IP做一个域名解析：
+　　　　　　　　如果你想通过域名去访问，有两种解决方式：
+　　　　　　　　　　方式一：
+　　　　　　　　　　　　1、租一个域名   haiyan.lalala
+　　　　　　　　　　　　2、租一个公网IP  49.8.5.62
+　　　　　　　　　　　　3、域名解析：
+                           haiyan.com    49.8.5.62
+　　　　　　　　　　　　4、吧代码放在49.8.5.62这个服务器上，程序运行起来
+　　　　　　　　　　　　　 用户可以通过IP进行访问
+　　　　　　　　　　方式二：如果是自己测试用的就可以用这种方式。先在自己本地的文件中找
+　　　　　　　　　　　　 C:\Windows\System32\drivers\etc  找到HOST，修改配置
+　　　　　　　　　　　　然后吧域名修改成自己的本地服务器127.0.0.1
+　　　　　　　　　　　　加上配置：app.config[&quot;SERVER_NAME&quot;] = &quot;haiyan.com:5000&quot;</code></pre><pre><code># =============== 子域名访问============
+@app.route(&quot;/static_index&quot;, subdomain=&quot;admin&quot;)
+def static_index():
+    return &quot;admin.bjg.com&quot;
+
+# ===========动态生成子域名===========
+@app.route(&quot;/index&quot;,subdomain=&#39;&lt;xxxxx&gt;&#39;)
+def index(xxxxx):
+    return &quot;%s.bjg.com&quot; %(xxxxx,)</code></pre><h2 id="4-自定制正则路由匹配"><a href="#4-自定制正则路由匹配" class="headerlink" title="4.自定制正则路由匹配"></a>4.自定制正则路由匹配</h2><p>扩展Flask的路由系统，让他支持正则,这个类必须这样写，必须去继承BaseConverter</p><pre><code>from flask import Flask,url_for
+from werkzeug.routing import BaseConverter
+    app = Flask(__name__)
+
+    # 定义转换的类  class RegexConverter(BaseConverter):
+        &quot;&quot;&quot;
+        自定义URL匹配正则表达式
+        &quot;&quot;&quot;
+
+        def __init__(self, map, regex):
+            super(RegexConverter, self).__init__(map)
+            self.regex = regex
+
+        def to_python(self, value):
+            &quot;&quot;&quot;
+            路由匹配时，匹配成功后传递给视图函数中参数的值
+            :param value: 
+            :return: 
+            &quot;&quot;&quot;
+            return int(value)
+
+        def to_url(self, value):
+            &quot;&quot;&quot;
+            使用url_for反向生成URL时，传递的参数经过该方法处理，返回的值用于生成URL中的参数
+            :param value: 
+            :return: 
+            &quot;&quot;&quot;
+            val = super(RegexConverter, self).to_url(value)
+            return val
+
+    # 添加到converts中
+    app.url_map.converters[&#39;regex&#39;] = RegexConverter
+
+    # 进行使用
+    @app.route(&#39;/index/&lt;regex(&quot;\d+&quot;):nid&gt;&#39;,endpoint=&#39;xx&#39;)
+    def index(nid):
+        url_for(&#39;xx&#39;,nid=123) 
+        return &quot;Index&quot;
+
+    if __name__ == &#39;__main__&#39;:
+        app.run()</code></pre><p><span class="exturl" data-url="aHR0cDovL2RvY3Muamlua2FuLm9yZy9kb2NzL2ZsYXNrL3ZpZXdzLmh0bWw=">http://docs.jinkan.org/docs/flask/views.html<i class="fa fa-external-link-alt"></i></span></p><p><span class="exturl" data-url="aHR0cHM6Ly9hbGlhbmcub3JnL1B5dGhvbi9GbGFzay1yb3V0ZS5odG1s">https://aliang.org/Python/Flask-route.html<i class="fa fa-external-link-alt"></i></span></p><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="五、视图函数"><a href="#五、视图函数" class="headerlink" title="五、视图函数"></a>五、视图函数</h1><h2 id="1-Django中的CBV模式"><a href="#1-Django中的CBV模式" class="headerlink" title="1.Django中的CBV模式"></a>1.Django中的CBV模式</h2><p><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180107160456565-1909212451.png" alt="img"></p><h2 id="2-Flask中的CBV和FBV"><a href="#2-Flask中的CBV和FBV" class="headerlink" title="2.Flask中的CBV和FBV"></a>2.Flask中的CBV和FBV</h2><pre><code>def auth(func):
+    def inner(*args, **kwargs):
+        result = func(*args, **kwargs)
+        return result
+    return inner
+
+class IndexView(views.MethodView):
+    # methods = [&#39;POST&#39;]  #只允许POST请求访问
+    decorators = [auth,]  # 如果想给所有的get,post请求加装饰器，就可以这样来写，也可以单个指定
+
+    def get(self):   #如果是get请求需要执行的代码
+        v = url_for(&#39;index&#39;)
+        print(v)
+        return &quot;GET&quot;
+
+    def post(self):  #如果是post请求执行的代码
+        return &quot;POST&quot;
+
+app.add_url_rule(&#39;/index&#39;, view_func=IndexView.as_view(name=&#39;index&#39;))  #name即FBV中的endpoint，指别名
+
+if __name__ == &#39;__main__&#39;:
+    app.run()</code></pre><h3 id="类视图及其使用"><a href="#类视图及其使用" class="headerlink" title="类视图及其使用"></a>类视图及其使用</h3><p>　　视图函数不能面向对象编程，利用类视图来代替视图函数来解决这个问题</p><h4 id="导入视图类-View"><a href="#导入视图类-View" class="headerlink" title="导入视图类 View"></a>导入视图类 View</h4><p>　from flask.views import View</p><h4 id="编写一个视图子类"><a href="#编写一个视图子类" class="headerlink" title="编写一个视图子类"></a>编写一个视图子类</h4><pre><code>class MyView(View): # MyView继承于View
+
+    def test(self):  #  自定义的方法
+        return &#39;测试类视图&#39;
+
+    def dispatch_request(self):   # 必须重写这个方法
+        resp = self.test()
+        return resp</code></pre><h4 id="利用View子类获取到一个视图方法"><a href="#利用View子类获取到一个视图方法" class="headerlink" title="利用View子类获取到一个视图方法"></a>利用View子类获取到一个视图方法</h4><p>　　　　MyView.as_view(‘test’)</p><p>　　　　　　注意：.as_view方法的放回值是一个方法，而且该方法的名字就是传进去的参数</p><h4 id="将获取到的视图方法和路径对应起来"><a href="#将获取到的视图方法和路径对应起来" class="headerlink" title="将获取到的视图方法和路径对应起来"></a>将获取到的视图方法和路径对应起来</h4><p>　　　　app.add_url_rule(‘/test/‘, view_func=MyView.as_view(‘test’)) # MyView.as_view(‘test’) 返回的是一个方法</p><h4 id="类视图的原理"><a href="#类视图的原理" class="headerlink" title="类视图的原理"></a>类视图的原理</h4><p>　　　　把as_view方法返回的结果赋值给view_func<br>　　　　as_view方法返回的是一个方法(注意：as_view方法传入的参数就是as_view返回的那个方法的名字)，该方法会调用dispatch_request方法<br>　　　　一旦路由进来，就会调用 dispatch_request 方法<br>　　　　类视图的目的就是实现逻辑分离、方便管理</p><p><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="img"> View Code</p><h3 id="方法视图及其使用"><a href="#方法视图及其使用" class="headerlink" title="方法视图及其使用"></a>方法视图及其使用</h3><p>　　利用视图函数实现不同的请求执行不同的逻辑时比较复杂，需要在视图函数函数中进行判断；如果利用方法视图实现就比较简单</p><pre><code>@app.route(&#39;/test/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+def test():
+    if request.method == &#39;GET&#39;:
+        # 做GET的事情
+        pass
+    elif request.method == &#39;POST&#39;:
+        # 做POST的事情
+        pass
+    return &#39;测试&#39;</code></pre><h4 id="导入方法视图类"><a href="#导入方法视图类" class="headerlink" title="导入方法视图类　　"></a>导入方法视图类　　</h4><p>　　　　from flask.views import MethodView</p><h4 id="创建方法视图子类"><a href="#创建方法视图子类" class="headerlink" title="创建方法视图子类"></a>创建方法视图子类</h4><pre><code>class TestMethodView(MethodView):
+    def get(self):
+        # 处理Get请求
+        return &#39;GET请求&#39;
+    def post(self):
+        # 处理post请求
+        return &#39;POST请求&#39;</code></pre><p>注意：视图类中的方法就是支持的请求类型</p><p>　　　　　　<img src="https://images2017.cnblogs.com/blog/1057762/201709/1057762-20170918163803337-478209396.png" alt="img"></p><h4 id="利用方法视图子类创建一个视图函数"><a href="#利用方法视图子类创建一个视图函数" class="headerlink" title="利用方法视图子类创建一个视图函数"></a>利用方法视图子类创建一个视图函数</h4><p>　　　　TestMethodView.as_view(‘testMethodView’)</p><p>　　　　　注意：as_view返回的是一个视图函数，而且该视图函数逇名称就是传进去的参数</p><h4 id="将获取到的视图方法和路径对应起来-1"><a href="#将获取到的视图方法和路径对应起来-1" class="headerlink" title="将获取到的视图方法和路径对应起来"></a>将获取到的视图方法和路径对应起来</h4><p>　　　　　　app.add_url_rule(‘/test02/‘, view_func=TestMethodView.as_view(‘testMethodView’))</p><p><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="img"> View Code</p><h4 id="虽然在方法视图中定义的函数就是支持的请求类型，但是我们可以在配置路径时指定哪个路径对应哪中类型的请求"><a href="#虽然在方法视图中定义的函数就是支持的请求类型，但是我们可以在配置路径时指定哪个路径对应哪中类型的请求" class="headerlink" title="虽然在方法视图中定义的函数就是支持的请求类型，但是我们可以在配置路径时指定哪个路径对应哪中类型的请求"></a>虽然在方法视图中定义的函数就是支持的请求类型，但是我们可以在配置路径时指定哪个路径对应哪中类型的请求</h4><h4 id="利用方法视图子类获取一个名字为testMethodView02的视图函数，该视图函数只能支持GET请求，而且支持转换器"><a href="#利用方法视图子类获取一个名字为testMethodView02的视图函数，该视图函数只能支持GET请求，而且支持转换器" class="headerlink" title="利用方法视图子类获取一个名字为testMethodView02的视图函数，该视图函数只能支持GET请求，而且支持转换器"></a>利用方法视图子类获取一个名字为testMethodView02的视图函数，该视图函数只能支持GET请求，而且支持转换器</h4><pre><code>method02 = TestMethodView.as_view(&#39;testMethodView02&#39;);
+app.add_url_rule(&#39;/test02/&lt;name&gt;/&#39;, view_func=method02, methods=[&#39;GET&#39;])</code></pre><h4 id="利用利用方法视图子类获取一个名字为testMethodView03的视图函数，该视图函数只能支持POST请求"><a href="#利用利用方法视图子类获取一个名字为testMethodView03的视图函数，该视图函数只能支持POST请求" class="headerlink" title="利用利用方法视图子类获取一个名字为testMethodView03的视图函数，该视图函数只能支持POST请求"></a>利用利用方法视图子类获取一个名字为testMethodView03的视图函数，该视图函数只能支持POST请求</h4><pre><code>method03 = TestMethodView.as_view(&#39;testMethodView03&#39;)
+app.add_url_rule(&#39;/test03/&#39;, view_func=method03, methods=[&#39;POST&#39;])</code></pre><p>　模拟POST请求</p><p>　　　　　　　　<img src="https://images2017.cnblogs.com/blog/1057762/201709/1057762-20170918165632165-2077598826.png" alt="img"></p><p><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="img"> View Code</p><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="六、请求与响应"><a href="#六、请求与响应" class="headerlink" title="六、请求与响应"></a>六、请求与响应</h1><p><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="img"> View Code</p><pre><code>from flask import Flask,url_for,request,redirect,render_template,jsonify,make_response
+from urllib.parse import urlencode,quote,unquote
+app = Flask(__name__)
+
+@app.route(&#39;/index&#39;,endpoint=&#39;xx&#39;)
+def index():
+    from werkzeug.datastructures import ImmutableMultiDict
+　　=================
+    # get_data = request.args
+    # get_dict = get_data.to_dict()
+    # get_dict[&#39;xx&#39;] = &#39;18&#39;
+    # url = urlencode(get_dict)
+    # print(url)
+　　====================
+    # print(request.query_string)
+    # print(request.args)
+　　==========================
+    # val = &quot;%E6%8A%8A%E5%87%A0%E4%B8%AA&quot;
+    # print(unquote(val))   #把上面这样的数据转换成中文
+    #
+    # return &quot;Index&quot;
+
+    # return &quot;Index&quot;
+    # return redirect()
+    # return render_template()
+    # return jsonify(name=&#39;alex&#39;,age=&#39;18&#39;)  #相当于JsonResponse
+　　=======================
+    response = make_response(&#39;xxxxx&#39;)   ##如果是返回更多的值，cookie，headers，或者其他的就可用它
+    response.headers[&#39;xxx&#39;] = &#39;123123&#39;
+    return response
+
+
+if __name__ == &#39;__main__&#39;:
+    # app.__call__
+    app.run()</code></pre><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="七、模板语法"><a href="#七、模板语法" class="headerlink" title="七、模板语法"></a>七、模板语法</h1><h2 id="1、模板的使用"><a href="#1、模板的使用" class="headerlink" title="1、模板的使用"></a>1、模板的使用</h2><p>Flask使用的是Jinja2模板，所以其语法和Django无太大差别</p><p>Flask中模板里面，执行函数时，需要带（）才执行</p><h3 id="1-为了防止xss攻击，加了验证，所以页面上显示字符串的形式，解决办法，有两种方法"><a href="#1-为了防止xss攻击，加了验证，所以页面上显示字符串的形式，解决办法，有两种方法" class="headerlink" title="1.为了防止xss攻击，加了验证，所以页面上显示字符串的形式，解决办法，有两种方法"></a>1.为了防止xss攻击，加了验证，所以页面上显示字符串的形式，解决办法，有两种方法</h3><p><strong>方法一：</strong>在后端使用Markup，等价于Django里的mark_safe</p><pre><code> v = Markup(&quot;&lt;input type=&#39;text&#39; /&gt;&quot;)</code></pre><p><strong>方法二</strong>：在前端使用safe</p><pre><code>&#123;&#123; v1|safe &#125;&#125;</code></pre><h3 id="2-静态文件的两种导入方式"><a href="#2-静态文件的两种导入方式" class="headerlink" title="2.静态文件的两种导入方式"></a>2.静态文件的两种导入方式</h3><p><strong>目录结构：</strong></p><p><strong><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002129551-1702350524.png" alt="img"></strong></p><p><strong>方式一：</strong></p><p><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002150441-1692454105.png" alt="img"></p><p><strong>方式二：</strong></p><p><strong><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002214519-340547811.png" alt="img"></strong></p><h3 id="3-flask中模板语法不提示，解决办法"><a href="#3-flask中模板语法不提示，解决办法" class="headerlink" title="3.flask中模板语法不提示，解决办法"></a>3.flask中模板语法不提示，解决办法</h3><p><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180112002339004-478741395.png" alt="img"></p><p><strong>点击选择jinja2</strong></p><h2 id="2、自定义模板方法"><a href="#2、自定义模板方法" class="headerlink" title="2、自定义模板方法"></a>2、自定义模板方法</h2><p>Flask中自定义模板方法的方式和Bottle相似，创建一个函数并通过参数的形式传入render_template，</p><p><strong>run.py</strong></p><pre><code>from flask import Flask,url_for,render_template,Markup
+app = Flask(__name__)
+
+def test(a,b):    #自定义的标签，此方法在使用时，需要在render_temlate中传入到指定以页面使用
+    return a+b
+
+@app.template_global()   # 不需要传入，可直接在页面使用
+def sb(a1, a2):
+    return a1 + a2 + 100
+
+
+@app.template_filter()    #不需要传入，使用时要在一个值（此值作为第一个参数传入到过滤器中）的后面加入|，然后再加参数
+def db(a1, a2, a3):
+    return a1 + a2 + a3
+
+@app.route(&#39;/index&#39;)
+def index():
+    v1 = &quot;字符串&quot;
+    v2 = [11,22,33]
+    v3 = &#123;&quot;k1&quot;:&quot;v3&quot;,&quot;sdf&quot;:&quot;sdgfgf&quot;&#125;
+    v4 = &quot;&lt;input type=&#39;text&#39; /&gt;&quot;
+    v5 = Markup(&quot;&lt;input type=&#39;text&#39; /&gt;&quot;)
+    return render_template(&quot;index.html&quot;,v1=v1,v2=v2,v3=v3,v4=v4,v5=v5,test=test)
+
+if __name__ == &#39;__main__&#39;:
+    app.run(debug=True)</code></pre><p><strong>index.html</strong></p><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&#123;&#123; v1 &#125;&#125;
+&lt;ul&gt;
+    &#123;% for foo in v2 %&#125;
+       <li>&#123;&#123; foo &#125;&#125;</li>
+    &#123;% endfor %&#125;
+    &#123;&#123; v2.1 &#125;&#125;
+
+    &#123;% for k,v in v3.items() %&#125;
+    <li>&#123;&#123; k &#125;&#125; &#123;&#123; v &#125;&#125;</li>
+    &#123;% endfor %&#125;
+    &#123;&#123; v3.k1 &#125;&#125;
+    &#123;&#123; v3.get("k1") &#125;&#125;
+
+    &#123;&#123; v4|safe &#125;&#125;
+    &#123;&#123; v5 &#125;&#125;
+
+    &lt;h1&gt;&#123;&#123; test(1,2) &#125;&#125;&lt;/h1&gt;
+    &lt;p&gt;&#123;&#123; sb(1,2) &#125;&#125;&lt;/p&gt;
+    &lt;p&gt;&#123;&#123; 1| db(2,3) &#125;&#125;&lt;/p&gt;
+&lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre><p>PS:模板继承的方法和django的一样。</p><h2 id="3-宏"><a href="#3-宏" class="headerlink" title="3.宏"></a>3.宏</h2><p>只有定义的东西在很多地方去使用的时候才去用它,</p><p><strong>html</strong></p><pre><code>&#123;% macro xx(name, type='text', value='') %&#125;
+    <input type="&#123;&#123; type &#125;&#125;" name="&#123;&#123; name &#125;&#125;" value="&#123;&#123; value &#125;&#125;">
+　　<input type="&#123;&#123; type &#125;&#125;" name="&#123;&#123; name &#125;&#125;" value="&#123;&#123; value &#125;&#125;">　　<input type="&#123;&#123; type &#125;&#125;" name="&#123;&#123; name &#125;&#125;" value="&#123;&#123; value &#125;&#125;">
+&#123;% endmacro %&#125;
+
+&#123;&#123; xx('n1') &#125;&#125; </code></pre><p>相当于在页面上定义了一个名为xx的’函数’，这个函数接收3个参数，我们给type和value写上了默认值，此时调用，我们还需要传入一个参数，我们此时传入了一个n1，则</p><p>页面上会生成3个input框，name都为n1</p><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="八、Session"><a href="#八、Session" class="headerlink" title="八、Session"></a>八、Session</h1><p>除请求对象之外，还有一个 session 对象。它允许你在不同请求间存储特定用户的信息。它是在 Cookies 的基础上实现的，并且对 Cookies 进行密钥签名要使用会话，你需要设置一个密钥。</p><ul><li>设置：session[‘username’] ＝ ‘xxx’</li><li>删除：session.pop(‘username’, None)</li></ul><pre><code>from flask import Flask,url_for,session
+
+app = Flask(__name__)
+app.secret_key = &quot;sdsfdgdgdgd&quot;
+app.config[&#39;SESSION_COOKIE_NAME&#39;] = &#39;session_lvning&#39;  #设置session的名字
+
+@app.route(&#39;/index/&#39;)
+def index(nid):
+    #session本质上操作的是字典， 所有对session操作的方法与字典方法相同
+    #session的原理：如果下一次访问的时候带着随机字符串，会把session里面对应的
+    # 值拿到内存，假设session保存在数据库，每执行一次链接一次数据库，每次都要时时更新的话，会非常损耗数据库的效率
+    session[&quot;xxx&quot;] = 123
+    session[&quot;xxx2&quot;] = 123
+    session[&quot;xxx3&quot;] = 123
+    session[&quot;xxx4&quot;] = 123
+    del session[&quot;xxx2&quot;]  #在这删除了，真正存储的时候是没有xxx2的
+    return &quot;ddsf&quot;
+
+if __name__ == &#39;__main__&#39;:
+    app.run()</code></pre><h2 id="关于session的配置"><a href="#关于session的配置" class="headerlink" title="关于session的配置"></a>关于session的配置</h2><pre><code> app.config[&#39;SESSION_COOKIE_NAME&#39;] = &#39;session_lvning&#39;</code></pre><pre><code>- session超时时间如何设置？      &#39;PERMANENT_SESSION_LIFETIME&#39;:           timedelta(days=31)
+ 以下是跟session相关的配置文件
+&quot;&quot;&quot;
+            &#39;SESSION_COOKIE_NAME&#39;:                  &#39;session&#39;,
+            &#39;SESSION_COOKIE_DOMAIN&#39;:                None,
+            &#39;SESSION_COOKIE_PATH&#39;:                  None,
+            &#39;SESSION_COOKIE_HTTPONLY&#39;:              True,
+            &#39;SESSION_COOKIE_SECURE&#39;:                False,
+            &#39;SESSION_REFRESH_EACH_REQUEST&#39;:         True,  #是否每次都跟新
+            &#39;PERMANENT_SESSION_LIFETIME&#39;:           timedelta(days=31)</code></pre><p><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="img"> 基本使用</p><p><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="img"> 自定义Session</p><p><img src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="img"> 第三方session</p><h2 id="Django和Flask中session的区别"><a href="#Django和Flask中session的区别" class="headerlink" title="Django和Flask中session的区别"></a>Django和Flask中session的区别</h2><pre><code>&#39;&#39;&#39;
+Django中，session保存在服务端的数据库中，数据库中保存请求用户的所有数据，服务端数据中&#123;&#39;随机字符串&#39;：加密后的客户相关信息&#125;
+请求完成后，把随机字符串作为值，返回给客户端，保存在客户端的cookie中，键为：sessionid，值为：服务端返回的随机字符串；即&#123;&#39;sessionid&#39;:&#39;随机字符串&#39;&#125;
+
+
+
+Flask中，服务端什么都不存，用户第一次请求时，在内存中生成一个空字典，将这个空字典加密后，返回给客户端，保存在客户端的cookie中，键为’session&#39;,值为:加密后的字典
+下次访问时，读取客户端cookie中key为session对应的值
+然后进行解密（如果不能按之前的的加密方式对应个解密方式解密，即认为第一次请求，重新生成空字典），解密成功后，可以对字典进行操作，保存新数据在字典中，请求完成后，会重新加密这个字典,返回个客户端保存
+
+&#39;&#39;&#39;</code></pre><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="九、蓝图（flask中多py文件拆分都要用到蓝图）"><a href="#九、蓝图（flask中多py文件拆分都要用到蓝图）" class="headerlink" title="九、蓝图（flask中多py文件拆分都要用到蓝图）"></a>九、蓝图（flask中多py文件拆分都要用到蓝图）</h1><p>如果代码非常多，要进行归类。不同的功能放在不同的文件，吧相关的视图函数也放进去。蓝图也就是对flask的目录结构进行分配（应用于小，中型的程序）</p><p>蓝图用于为应用提供目录划分：</p><h2 id="小中型："><a href="#小中型：" class="headerlink" title="小中型："></a>小中型：</h2><p><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153505097-1906265054.png" alt="img"></p><p><strong>manage.py</strong></p><pre><code>import fcrm
+if __name__ == &#39;__main__&#39;:
+    fcrm.app.run()</code></pre><p><strong><strong>init</strong>.py</strong>(只要一导入fcrm就会执行<strong>init</strong>.py文件)</p><pre><code>from flask import Flask
+#导入accout 和order
+from fcrm.views import accout
+from fcrm.views import order
+app = Flask(__name__)
+print(app.root_path)  #根目录
+
+app.register_blueprint(accout.accout)  #把蓝图注册到app里面，accout.accout是创建的蓝图对象
+app.register_blueprint(order.order)</code></pre><p><strong>accout.py</strong></p><pre><code>from flask import  Blueprint,render_template
+accout = Blueprint(&quot;accout&quot;,__name__)
+
+@accout.route(&#39;/accout&#39;)
+def xx():
+    return &quot;accout&quot;
+
+@accout.route(&quot;/login&quot;)
+def login():
+    return render_template(&quot;login.html&quot;)</code></pre><p><strong>order.py</strong></p><pre><code>from flask import Blueprint
+order = Blueprint(&quot;order&quot;,__name__)
+
+@order.route(&#39;/order&#39;)
+def register():   
+    return &quot;order</code></pre><p>小型应用程序：<span class="exturl" data-url="aHR0cHM6Ly9maWxlcy5jbmJsb2dzLmNvbS9maWxlcy9odWNob25nL3Byb19mbGFza18lRTclQUUlODAlRTUlOEQlOTUlRTUlQkElOTQlRTclOTQlQTglRTclQTglOEIlRTUlQkElOEYlRTclOUIlQUUlRTUlQkQlOTUlRTclQTQlQkElRTQlQkUlOEIuemlw">代码示例<i class="fa fa-external-link-alt"></i></span></p><h2 id="大型："><a href="#大型：" class="headerlink" title="大型："></a>大型：</h2><p><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153849004-1739492250.png" alt="img"></p><p><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153920738-2108982455.png" alt="img"></p><p><img src="https://images2017.cnblogs.com/blog/1195739/201801/1195739-20180109153947363-940880815.png" alt="img"></p><p>大型应用程序：<span class="exturl" data-url="aHR0cHM6Ly9maWxlcy5jbmJsb2dzLmNvbS9maWxlcy9odWNob25nL3Byb19mbGFza18lRTUlQTQlQTclRTUlOUUlOEIlRTUlQkElOTQlRTclOTQlQTglRTclOUIlQUUlRTUlQkQlOTUlRTclQTQlQkElRTQlQkUlOEIuemlw">代码示例<i class="fa fa-external-link-alt"></i></span></p><h2 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h2><p><strong>蓝图中的视图函数的名字不能和蓝图对象的名字一样！！！</strong></p><h2 id="其他："><a href="#其他：" class="headerlink" title="其他："></a>其他：</h2><ul><li><ul><li>蓝图URL前缀：xxx = Blueprint(‘account’, <strong>name</strong>,url_prefix=’/xxx’)</li><li>蓝图子域名：xxx = Blueprint(‘account’, <strong>name</strong>,subdomain=’admin’)<br># 前提需要给配置SERVER_NAME： app.config[‘SERVER_NAME’] = ‘hc.com:5000’<br># 访问时：admin.hc.com:5000/login.html</li></ul></li></ul><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="十、闪现（flash）"><a href="#十、闪现（flash）" class="headerlink" title="十、闪现（flash）"></a>十、闪现（flash）</h1><p>session存在在服务端的一个字典里面，session保存起来，取一次里面还是有的，直到你删除之后才没有了</p><h2 id="1、本质"><a href="#1、本质" class="headerlink" title="1、本质"></a>1、本质</h2><p>flash是基于session创建的，flash支持往里边放值，只要你取一下就没有了，相当于pop了一下。不仅可以拿到值，而且可以把其从session里的去掉，</p><p>基于Session实现的用于保存数据的集合，其特点是：使用一次就删除。</p><h2 id="2、闪现的用途"><a href="#2、闪现的用途" class="headerlink" title="2、闪现的用途"></a>2、闪现的用途</h2><p>某个数据仅需用一次时，可以使用闪现</p><pre><code>from flask import Flask,session,Session,flash,get_flashed_messages,redirect,render_template,request
+app = Flask(__name__)
+app.secret_key =&#39;sdfsdfsdf&#39;
+
+@app.route(&#39;/users&#39;)
+def users():
+    # 方式一
+    # msg = request.args.get(&#39;msg&#39;,&#39;&#39;)
+    # 方式二
+    # msg = session.get(&#39;msg&#39;)
+    # if msg:
+    #     del session[&#39;msg&#39;]
+    # 方式三
+    v = get_flashed_messages()　　# 获取flash中的值
+    print(v)
+    msg = &#39;&#39;
+    return render_template(&#39;users.html&#39;,msg=msg)
+
+@app.route(&#39;/useradd&#39;)
+def user_add():
+    # 在数据库中添加一条数据
+    # 假设添加成功，在跳转到列表页面时，显示添加成功
+    # 方式一
+    # return redirect(&#39;/users?msg=添加成功&#39;)
+    # 方式二
+    # session[&#39;msg&#39;] = &#39;添加成功&#39;
+    # 方式三
+    flash(&#39;添加成功&#39;)
+    return redirect(&#39;/users&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    app.run(debug=True)</code></pre><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="十一、中间件"><a href="#十一、中间件" class="headerlink" title="十一、中间件"></a>十一、中间件</h1><p>在函数执行之前或函数执行之后想做点事情，有2种方式</p><p>第一种：装饰器</p><p>第二种：flask里面的扩展，相当于django中的中间件</p><pre><code>from flask import Flask,session,Session,flash,get_flashed_messages,redirect,render_template,request
+app = Flask(__name__)
+app.secret_key =&#39;sdfsdfsdf&#39;
+
+@app.before_request
+def process_request1():
+    print(&#39;process_request1&#39;)
+
+@app.after_request
+def process_response1(response):
+    print(&#39;process_response1&#39;)
+    return response
+
+
+@app.before_request
+def process_request2():
+    print(&#39;process_request2&#39;)
+
+@app.after_request
+def process_response2(response):   #参数也得有
+    print(&#39;process_response2&#39;)
+    return response   #必须有返回值
+
+
+@app.route(&#39;/index&#39;)
+def index():
+    print(&#39;index&#39;)
+    return &#39;Index&#39;
+
+@app.route(&#39;/order&#39;)
+def order():
+    print(&#39;order&#39;)
+    return &#39;order&#39;
+
+@app.route(&#39;/test&#39;)
+def test():
+    print(&#39;test&#39;)
+    return &#39;test&#39;
+
+if __name__ == &#39;__main__&#39;:
+    app.run()</code></pre><p>运行结果：</p><p><img src="https://images2017.cnblogs.com/blog/1184802/201801/1184802-20180104233933237-2120353157.png" alt="img"></p><p>还有一个@app.before_first_request：表示，当程序运行起来，第一个请求来的时候就只执行一次，下次再来就不会在执行了</p><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="十二、请求扩展"><a href="#十二、请求扩展" class="headerlink" title="十二、请求扩展"></a>十二、请求扩展</h1><p><img src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="img"></p><pre><code>#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+from flask import Flask, Request, render_template
+
+app = Flask(__name__, template_folder=&#39;templates&#39;)
+app.debug = True
+
+
+@app.before_first_request    # 只在第一次请求到来时执行一次，后面不会再执行
+def before_first_request1():
+    print(&#39;before_first_request1&#39;)
+
+
+@app.before_first_request
+def before_first_request2():
+    print(&#39;before_first_request2&#39;)
+
+
+@app.before_request    # 每次请求到来时，都会执行
+def before_request1():
+    Request.nnn = 123
+    print(&#39;before_request1&#39;)
+
+
+@app.before_request
+def before_request2():
+    print(&#39;before_request2&#39;)
+
+
+@app.after_request    # 每次响应时执行
+def after_request1(response):
+    print(&#39;before_request1&#39;, response)
+    return response
+
+
+@app.after_request
+def after_request2(response):
+    print(&#39;before_request2&#39;, response)
+    return response
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return &#39;This page does not exist&#39;, 404
+
+
+@app.template_global()    # 自定义标签，所有页面都直接使用
+def sb(a1, a2):
+    return a1 + a2
+
+
+@app.template_filter()    # 自定义过滤器，所有页面都直接使用
+def db(a1, a2, a3):
+    return a1 + a2 + a3
+
+
+@app.route(&#39;/&#39;)    # 访问的url，不加其他后缀时，也要有/
+def hello_world():
+    return render_template(&#39;hello.html&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    app.run()</code></pre><pre><code>自定义标签和过滤器在页面上的调用方式：&#123;&#123;sb(1,2)&#125;&#125;  &#123;&#123; 1|db(2,3)&#125;&#125;</code></pre><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaHVjaG9uZy9wLzgyMjc2MDYuaHRtbCNfbGFiZWxUb3A=">回到顶部(go to top)<i class="fa fa-external-link-alt"></i></span></p><h1 id="十三、编写统一的404页面"><a href="#十三、编写统一的404页面" class="headerlink" title="十三、编写统一的404页面"></a>十三、编写统一的404页面</h1><h2 id="导入abort方法"><a href="#导入abort方法" class="headerlink" title="导入abort方法"></a>导入abort方法</h2><p>　　　　from flask import abort</p><h2 id="设置一个站位符，当404错误出现时，自己编写的404页面就会在占位符的位置进行显示"><a href="#设置一个站位符，当404错误出现时，自己编写的404页面就会在占位符的位置进行显示" class="headerlink" title="设置一个站位符，当404错误出现时，自己编写的404页面就会在占位符的位置进行显示"></a>设置一个站位符，当404错误出现时，自己编写的404页面就会在占位符的位置进行显示</h2><p>　　　　abort(404)　　</p><h2 id="利用钩子编写自己的404页面"><a href="#利用钩子编写自己的404页面" class="headerlink" title="利用钩子编写自己的404页面"></a>利用钩子编写自己的404页面</h2><pre><code>@app.errorhandler(404)  # 404页面钩子
+def page_404(er):  # 参数是原始的404页面提示信息
+    print(er)
+    return &#39;这是统一的错误页面&#39;, 404, &#123;&#125;  # 返回自己编写的404页面信息</code></pre><p><img src="https://images2018.cnblogs.com/blog/1195739/201804/1195739-20180425102513168-1283642565.png" alt="img"></p><pre><code>from flask import Flask
+from flask import abort
+
+app = Flask(__name__)
+
+@app.route(&#39;/&#39;)
+def index():
+    return &#39;测试主页面&#39;
+
+movies = [1,2,3,4,5]
+
+@app.route(&#39;/movie/&lt;int:num&gt;/&#39;)
+def movie(num):
+    if num in movies:
+        return &#39;电影 &#123;&#125; 的详细信息为：...... &#39;.format(num)
+    abort(404)  # 自己编写的404页面会显示在这里
+
+@app.errorhandler(404)  # 404页面钩子
+def page_404(er):  # 参数是原始的404页面提示信息
+    print(er)
+    return &#39;这是统一的错误页面&#39;, 404, &#123;&#125;  # 返回自己编写的404页面信息
+
+
+print(app.url_map)
+
+if __name__ == &#39;__main__&#39;:
+    app.run(debug=True)</code></pre></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Flask/" rel="tag"><i class="fa fa-tag"></i> Flask</a></div><div class="post-nav"><div class="post-nav-item"><a href="/Git/%E3%80%8APro%20Git%E3%80%8B%E7%AC%94%E8%AE%B0%C2%B7%E2%91%A0Git%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" rel="prev" title="《Pro Git》笔记·①Git概述与安装配置"><i class="fa fa-chevron-left"></i> 《Pro Git》笔记·①Git概述与安装配置</a></div><div class="post-nav-item"><a href="/Python/%E7%88%AC%E8%99%AB/Scrapy%E6%A1%86%E6%9E%B6/scrapy%20%E5%91%BD%E4%BB%A4/" rel="next" title="Scrapy框架笔记·命令行">Scrapy框架笔记·命令行 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81Flask%E4%BB%8B%E7%BB%8D%EF%BC%88%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84%E6%A1%86%E6%9E%B6%EF%BC%8C%E9%9D%9E%E5%B8%B8%E5%BF%AB%E9%80%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E6%8A%8A%E7%A8%8B%E5%BA%8F%E6%90%AD%E5%BB%BA%E8%B5%B7%E6%9D%A5%EF%BC%89"><span class="nav-text">一、Flask介绍（轻量级的框架，非常快速的就能把程序搭建起来）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8EDjango%E7%9A%84%E7%AE%80%E5%8D%95%E6%AF%94%E8%BE%83"><span class="nav-text">与Django的简单比较</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-text">二、基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AE%9E%E4%BE%8B%E5%8C%96Flask%E5%AF%B9%E8%B1%A1%E6%97%B6%EF%BC%8C%E5%8F%AF%E9%80%89%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-text">1.实例化Flask对象时，可选的参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A%E8%B7%AF%E7%94%B1%E5%85%B3%E7%B3%BB%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-text">绑定路由关系的两种方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Flask%E4%B8%AD%E8%A3%85%E9%A5%B0%E5%99%A8%E5%BA%94%E7%94%A8"><span class="nav-text">2.Flask中装饰器应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%AF%B7%E6%B1%82%E5%93%8D%E5%BA%94%E7%9B%B8%E5%85%B3"><span class="nav-text">4.请求响应相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E6%95%B0%E6%8D%AE%EF%BC%8C%E5%8F%8A%E7%9B%B8%E5%BA%94"><span class="nav-text">1.获取请求数据，及相应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-flask%E4%B8%AD%E8%8E%B7%E5%8F%96URL%E5%90%8E%E9%9D%A2%E7%9A%84%E5%8F%82%E6%95%B0-from-urllib-parse-import-urlencode-quote-unquote"><span class="nav-text">2.flask中获取URL后面的参数(from urllib.parse import urlencode,quote,unquote)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">三、配置文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%B7%AF%E7%94%B1%E7%B3%BB%E7%BB%9F"><span class="nav-text">四、路由系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%8F%AF%E4%BC%A0%E5%85%A5%E5%8F%82%E6%95%B0%EF%BC%9A"><span class="nav-text">1.可传入参数：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%8F%8D%E5%90%91%E7%94%9F%E6%88%90URL%EF%BC%9A-url-for"><span class="nav-text">2.反向生成URL： url_for</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-app-route%E5%92%8Capp-add-url-rule%E5%8F%82%E6%95%B0"><span class="nav-text">3. @app.route和app.add_url_rule参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%87%AA%E5%AE%9A%E5%88%B6%E6%AD%A3%E5%88%99%E8%B7%AF%E7%94%B1%E5%8C%B9%E9%85%8D"><span class="nav-text">4.自定制正则路由匹配</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%A7%86%E5%9B%BE%E5%87%BD%E6%95%B0"><span class="nav-text">五、视图函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Django%E4%B8%AD%E7%9A%84CBV%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.Django中的CBV模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Flask%E4%B8%AD%E7%9A%84CBV%E5%92%8CFBV"><span class="nav-text">2.Flask中的CBV和FBV</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E8%A7%86%E5%9B%BE%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8"><span class="nav-text">类视图及其使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E8%A7%86%E5%9B%BE%E7%B1%BB-View"><span class="nav-text">导入视图类 View</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E8%A7%86%E5%9B%BE%E5%AD%90%E7%B1%BB"><span class="nav-text">编写一个视图子类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8View%E5%AD%90%E7%B1%BB%E8%8E%B7%E5%8F%96%E5%88%B0%E4%B8%80%E4%B8%AA%E8%A7%86%E5%9B%BE%E6%96%B9%E6%B3%95"><span class="nav-text">利用View子类获取到一个视图方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E8%8E%B7%E5%8F%96%E5%88%B0%E7%9A%84%E8%A7%86%E5%9B%BE%E6%96%B9%E6%B3%95%E5%92%8C%E8%B7%AF%E5%BE%84%E5%AF%B9%E5%BA%94%E8%B5%B7%E6%9D%A5"><span class="nav-text">将获取到的视图方法和路径对应起来</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E8%A7%86%E5%9B%BE%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-text">类视图的原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E8%A7%86%E5%9B%BE%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8"><span class="nav-text">方法视图及其使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E6%96%B9%E6%B3%95%E8%A7%86%E5%9B%BE%E7%B1%BB"><span class="nav-text">导入方法视图类　　</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%B9%E6%B3%95%E8%A7%86%E5%9B%BE%E5%AD%90%E7%B1%BB"><span class="nav-text">创建方法视图子类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%E8%A7%86%E5%9B%BE%E5%AD%90%E7%B1%BB%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%A7%86%E5%9B%BE%E5%87%BD%E6%95%B0"><span class="nav-text">利用方法视图子类创建一个视图函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E8%8E%B7%E5%8F%96%E5%88%B0%E7%9A%84%E8%A7%86%E5%9B%BE%E6%96%B9%E6%B3%95%E5%92%8C%E8%B7%AF%E5%BE%84%E5%AF%B9%E5%BA%94%E8%B5%B7%E6%9D%A5-1"><span class="nav-text">将获取到的视图方法和路径对应起来</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%BD%E7%84%B6%E5%9C%A8%E6%96%B9%E6%B3%95%E8%A7%86%E5%9B%BE%E4%B8%AD%E5%AE%9A%E4%B9%89%E7%9A%84%E5%87%BD%E6%95%B0%E5%B0%B1%E6%98%AF%E6%94%AF%E6%8C%81%E7%9A%84%E8%AF%B7%E6%B1%82%E7%B1%BB%E5%9E%8B%EF%BC%8C%E4%BD%86%E6%98%AF%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E5%9C%A8%E9%85%8D%E7%BD%AE%E8%B7%AF%E5%BE%84%E6%97%B6%E6%8C%87%E5%AE%9A%E5%93%AA%E4%B8%AA%E8%B7%AF%E5%BE%84%E5%AF%B9%E5%BA%94%E5%93%AA%E4%B8%AD%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%AF%B7%E6%B1%82"><span class="nav-text">虽然在方法视图中定义的函数就是支持的请求类型，但是我们可以在配置路径时指定哪个路径对应哪中类型的请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%E8%A7%86%E5%9B%BE%E5%AD%90%E7%B1%BB%E8%8E%B7%E5%8F%96%E4%B8%80%E4%B8%AA%E5%90%8D%E5%AD%97%E4%B8%BAtestMethodView02%E7%9A%84%E8%A7%86%E5%9B%BE%E5%87%BD%E6%95%B0%EF%BC%8C%E8%AF%A5%E8%A7%86%E5%9B%BE%E5%87%BD%E6%95%B0%E5%8F%AA%E8%83%BD%E6%94%AF%E6%8C%81GET%E8%AF%B7%E6%B1%82%EF%BC%8C%E8%80%8C%E4%B8%94%E6%94%AF%E6%8C%81%E8%BD%AC%E6%8D%A2%E5%99%A8"><span class="nav-text">利用方法视图子类获取一个名字为testMethodView02的视图函数，该视图函数只能支持GET请求，而且支持转换器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%E8%A7%86%E5%9B%BE%E5%AD%90%E7%B1%BB%E8%8E%B7%E5%8F%96%E4%B8%80%E4%B8%AA%E5%90%8D%E5%AD%97%E4%B8%BAtestMethodView03%E7%9A%84%E8%A7%86%E5%9B%BE%E5%87%BD%E6%95%B0%EF%BC%8C%E8%AF%A5%E8%A7%86%E5%9B%BE%E5%87%BD%E6%95%B0%E5%8F%AA%E8%83%BD%E6%94%AF%E6%8C%81POST%E8%AF%B7%E6%B1%82"><span class="nav-text">利用利用方法视图子类获取一个名字为testMethodView03的视图函数，该视图函数只能支持POST请求</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94"><span class="nav-text">六、请求与响应</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95"><span class="nav-text">七、模板语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%A8%A1%E6%9D%BF%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-text">1、模板的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%BA%E4%BA%86%E9%98%B2%E6%AD%A2xss%E6%94%BB%E5%87%BB%EF%BC%8C%E5%8A%A0%E4%BA%86%E9%AA%8C%E8%AF%81%EF%BC%8C%E6%89%80%E4%BB%A5%E9%A1%B5%E9%9D%A2%E4%B8%8A%E6%98%BE%E7%A4%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BD%A2%E5%BC%8F%EF%BC%8C%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95%EF%BC%8C%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-text">1.为了防止xss攻击，加了验证，所以页面上显示字符串的形式，解决办法，有两种方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%AF%BC%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="nav-text">2.静态文件的两种导入方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-flask%E4%B8%AD%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95%E4%B8%8D%E6%8F%90%E7%A4%BA%EF%BC%8C%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="nav-text">3.flask中模板语法不提示，解决办法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95"><span class="nav-text">2、自定义模板方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%8F"><span class="nav-text">3.宏</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AB%E3%80%81Session"><span class="nav-text">八、Session</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8Esession%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-text">关于session的配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Django%E5%92%8CFlask%E4%B8%ADsession%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">Django和Flask中session的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E8%93%9D%E5%9B%BE%EF%BC%88flask%E4%B8%AD%E5%A4%9Apy%E6%96%87%E4%BB%B6%E6%8B%86%E5%88%86%E9%83%BD%E8%A6%81%E7%94%A8%E5%88%B0%E8%93%9D%E5%9B%BE%EF%BC%89"><span class="nav-text">九、蓝图（flask中多py文件拆分都要用到蓝图）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E4%B8%AD%E5%9E%8B%EF%BC%9A"><span class="nav-text">小中型：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E5%9E%8B%EF%BC%9A"><span class="nav-text">大型：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%EF%BC%9A"><span class="nav-text">注意：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%EF%BC%9A"><span class="nav-text">其他：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E9%97%AA%E7%8E%B0%EF%BC%88flash%EF%BC%89"><span class="nav-text">十、闪现（flash）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%9C%AC%E8%B4%A8"><span class="nav-text">1、本质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E9%97%AA%E7%8E%B0%E7%9A%84%E7%94%A8%E9%80%94"><span class="nav-text">2、闪现的用途</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-text">十一、中间件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E8%AF%B7%E6%B1%82%E6%89%A9%E5%B1%95"><span class="nav-text">十二、请求扩展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E7%BC%96%E5%86%99%E7%BB%9F%E4%B8%80%E7%9A%84404%E9%A1%B5%E9%9D%A2"><span class="nav-text">十三、编写统一的404页面</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5abort%E6%96%B9%E6%B3%95"><span class="nav-text">导入abort方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%80%E4%B8%AA%E7%AB%99%E4%BD%8D%E7%AC%A6%EF%BC%8C%E5%BD%93404%E9%94%99%E8%AF%AF%E5%87%BA%E7%8E%B0%E6%97%B6%EF%BC%8C%E8%87%AA%E5%B7%B1%E7%BC%96%E5%86%99%E7%9A%84404%E9%A1%B5%E9%9D%A2%E5%B0%B1%E4%BC%9A%E5%9C%A8%E5%8D%A0%E4%BD%8D%E7%AC%A6%E7%9A%84%E4%BD%8D%E7%BD%AE%E8%BF%9B%E8%A1%8C%E6%98%BE%E7%A4%BA"><span class="nav-text">设置一个站位符，当404错误出现时，自己编写的404页面就会在占位符的位置进行显示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E9%92%A9%E5%AD%90%E7%BC%96%E5%86%99%E8%87%AA%E5%B7%B1%E7%9A%84404%E9%A1%B5%E9%9D%A2"><span class="nav-text">利用钩子编写自己的404页面</span></a></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="yuandongxu" src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><p class="site-author-name" itemprop="name">yuandongxu</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">94</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">16</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span> </span><span class="links-of-author-item"><a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script><script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script><div class="widget-wrap"><h3 class="widget-title"></h3><div id="myCanvasContainer" class="widget tagcloud"><canvas width="250" height="250" id="resCanvas" style="width:100%"><ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flask/" rel="tag">Flask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IOS/" rel="tag">IOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag">Python标准库</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag">博客</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag">软件</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a><span class="tag-list-count">8</span></li></ul></canvas></div></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">yuandongxu</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">298k</span></div><script src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.js" async></script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var e,t,o,n,r,a=document.getElementsByTagName("link");if(0<a.length)for(i=0;i<a.length;i++)"canonical"==a[i].rel.toLowerCase()&&a[i].href&&(e=a[i].href);t=e?e.split(":")[0]:window.location.protocol.split(":")[0],e=e||window.location.href,window,n=e,r=document.referrer,/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi.test(n)||(o="https"===String(t).toLowerCase()?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif",r?(o+="?r="+encodeURIComponent(document.referrer),n&&(o+="&l="+n)):n&&(o+="?l="+n),(new Image).src=o)}()</script><script src="/js/local-search.js"></script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}</script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'http://yoursite.com/Python/Flask/',]
+      });
+      });</script><script>NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'ppTfB90JLFHWAP8jtgDULtBY-gzGzoHsz',
+      appKey     : '3QvYOEbjnbDB09UCGm4Pmbdx',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});</script></body></html>

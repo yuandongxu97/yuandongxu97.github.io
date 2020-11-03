@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/note.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/note.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/note.png"><link rel="mask-icon" href="/note.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open Sans:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css"><script src="/lib/pace/pace.min.js"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yoursite.com",root:"/",scheme:"Gemini",version:"7.8.0",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:15,onmobile:!0},copycode:{enable:!0,show_result:!1,style:"mac"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!0,lazyload:!1,pangu:!0,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!0,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"content.json"}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.css"><meta name="description" content="本文将根据一个示例来学习并实现K近邻算法，示例的需求是这样的：我手中有一套房子需要出租，但是价格不知道定为多少是最合适的，现在需要参考其他房东的出租信息来制定我的出租价格。示例将分为以下几部分内容：  KNN算法实现 模型评估 基于多变量KNN模型  K近邻算法（KNN，K-NearestNeighbor）是机器学习或数据分析中最基础、也是最简单的算法之一，这个算法的思路就如同它字面上的意思“K个"><meta property="og:type" content="article"><meta property="og:title" content="K近邻算法（KNN）"><meta property="og:url" content="http://yoursite.com/%E7%AE%97%E6%B3%95/K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%EF%BC%88KNN%EF%BC%89/index.html"><meta property="og:site_name" content="苑东旭的博客"><meta property="og:description" content="本文将根据一个示例来学习并实现K近邻算法，示例的需求是这样的：我手中有一套房子需要出租，但是价格不知道定为多少是最合适的，现在需要参考其他房东的出租信息来制定我的出租价格。示例将分为以下几部分内容：  KNN算法实现 模型评估 基于多变量KNN模型  K近邻算法（KNN，K-NearestNeighbor）是机器学习或数据分析中最基础、也是最简单的算法之一，这个算法的思路就如同它字面上的意思“K个"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224305.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224302.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224259.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224256.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224238.png"><meta property="og:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224248.png"><meta property="og:image" content="https://img2020.cnblogs.com/blog/997700/202007/997700-20200723235639342-2054762323.png"><meta property="article:published_time" content="2019-11-11T16:00:00.000Z"><meta property="article:modified_time" content="2020-10-12T15:19:12.728Z"><meta property="article:author" content="yuandongxu"><meta property="article:tag" content="算法"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224305.png"><link rel="canonical" href="http://yoursite.com/%E7%AE%97%E6%B3%95/K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%EF%BC%88KNN%EF%BC%89/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>K近邻算法（KNN） | 苑东旭的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">苑东旭的博客</h1><span class="logo-line-after"><i></i></span></a><p class="site-subtitle" itemprop="description">笔记·归纳·总结</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">16</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">94</span></a></li><li class="menu-item menu-item-书签"><a href="/sidebar/bookmark.html" rel="section"><i class="fa fa-bookmark fa-fw"></i>书签</a></li><li class="menu-item menu-item-分享"><a href="/sidebar/download.html" rel="section"><i class="fa fa-download fa-fw"></i>分享</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>站内搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://yoursite.com/%E7%AE%97%E6%B3%95/K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%EF%BC%88KNN%EF%BC%89/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><meta itemprop="name" content="yuandongxu"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="苑东旭的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">K近邻算法（KNN）</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-11-12 00:00:00" itemprop="dateCreated datePublished" datetime="2019-11-12T00:00:00+08:00">2019-11-12</time> </span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>12k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-tag"></i> </span><span class="post-meta-item-text">标签：</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/tags/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a> </span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/%E7%AE%97%E6%B3%95/K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%EF%BC%88KNN%EF%BC%89/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/%E7%AE%97%E6%B3%95/K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%EF%BC%88KNN%EF%BC%89/" itemprop="commentCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><p>本文将根据一个示例来学习并实现K近邻算法，示例的需求是这样的：我手中有一套房子需要出租，但是价格不知道定为多少是最合适的，现在需要参考其他房东的出租信息来制定我的出租价格。示例将分为以下几部分内容：</p><ul><li>KNN算法实现</li><li>模型评估</li><li>基于多变量KNN模型</li></ul><p>K近邻算法（KNN，K-NearestNeighbor）是机器学习或数据分析中最基础、也是最简单的算法之一，这个算法的思路就如同它字面上的意思“K个最近的邻居”，想要得到某个样本的某个特征的值（一个样本通常有多个特征），就需要找到距离它最近的K个样本，然后根据这些样本的该特征的近似值作为它的特征值。</p><a id="more"></a><h3 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h3><p><strong>样本和特征：</strong>通常来讲，可以理解为一个表格数据中一行数据为一个样本，一列数据为这个样本的一个特征，就像数据库中的记录和字段的关系。</p><p><strong>距离和K值：</strong>这个算法的关键点在于距离的计算方法和K值的选取，距离的计算方式可以根据实际情况自定义，比如使用两个样本的某个特征值的差值绝对值作为这两个样本之间的距离，也可以使用比较通用的欧式距离计算方式，或者直接使用某些库自带的距离计算方式，如scipy库中就有计算距离的方法“from scipy.spatial import distance”，这几种距离的计算方式在本文示例中都有讲解，可以参考下。关于K值的选取，通常不宜过大，K值太大时，准确率会随之降低，通常选择3-10就足够了。</p><p><strong>优点和缺点：</strong>优点就是思路简单，易于实现，理解了这个算法后，可以不用复杂的公式也能计算出来。缺点是需要计算每个样本与自身之间的距离，当样本数量较大时，计算量也随之增大，而且当样本之间的特征不平衡时，得出的结果的偏差也会随之增大。</p><p><strong>注：</strong>机器学习中会涉及许多数学中的概念，如果有不清楚的地方，可能是学过但忘了，也可能是以前就没接触过，可以再去复习一下，或者干脆就重新学习一下，本文不再赘述。</p><h3 id="KNN算法实现"><a href="#KNN算法实现" class="headerlink" title="KNN算法实现"></a>KNN算法实现</h3><h4 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h4><p>需要准备的数据为其他房东的出租数据，我们将会根据这些数据作为参考得出自己房子的合适出租价格，这里准备的少量数据只是为了演示用，实际上应该多准备一些数据，得出的价格才能更加精确。</p><pre><code class="language-python">import pandas as pd
+
+# 假设这些是我们获取到的租房信息
+rental_info = &#123;
+    &#39;url&#39;: [&#39;https://www.airbnb.com/rooms/975833&#39;, &#39;https://www.airbnb.com/rooms/295345&#39;, &#39;https://www.airbnb.com/rooms/295346&#39;,
+            &#39;https://www.airbnb.com/rooms/333613&#39;, &#39;https://www.airbnb.com/rooms/805961&#39;, &#39;https://www.airbnb.com/rooms/7087327&#39;,
+            &#39;https://www.airbnb.com/rooms/8249488&#39;, &#39;https://www.airbnb.com/rooms/8409022&#39;, &#39;https://www.airbnb.com/rooms/8411173&#39;,
+            &#39;https://www.airbnb.com/rooms/8634774&#39;, &#39;https://www.airbnb.com/rooms/8498095&#39;, &#39;https://www.airbnb.com/rooms/8513660&#39;,
+            &#39;https://www.airbnb.com/rooms/8298145&#39;, &#39;https://www.airbnb.com/rooms/1745866&#39;, &#39;https://www.airbnb.com/rooms/7678268&#39;,
+            &#39;https://www.airbnb.com/rooms/8457865&#39;, &#39;https://www.airbnb.com/rooms/6757134&#39;, &#39;https://www.airbnb.com/rooms/8479636&#39;,
+            &#39;https://www.airbnb.com/rooms/2310297&#39;, &#39;https://www.airbnb.com/rooms/6556520&#39;, &#39;https://www.airbnb.com/rooms/8519782&#39;,
+            &#39;https://www.airbnb.com/rooms/8606980&#39;, &#39;https://www.airbnb.com/rooms/8485995&#39;, &#39;https://www.airbnb.com/rooms/8607216&#39;,
+            &#39;https://www.airbnb.com/rooms/8568945&#39;, &#39;https://www.airbnb.com/rooms/1026034&#39;, &#39;https://www.airbnb.com/rooms/2486785&#39;,
+            &#39;https://www.airbnb.com/rooms/1822257&#39;, &#39;https://www.airbnb.com/rooms/5220279&#39;, &#39;https://www.airbnb.com/rooms/3419118&#39;],
+    &#39;name&#39;: [&#39;Historic DC Condo-Walk to Capitol!&#39;, &#39;Spacious Capitol Hill Townhouse&#39;, &#39;Spacious/private room for single&#39;,
+             &#39;A wonderful bedroom with library&#39;, &#39;Downtown Silver Spring&#39;, &#39;Exclusive Catamaran Houseboat&#39;, 
+             &#39;Cozy DC Condo, Close to Metro!&#39;, &#39;Warm and Cozy 1 Bedroom Apt&#39;, &#39;Private room for rent&#39;,
+             &#39;Elite Room w/private bath Eden Park&#39;, &#39;Takoma Comfort, DC Convenience&#39;, &#39;Great Penthouse View! Metro in 7min&#39;,
+             &#39;Sunny &amp; Conveniently Located!&#39;, &#39;Beautiful Private High-Rise Apt&#39;, &#39;Renaissance Rm shared bath Eden PK&#39;,
+             &#39;Cozy private second floor&#39;, &#39;Cheap room near Fort Totten Metro&#39;, &#39;Near Washington,DC&#39;,
+             &#39;Sweet basement suite apartment&#39;, &#39;Etta Mae Inn B&amp;B - The Kiera room&#39;, &#39;All the comfort you need.&#39;,
+             &#39;Etta Mae Inn B&amp;B - The Phoenix room&#39;, &#39;Sunny Cape Cod minutes from DC&#39;, &#39;CHIC DC URBAN RETREAT&#39;,
+             &#39;Perfect studio in VERY central DC&#39;, &#39;Logan Circle Loft 1bedroom, 1.5bath&#39;, &#39;Updated 2BD Rowhome Steps to Metro&#39;,
+             &#39;Cozy Apt in the Heart of Hipsterdom&#39;, &#39;Beautiful room in amazing location!&#39;, &#39;Clean Studio - Next to Conv Center!&#39;],
+    &#39;host_id&#39;: [15830506, 5338703, 1487418, 16970249, 30369828, 951119, 4628, 3671500, 5159038, 347309, 9188872, 21704152, 
+                44519208, 3736766, 347309, 44659281, 11798122, 34290236, 4218349, 45276150, 44546458, 45276150, 2245859, 
+                966914, 2070536, 12725500, 9540128, 22207701, 12772446, 4240274],
+    &#39;accommodates&#39;: [4, 6, 1, 2, 4, 4, 4, 2, 2, 2, 4, 1, 2, 2, 2, 2, 1, 2, 4, 2, 2, 2, 7, 1, 4, 4, 3, 4, 2, 2],
+    &#39;bedrooms&#39;: [4, 6, 1, 2, 4, 4, 4, 2, 2, 2, 4, 1, 2, 2, 2, 2, 1, 2, 4, 2, 2, 2, 7, 1, 4, 4, 3, 4, 2, 2],
+    &#39;bathrooms&#39;: [1, 3, 2, 1, 1, 1, 2, 1, 1.5, 2, 1.5, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1.5, 1, 1, 1, 1],
+    &#39;beds&#39;: [2, 3, 1, 1, 1, 4, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 3, 1, 2, 1, 2, 2, 1, 1],
+    &#39;price&#39;: [&#39;$160.00 &#39;, &#39;$350.00 &#39;, &#39;$50.00 &#39;, &#39;$95.00 &#39;, &#39;$50.00 &#39;, &#39;$99.00 &#39;, &#39;$100.00 &#39;, &#39;$100.00 &#39;, &#39;$38.00 &#39;, 
+              &#39;$71.00 &#39;, &#39;$97.00 &#39;, &#39;$55.00 &#39;, &#39;$50.00 &#39;, &#39;$99.00 &#39;, &#39;$60.00 &#39;, &#39;$52.00 &#39;, &#39;$23.00 &#39;, &#39;$200.00 &#39;, 
+              &#39;$40.00 &#39;, &#39;$135.00 &#39;, &#39;$100.00 &#39;, &#39;$225.00 &#39;, &#39;$129.00 &#39;, &#39;$149.00 &#39;, &#39;$150.00 &#39;, &#39;$175.00 &#39;, &#39;$239.00 &#39;, 
+              &#39;$65.00 &#39;, &#39;$71.00 &#39;, &#39;$80.00 &#39;],
+    &#39;minimum_nights&#39;: [1, 2, 2, 1, 7, 1, 3, 1, 2, 2, 4, 3, 2, 7, 2, 1, 1, 1, 1, 1, 1, 1, 14, 3, 2, 1, 5, 2, 2, 1],
+    &#39;maximum_nights&#39;: [1125, 30, 1125, 1125, 1125, 1125, 1125, 1125, 180, 365, 1125, 1125, 14, 1125, 1125, 1125, 
+                       1125, 1125, 1125, 1125, 1125, 1125, 1125, 31, 365, 1125, 1125, 1125, 14, 1125],
+    &#39;number_of_reviews&#39;: [0, 65, 1, 0, 0, 0, 0, 0, 1, 4, 5, 1, 0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 46, 84, 25, 4, 2, 83, 19],
+    &#39;cleaning_fee&#39;: [&#39;$115.00 &#39;, &#39;$100.00 &#39;, &#39;$100.00&#39;, &#39;$15.00 &#39;, &#39;$15.00 &#39;, &#39;$50.00 &#39;, &#39;$50.00 &#39;, &#39;$10.00 &#39;, 
+                     &#39;$10.00 &#39;, &#39;$10.00 &#39;, &#39;$50.00 &#39;, &#39;$20.00 &#39;, &#39;$20.00 &#39;, &#39;$125.00 &#39;, &#39;$10.00 &#39;, &#39;$5.00&#39;, &#39;$5.00 &#39;, 
+                     &#39;$99.00 &#39;, &#39;$99.00 &#39;, &#39;$99.00 &#39;, &#39;$99.00 &#39;, &#39;$99.00 &#39;, &#39;$99.00 &#39;, &#39;$30.00 &#39;, &#39;$30.00 &#39;, &#39;$25.00 &#39;, 
+                     &#39;$50.00 &#39;, &#39;$12.00 &#39;, &#39;$12.00 &#39;, &#39;$12.00 &#39;],
+    &#39;zipcode&#39;: [20003, 20003, 20782, 20024, 20910, 20024, 20012, 20712, 20743, 20912, 20912, 20910, 20910, 20910, 
+                20912, 20712, 20782, 20910, 20712, 20912, 20712, 20912, 20912, 20008, 20005, 20005, 20001, 20001, 20001, 20001]
+&#125;
+
+# 如果数据是存放在类似csv格式的文本文件中，可以使用pd.read_csv(&#39;xxx.csv&#39;)来读取数据
+rental_df = pd.DataFrame(rental_info)
+# 选取我们需要参考的信息：accommodates（可以容纳的房客数量），bedrooms（卧室数量），bathrooms（卫生间数量），
+# beds（床的数量），price（房租价格），minimum_nights（房客最少租了多少天），maximum_nights（房客最多租了多少天），
+# number_of_reviews（评论数量）
+key_info = [&#39;accommodates&#39;, &#39;bedrooms&#39;, &#39;bathrooms&#39;, &#39;beds&#39;, &#39;price&#39;, &#39;minimum_nights&#39;, &#39;maximum_nights&#39;, &#39;number_of_reviews&#39;]
+keyinfo_df = rental_df[key_info]
+# 查看前五条数据
+keyinfo_df.head()</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224305.png" alt="img"></p><h4 id="距离计算"><a href="#距离计算" class="headerlink" title="距离计算"></a>距离计算</h4><p>假设我们以卧室数量作为参考，我们自己的房子有4个卧室，那么我们的房子与其他房东的房子的距离可以使用欧式距离计算方式，由于我们只有卧室数量这个单一变量，所以就可以简单计算为两者数量的差的绝对值。欧式距离公式如下：<br><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224302.png" alt="img"></p><p><strong>注：</strong>其中q1-qn为一条数据（样本）的n个特征信息，p1-pn为另一条数据（样本）的特征信息，由此公式便可同时根据多个变量（多个特征）计算出两个样本之间的距离。</p><pre><code class="language-python"> import numpy as np
+
+ my_bedrooms = 4
+ # 新加一列用以存放其他的房子与我们自己房子的距离
+ keyinfo_df[&#39;distance&#39;] = np.abs(keyinfo_df[&#39;accommodates&#39;] - my_bedrooms)
+ # 统计这些距离值并排序，以便查看
+ print(keyinfo_df[&#39;distance&#39;].value_counts().sort_index())
+ keyinfo_df.head()</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224259.png" alt="img"><br><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224256.png" alt="img"></p><p>可以看出，与我们房子的卧室数量相同的有9个。</p><h4 id="选择K个近邻算出价格"><a href="#选择K个近邻算出价格" class="headerlink" title="选择K个近邻算出价格"></a>选择K个近邻算出价格</h4><p>我们这里指定K=5，即选择5个与我们距离最近的房子作为参考，并算出近似值作为我们出租房子的参考价格。</p><pre><code class="language-python"># 将价格列的字符串去掉$符并转换为float类型
+keyinfo_df[&#39;price&#39;] = keyinfo_df[&#39;price&#39;].str.replace(&#39;$&#39;, &#39;&#39;).astype(float)
+# sample函数具有“洗牌”的功能，先打乱数据的顺序，再返回指定的数据量，frac=1表示返回100%的数据，random_state为随机数种子
+keyinfo_df = keyinfo_df.sample(frac=1, random_state=0)
+# 按照distance列排序
+keyinfo_df = keyinfo_df.sort_values(&#39;distance&#39;)
+# 这里近似值的算法我们采用求平均的方式，即选择与我们距离最近的5个房子的价格计算平均值
+my_price = keyinfo_df[&#39;price&#39;].iloc[:5].mean()
+my_price</code></pre><p>输出结果：105.8</p><p><strong>结论：</strong>以卧室数量作为参考，我们可以将房子的出租价格定在105.8左右。</p><h3 id="模型评估"><a href="#模型评估" class="headerlink" title="模型评估"></a>模型评估</h3><p>模型即我们的这个算法，对于上面这种实现方式，到底可不可靠？在不同的数据中计算得出的结果的误差有多大？这就是模型评估需要做的事。<br>为了评估模型（算法），我们需要将数据打乱之后分为两组，一组作为训练集（数据量占比较大），一组作为测试集（数据量占比较小），训练集数据用来优化改进我们的算法模型，测试集用来验证我们的算法模型。<br>验证方法为通过计算我们测试集数据得出的结果与测试集中原本的实际数据之间的误差来验证算法模型的可靠性，误差越小，则越可靠，这里我们采用的误差计算方式为均方根误差（RMSE，Root Mean Squared Error），计算公式如下：<br><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224238.png" alt="img"><br><strong>注：</strong>actual表示实际值，predicted表示预测出来的值，1-n表示不同的样本，最终的值表示通过多个样本计算出来总体误差值。</p><pre><code class="language-python">keyinfo_df = keyinfo_df.sample(frac=1, random_state=0)  # 再次打乱数据
+keyinfo_df.drop(&#39;distance&#39;, axis=1)  # 删除distance列
+train_df = keyinfo_df.copy().iloc[:20]  # 选取前20条数据作为训练集
+test_df = keyinfo_df.copy().iloc[20:]  # 选取后10条数据作为测试集
+
+
+def predict_price(feature_value, feature_name):
+    &quot;&quot;&quot;
+    根据特征值feature_value，在训练集中根据指定特征feature_name得出预测的价格
+    &quot;&quot;&quot;
+    temp_df = train_df
+    temp_df[&#39;distance&#39;] = np.abs(temp_df[feature_name] - feature_value)
+    temp_df = temp_df.sort_values(&#39;distance&#39;)
+    my_price = temp_df[&#39;price&#39;].iloc[:5].mean()
+    return my_price
+
+# 以测试集中的每条数据的卧室数量作为“我们自己的房子的卧室数量”，去训练集中计算得出参考价格
+test_df[&#39;my_price&#39;] = test_df[&#39;accommodates&#39;].apply(predict_price, feature_name=&#39;accommodates&#39;)
+# 根据公式计算均方根误差
+test_df[&#39;squared_price&#39;] = (test_df[&#39;price&#39;] - test_df[&#39;my_price&#39;]) ** 2
+mean_value = test_df[&#39;squared_price&#39;].mean()
+rmse = mean_value ** (1/2)
+rmse</code></pre><p>输出结果：101.82695124572865</p><p>单个误差值看不出什么意义，需要多个特征之间误差值联合起来一起看才有意义，误差值更小的那种计算方式通常更为可靠。</p><pre><code class="language-python"># 根据多个特征分别计算这种算法模型的均方根误差
+for feature in [&#39;accommodates&#39;,&#39;bedrooms&#39;,&#39;bathrooms&#39;,&#39;number_of_reviews&#39;]:
+    test_df[&#39;my_price&#39;] = test_df[feature].apply(predict_price, feature_name=feature)
+    test_df[&#39;squared_price&#39;] = (test_df[&#39;price&#39;] - test_df[&#39;my_price&#39;]) ** 2
+    mean_value = test_df[&#39;squared_price&#39;].mean()
+    rmse = mean_value ** (1/2)
+    print(&#39;&#123;&#125;: &#123;&#125;&#39;.format(feature, rmse))
+accommodates: 101.82695124572865
+bedrooms: 101.82695124572865
+bathrooms: 99.81280478976633
+number_of_reviews: 87.14700224333595</code></pre><h3 id="基于多变量KNN模型"><a href="#基于多变量KNN模型" class="headerlink" title="基于多变量KNN模型"></a>基于多变量KNN模型</h3><p>基于多变量的KNN模型意思是同时参考多个特征来选取距离自己最近的K个样本，即需要同时参考多个特征来计算与自己的距离，这种情况通常不会再自己写计算距离的算法了，而是借助于其他已经实现好的库，比如scipy库中的distance模块“scipy.spatial.distance”或者sklearn库中的neighbors模块“sklearn.neighbors”。以下就来介绍一下如何使用这两个库来实现KNN算法。</p><h4 id="数据准备：标准化和归一化"><a href="#数据准备：标准化和归一化" class="headerlink" title="数据准备：标准化和归一化"></a><strong>数据准备：标准化和归一化</strong></h4><pre><code class="language-python"># 重新获取数据
+key_info = [&#39;accommodates&#39;, &#39;bedrooms&#39;, &#39;bathrooms&#39;, &#39;beds&#39;, &#39;price&#39;, &#39;minimum_nights&#39;, &#39;maximum_nights&#39;, &#39;number_of_reviews&#39;]
+keyinfo_df = rental_df[key_info]
+keyinfo_df[&#39;price&#39;] = keyinfo_df[&#39;price&#39;].str.replace(&#39;$&#39;, &#39;&#39;).astype(float)
+keyinfo_df.head()</code></pre><p><img src="https://gitee.com/yuandongxu/mydata/raw/master/image/20201012224248.png" alt="img"></p><pre><code class="language-python">from sklearn.preprocessing import StandardScaler
+
+# 去除数据中的空值，示例中虽然没有空值，但实际操作中应该有这一步，至少要处理一下空值
+keyinfo_df = keyinfo_df.dropna()
+# 将数据归一化和标准化，这里采用的处理方式是StandardScaler中的fit_transform方法，即均值方差归一化
+# 这种归一化方法会使得数据集的方差为1，均值为0，符合标准正态分布，公式为：X=(x-μ)/σ
+# 可以发现处理后的数据它们之间的差值变小了，这样的话使用欧式距离计算的误差就会更小了
+keyinfo_df[key_info] = StandardScaler().fit_transform(keyinfo_df[key_info])
+# 这里只是另外起一个变量名称，表示它已经是标准化的数据了
+normalized_df = keyinfo_df
+normalized_df.head()</code></pre><p><img src="https://img2020.cnblogs.com/blog/997700/202007/997700-20200723235639342-2054762323.png" alt="img"></p><h4 id="使用scipy-spatial-distance计算距离"><a href="#使用scipy-spatial-distance计算距离" class="headerlink" title="使用scipy.spatial.distance计算距离"></a>使用scipy.spatial.distance计算距离</h4><p>scipy库中的distance模块有多种计算距离的方法，这里使用cdist()方法进行计算，这个方法默认也是采用欧氏距离的计算方式，当然也可以通过指定metric参数更换距离计算方式，具体支持的距离计算方式可以自行去查阅API文档，这里就不单独介绍了。</p><pre><code class="language-python">from scipy.spatial import distance
+
+normal_train_df = normalized_df.copy().iloc[:20]
+normal_test_df = normalized_df.copy().iloc[20:]
+
+
+def predict_price_multi(feature_values, feature_names):
+    &quot;&quot;&quot;
+    根据多个特征值feature_values，在训练集中根据指定的多个特征feature_names得出预测的价格
+    &quot;&quot;&quot;
+    temp_df = normal_train_df
+    # distance.cdist用于计算两组数据之间的距离，可使用metric参数指定距离的计算方式，默认为euclidean（欧几里得距离，即欧式距离）
+    temp_df[&#39;distance&#39;] = distance.cdist(temp_df[features], [feature_values[feature_names]])
+    temp_df = temp_df.sort_values(&#39;distance&#39;)
+    my_price = temp_df[&#39;price&#39;].iloc[:5].mean()
+    return my_price
+
+# 同时使用多个特征参与距离的计算
+features = [&#39;accommodates&#39;, &#39;bedrooms&#39;, &#39;bathrooms&#39;]
+normal_test_df[&#39;my_price&#39;] = normal_test_df[features].apply(predict_price_multi, feature_names=features, axis=1)
+# 根据公式计算均方根误差
+normal_test_df[&#39;squared_price&#39;] = (normal_test_df[&#39;price&#39;] - normal_test_df[&#39;my_price&#39;]) ** 2
+mean_value = normal_test_df[&#39;squared_price&#39;].mean()
+rmse = mean_value ** (1/2)
+rmse</code></pre><p>输出结果：0.925497918931224<br><strong>注：</strong>可以看到，通过数据的标准化和归一化，最后计算出来的均方根误差值完全不一样了，小了很多，这样也能更符合我们对于误差的比较和判断方式了。</p><h4 id="使用sklearn-neighbors实现KNN"><a href="#使用sklearn-neighbors实现KNN" class="headerlink" title="使用sklearn.neighbors实现KNN"></a><strong>使用sklearn.neighbors实现KNN</strong></h4><p>sklearn库是Python中机器学习的库，大多机器学习的操作和算法在sklearn中都能找到，当然也包括KNN算法，而且都已经封装好了，我们只需要拿来用就行了。</p><pre><code class="language-python">from sklearn.neighbors import KNeighborsRegressor
+from sklearn.metrics import mean_squared_error
+
+features = [&#39;accommodates&#39;, &#39;bedrooms&#39;, &#39;bathrooms&#39;]
+# 创建一个KNN回归器，默认k=5，即参数n_neighbors=5
+knr = KNeighborsRegressor()
+# 传入训练集和目标值
+knr.fit(normal_train_df[features], normal_train_df[&#39;price&#39;])
+# 根据提供的测试集算出目标值
+feature_predict = knr.predict(normal_test_df[features])
+# 计算均方根误差
+mse = mean_squared_error(normal_test_df[&#39;price&#39;], feature_predict)
+rmse = mse ** (1/2)
+rmse</code></pre><p>输出结果：1.139347164704861</p></div><footer class="post-footer"><div class="post-tags"><a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a></div><div class="post-nav"><div class="post-nav-item"><a href="/Python/%E6%A0%87%E5%87%86%E5%BA%93/Python%E6%A0%87%E5%87%86%E5%BA%93%C2%B7%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83venv/" rel="prev" title="Python标准库·虚拟环境venv"><i class="fa fa-chevron-left"></i> Python标准库·虚拟环境venv</a></div><div class="post-nav-item"><a href="/%E9%9A%8F%E7%AC%94/%E5%BF%AB%E6%8D%B7%E9%94%AE/" rel="next" title="常用快捷键笔记">常用快捷键笔记 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span> <span class="toggle-line toggle-line-middle"></span> <span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="nav-text">基础概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KNN%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-text">KNN算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="nav-text">数据准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%9D%E7%A6%BB%E8%AE%A1%E7%AE%97"><span class="nav-text">距离计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%89%E6%8B%A9K%E4%B8%AA%E8%BF%91%E9%82%BB%E7%AE%97%E5%87%BA%E4%BB%B7%E6%A0%BC"><span class="nav-text">选择K个近邻算出价格</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0"><span class="nav-text">模型评估</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%A4%9A%E5%8F%98%E9%87%8FKNN%E6%A8%A1%E5%9E%8B"><span class="nav-text">基于多变量KNN模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87%EF%BC%9A%E6%A0%87%E5%87%86%E5%8C%96%E5%92%8C%E5%BD%92%E4%B8%80%E5%8C%96"><span class="nav-text">数据准备：标准化和归一化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8scipy-spatial-distance%E8%AE%A1%E7%AE%97%E8%B7%9D%E7%A6%BB"><span class="nav-text">使用scipy.spatial.distance计算距离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8sklearn-neighbors%E5%AE%9E%E7%8E%B0KNN"><span class="nav-text">使用sklearn.neighbors实现KNN</span></a></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="yuandongxu" src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/av.jpg"><p class="site-author-name" itemprop="name">yuandongxu</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">94</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">16</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author motion-element"><span class="links-of-author-item"><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3l1YW5kb25neHU5Nw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuandongxu97"><i class="fab fa-github fa-fw"></i>GitHub</span> </span><span class="links-of-author-item"><a href="/431980110@qq.com" title="E-Mail → 431980110@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script><script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script><div class="widget-wrap"><h3 class="widget-title"></h3><div id="myCanvasContainer" class="widget tagcloud"><canvas width="250" height="250" id="resCanvas" style="width:100%"><ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flask/" rel="tag">Flask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IOS/" rel="tag">IOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python%E6%A0%87%E5%87%86%E5%BA%93/" rel="tag">Python标准库</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scrapy/" rel="tag">Scrapy</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag">博客</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag">软件</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a><span class="tag-list-count">8</span></li></ul></canvas></div></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">yuandongxu</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">298k</span></div><script src="https://cdn.jsdelivr.net/gh/yuandongxu97/image-repository/app/prism.js" async></script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var e,t,o,n,r,a=document.getElementsByTagName("link");if(0<a.length)for(i=0;i<a.length;i++)"canonical"==a[i].rel.toLowerCase()&&a[i].href&&(e=a[i].href);t=e?e.split(":")[0]:window.location.protocol.split(":")[0],e=e||window.location.href,window,n=e,r=document.referrer,/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi.test(n)||(o="https"===String(t).toLowerCase()?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif",r?(o+="?r="+encodeURIComponent(document.referrer),n&&(o+="&l="+n)):n&&(o+="?l="+n),(new Image).src=o)}()</script><script src="/js/local-search.js"></script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}</script><script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script><script>window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'http://yoursite.com/%E7%AE%97%E6%B3%95/K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%EF%BC%88KNN%EF%BC%89/',]
+      });
+      });</script><script>NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'ppTfB90JLFHWAP8jtgDULtBY-gzGzoHsz',
+      appKey     : '3QvYOEbjnbDB09UCGm4Pmbdx',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});</script></body></html>
